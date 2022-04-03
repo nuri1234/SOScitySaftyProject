@@ -23,9 +23,7 @@ import 'dbHelper/calldb_management.dart';
 void main() async{
  WidgetsFlutterBinding.ensureInitialized();
   await MongoDB.connect();
-
-// printACalls();
-  //await Firebase.initializeApp();
+  await Firebase.initializeApp();
 runApp(const MyApp());}
 
 
@@ -47,7 +45,7 @@ class _MyAppState extends State<MyApp> {
 
         title: 'home page',
         debugShowCheckedModeBanner: false,
-        home:connectionPage(),
+        home:Sos(),
       );
 
   }

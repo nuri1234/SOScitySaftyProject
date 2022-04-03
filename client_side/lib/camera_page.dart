@@ -60,6 +60,10 @@ class _camera_pageState extends State<camera_page> {
     alignment: Alignment.center,
     child: IconButton(
       onPressed: () {
+        setState(() {
+          imageFile=img;
+        });
+
         print("press");
       },
       icon: Image(image: FileImage(img)),

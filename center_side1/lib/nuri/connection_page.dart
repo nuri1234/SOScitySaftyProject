@@ -1,7 +1,14 @@
+import 'package:path_provider/path_provider.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'package:flutter/material.dart';
 import '../dbHelper/call_class.dart';
 import '../dbHelper/calldb_management.dart';
+import 'package:center_side/dbHelper/imagesdb_management.dart';
+import 'package:crossplat_objectid/crossplat_objectid.dart';
+import 'dart:convert';
+import 'dart:async';
+import 'dart:io';
+
 
 
 class connectionPage extends StatefulWidget {
@@ -13,11 +20,14 @@ class connectionPage extends StatefulWidget {
 
 class _connectionPageState extends State<connectionPage> {
   late IO.Socket socket;
+  late File fileImg;
+  bool isLoading = true;
 
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    //getImag();
     connect();
   }
 
@@ -70,6 +80,38 @@ class _connectionPageState extends State<connectionPage> {
   }
 
 
+  void getImag() async{
+
+
+   var imgs= await searchImages("ObjectId(\"6245f2ba87c326dc4d3d65ed\")");
+
+   print(imgs.base64image1);
+   final decodedBytes = base64Decode(imgs.base64image1);
+   final directory = await getApplicationDocumentsDirectory();
+
+   fileImg = File('${directory.path}/testImage.png');
+
+   print(fileImg.path);
+
+   fileImg.writeAsBytesSync(List.from(decodedBytes));
+
+
+
+
+
+
+   
+
+
+
+  }
+
+  Widget photo()=>Container(
+    padding: const EdgeInsets.all(5),
+    color: Colors.black54,
+    child: Image.file(fileImg),
+  );
+
 
   @override
   Widget build(BuildContext context) {
@@ -78,10 +120,16 @@ class _connectionPageState extends State<connectionPage> {
 
 
         body: Center(
-          child: IconButton(onPressed: ()async{
-             SoS();
-            i++;},
-            icon: const Icon(Icons.volume_up),
+          child: Column(
+            children: [
+              IconButton(onPressed: ()async{
+                getImag();
+                i++;},
+                icon: const Icon(Icons.volume_up),
+              ),
+
+
+            ],
           ),
         ));
   }

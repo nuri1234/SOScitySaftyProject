@@ -1,21 +1,21 @@
-
-import 'dart:io';
-
-
-
-
 class my_images{
   static int count=0;
   static List<String> _paths=[];
-
-  static  File? imageFile1;
-  static  File? imageFile2;
-  static  File? imageFile3;
-
+   static List<String> base64EncodeImages=[];
   static putPath(String path){
     _paths.add(path);
   }
 
+  static putbase64EncodeImages(String img){
+    print("here");
+    base64EncodeImages.insert(count,img);
+    count++;
+  }
+
+  static List<String> getputbase64EncodeImagess(){
+    return base64EncodeImages;
+
+  }
   static List<String> getPaths(){
     return _paths;
 

@@ -9,6 +9,7 @@ var io = require("socket.io")(server);
 app.use(express.json());
 var clients={}
 var centers={}
+var i=0;
 
 
 io.on("connection", (socket) => {
@@ -19,6 +20,18 @@ io.on("connection", (socket) => {
       clients[id]=socket;
      // console.log(clients);
 
+  });
+
+  socket.on("clientSignin",(id)=>{
+    console.log(id);
+    clients[id]=socket;
+    console.log(clients);
+  });
+
+  socket.on("centerSignin",(id)=>{
+    console.log(i);
+    centers[i]=socket;  
+    i++;
   });
 
   socket.on("message",(msg)=>{
@@ -34,12 +47,13 @@ io.on("connection", (socket) => {
 
    socket.on("SOS",(msg)=>{
     console.log("herrrrrrrr");
-    console.log(msg);
-    let targitId=msg.targitId
-    socket.emit("message",msg);
-    if(clients['1']){
-      console.log("yep");
-      clients['1'].emit("message",msg);}
+   // let targitId=msg.targitId
+    //socket.emit("message",msg);
+    for(j=0;j<i;j++)centers[j].emit("SOS",msg);
+    
+    
+
+
    });
   
    

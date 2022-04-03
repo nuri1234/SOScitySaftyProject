@@ -1,16 +1,16 @@
 import 'package:shared_preferences/shared_preferences.dart';
 class data{
-  static String? phone;
-  static bool? phon_verfyed;
-  static bool? anonymous;
-  static String? user_name;
-  static bool? first_time;
+  static String phone="non";
+  static bool phon_verfyed=false;
+  static bool anonymous=true;
+  static String user_name="guest";
+  static bool first_time=true;
 
 
   static  getData() async{
     final prefs = await SharedPreferences.getInstance();
     phon_verfyed= prefs.getBool('phon_verfyed') ?? false;
-    phone= prefs.getString('phone');
+    phone= prefs.getString('phone') ?? "non";
     first_time= prefs.getBool('first_time') ?? true;
     user_name= prefs.getString('user_name')?? "guest";
 

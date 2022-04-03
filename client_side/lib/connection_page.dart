@@ -21,6 +21,7 @@ class _connectionPageState extends State<connectionPage> {
     connect();
   }
 
+
   void connect() {
     socket = IO.io("http://localhost:5000", <String, dynamic>{
       "transports": ["websocket"],
@@ -35,13 +36,13 @@ class _connectionPageState extends State<connectionPage> {
       });
 
       socket.on("SOS", (msg){
-        print(msg);
-
-
-      });
-
+        print(msg);});
 
     });
+
+
+
+
     print(socket.connected);
     print("here99");
 
@@ -76,8 +77,8 @@ class _connectionPageState extends State<connectionPage> {
 
       body: Center(
         child: IconButton(onPressed: ()async{
-          Call call=await newCall("lolo", "0542256688",0.5, 0.6, 0);
-          SoS(call);
+          //Call call=await newCall("lolo", "0542256688",0.5, 0.6, 0);
+          //SoS(call);
        // sendMessage("msg $i", 1, 1);
         i++;},
          icon: const Icon(Icons.volume_up),
@@ -85,3 +86,4 @@ class _connectionPageState extends State<connectionPage> {
       ));
   }
 }
+
