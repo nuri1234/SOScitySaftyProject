@@ -21,7 +21,10 @@ class app_colors{
   static Color text_button = const Color(0xffffffff);
   static Color textInputFill = const Color(0xff8FB9D0);
   static Color background = const Color(0xffcfe2f3);
-
+  static Color statshow=const Color(0xff010048);
+  static Color messag_button= Colors.orangeAccent;
+  static Color sos_button=const Color(0xffff0000);
+  static Color sos_disablbutton=const Color(0xffffb3b3);
 
 
  //////////////////////////

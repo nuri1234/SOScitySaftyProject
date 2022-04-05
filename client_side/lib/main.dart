@@ -16,14 +16,18 @@ import 'images.dart';
 import 'connection_page.dart';
 
 import 'dbHelper/calldb_management.dart';
+import 'socket_class.dart';
+import 'registration_page.dart';
 
 
 
 
 void main() async{
  WidgetsFlutterBinding.ensureInitialized();
-  await MongoDB.connect();
+ my_socket.connect();
+ await MongoDB.connect();
   await Firebase.initializeApp();
+
 runApp(const MyApp());}
 
 

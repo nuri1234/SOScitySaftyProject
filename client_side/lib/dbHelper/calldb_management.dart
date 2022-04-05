@@ -1,3 +1,5 @@
+import 'package:client_side/local_data.dart';
+
 import 'mongodb.dart';
 import 'package:flutter/material.dart';
 import 'package:client_side/dbHelper/call_class.dart';
@@ -5,9 +7,10 @@ import 'package:mongo_dart/mongo_dart.dart';
 
 
 
-Future<Call> newCall(String userName, String phone,double lat,double long,String msg,int imgSize,ObjectId images )async{
-
-  final id = ObjectId();
+Future<Call> newCall(String userName, String phone,double lat,double long,String msg,int imgSize,String images )async{
+final dateTime=DateTime.now();
+final id = ObjectId();
+print("ff");
   final  call = Call(
       id:id,
         phone: phone,
@@ -16,7 +19,8 @@ Future<Call> newCall(String userName, String phone,double lat,double long,String
         long: long,
         msg: msg,
         imgSize: imgSize,
-        images:images
+        imagesId:images,
+      dateTime: dateTime
     );
   print("hii");
   print(call.toString());

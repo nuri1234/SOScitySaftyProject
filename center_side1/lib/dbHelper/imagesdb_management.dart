@@ -2,7 +2,7 @@ import 'mongodb.dart';
 import 'package:flutter/material.dart';
 import 'package:center_side/dbHelper/images_class.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import 'images_class.dart';
+
 
 ObjectId objId(){
   return ObjectId();
@@ -12,6 +12,7 @@ ObjectId objId(){
 dynamic searchImages(String id) async{
   List l=await MongoDB.getImagesDocuments();
   int i;
+  id="ObjectId(\"${id}\")";
   print(id);
 
   for(i=0;i<l.length;i++){
@@ -30,11 +31,7 @@ dynamic searchImages(String id) async{
     }
   }
 
-return null;
+  return null;
 }
-
-
-
-
 
 

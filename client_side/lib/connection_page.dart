@@ -36,7 +36,10 @@ class _connectionPageState extends State<connectionPage> {
       });
 
       socket.on("SOS", (msg){
-        print(msg);});
+        print(msg);
+        setState(() {
+        });
+      });
 
     });
 
@@ -86,4 +89,43 @@ class _connectionPageState extends State<connectionPage> {
       ));
   }
 }
+/*void callConnect() async {
+  my_socket.socket = IO.io("http://192.168.1.233:5000", <String, dynamic>{
+    "transports": ["websocket"],
+    "autoConnect": false,} );
 
+  my_socket.socket.connect();
+  my_socket.socket.onConnect((data) {
+    print("Connected");
+
+    my_socket.socket.emit("clientSignin",1);
+    my_socket.socket.on("SOS", (msg){
+      print("recive SOS");
+      print(msg['userName']);
+      print("hhhh");
+      print(msg);
+    });
+    my_socket.socket.on("Received", (msg){
+      print("recive SOS");
+
+      print(msg);
+    });
+
+    my_socket.socket.on("sos_send", (msg){
+      print("sos_send");
+      print(msg);
+      setState(() {
+        _sent=true;
+      });
+
+
+
+    });
+  });
+
+
+  print(my_socket.socket.connected);
+
+}
+
+*/

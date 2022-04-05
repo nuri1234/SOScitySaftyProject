@@ -6,12 +6,15 @@ import 'example.dart';
 import 'dbHelper/mongodb.dart';
 import 'nuri/getimage.dart';
 import 'package:flutter/gestures.dart';
+import 'socket_class.dart';
+
 
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await MongoDB.connect();
-  debugPrintHitTestResults = true;
+  await my_socket.connect();
+
 
   runApp(const MyApp());
 }
@@ -25,7 +28,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      home:SOS(),
+      home:examplePage(),
     );
   }
 }

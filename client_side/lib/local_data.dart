@@ -9,6 +9,7 @@ class data{
 
   static  getData() async{
     final prefs = await SharedPreferences.getInstance();
+
     phon_verfyed= prefs.getBool('phon_verfyed') ?? false;
     phone= prefs.getString('phone') ?? "non";
     first_time= prefs.getBool('first_time') ?? true;

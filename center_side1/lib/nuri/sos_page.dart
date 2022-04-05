@@ -15,10 +15,10 @@ import 'package:geocoding/geocoding.dart';
 
 
 
-class SOS extends StatefulWidget {
-  //final Call call;
-  const SOS({Key? key}) : super(key: key);
 
+class SOS extends StatefulWidget {
+  final Call call;
+  SOS({ required this.call});
 
 
   @override
@@ -28,7 +28,7 @@ class SOS extends StatefulWidget {
 
 
 class _SOSState extends State<SOS> {
-  late Call call;
+
   File? _fileImg;
   bool showBigPic = false;
    File? fileImg1;
@@ -37,31 +37,25 @@ class _SOSState extends State<SOS> {
    File? fileImg4;
    File? fileImg5;
   bool _picLooading=true;
-  bool _callLoading=true;
   double lat=50;
   double long=-0.12;
   String street="";
 
 
   void getCall()async{
-    call=await searchCall("ObjectId(\"6246015787c326dc4d3d65ef\")");
-    setState(() {
-      lat=call.lat;
-      long=call.long;
-      _callLoading=false;
-    });
+   //for Test call=await searchCall("ObjectId(\"6246015787c326dc4d3d65ef\")");
 
 
     GetAddressFromLatLong();
-    if(call.imgSize>0)getImages(call.images.toString());
-    else(_picLooading=false);
-    print(call.toMap());
+  //  if(call.imgSize>0)getImages(call.imagesId.toString());
+  //  else(_picLooading=false);
+ //   print(call.toMap());
 
   }
 
   void getImages(String id) async{
     print("getImages0");
-    //var imgs= await searchImages("ObjectId(\"6246015587c326dc4d3d65ee\")");
+    //for Test var imgs= await searchImages("ObjectId(\"6246015587c326dc4d3d65ee\")");
     var imgs= await searchImages(id);
     print("getImages1");
     if(imgs.base64image1 !="non"){
@@ -112,18 +106,25 @@ class _SOSState extends State<SOS> {
   void initState() {
     // TODO: implement initState
     super.initState();
-    getCall();
+
+    setState(() {
+      lat=widget.call.lat;
+      long=widget.call.long;
+    });
+    GetAddressFromLatLong();
+    getImages(widget.call.imagesId);
+
   }
 
   Widget detailsContainr()=>Container(
-    //color: Colors.purpleAccent,
-    height: 150,
-    width: 300,
+    color: Colors.purpleAccent,
+    height: 100,
+    width: 350,
     padding: EdgeInsets.all(5),
     child: Column(children: [
-      DefaultTextStyle(  child:Text("username: ${call.userName}") ,style: TextStyle(fontSize: 30,color:app_colors.sos_page_font),),
-      DefaultTextStyle(  child:Text("phone: ${call.phone}") ,style: TextStyle(fontSize: 30,color:app_colors.sos_page_font),),
-      DefaultTextStyle(  child:Text("date: non for now") ,style: TextStyle(fontSize: 30,color:app_colors.sos_page_font),)
+      DefaultTextStyle(  child:Text("username: ${widget.call.userName}") ,style: TextStyle(fontSize:20,color:app_colors.sos_page_font),),
+      DefaultTextStyle(  child:Text("phone: ${widget.call.phone}") ,style: TextStyle(fontSize: 20,color:app_colors.sos_page_font),),
+      DefaultTextStyle(  child:Text("date: ${widget.call.dateTime}") ,style: TextStyle(fontSize: 20,color:app_colors.sos_page_font),)
 
     ],),
 
@@ -131,12 +132,12 @@ class _SOSState extends State<SOS> {
   );
 
   Widget messageContainr()=>Container(
-  //  color: Colors.purpleAccent,
+   color: Colors.greenAccent,
     height: 150,
     width: 300,
     padding: EdgeInsets.all(5),
     alignment: Alignment.center,
-    child:DefaultTextStyle(  child:Text("message: ${call.msg}") ,style: TextStyle(fontSize: 30,color:app_colors.sos_page_font),),
+    child:DefaultTextStyle(  child:Text("message: ${widget.call.msg}") ,style: TextStyle(fontSize: 20,color:app_colors.sos_page_font),),
 
   );
 
@@ -170,7 +171,9 @@ class _SOSState extends State<SOS> {
   void GetAddressFromLatLong() async{
     List<Placemark> placemark= await placemarkFromCoordinates(lat,long);
     print(placemark);
-   street=placemark.first.street.toString();
+   setState(() {
+     street=placemark.first.street.toString();
+   });
 
 
 
@@ -223,6 +226,7 @@ class _SOSState extends State<SOS> {
 
         ),
       ),),
+
 
     ],)
 
@@ -287,17 +291,26 @@ class _SOSState extends State<SOS> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Container(
-        padding: EdgeInsets.all(20),
-        color: app_colors.background,
-        child:_callLoading? Center(child: const CircularProgressIndicator()): Stack(children: [
-         Align(alignment: Alignment.topLeft,child: detailsContainr(),),
-          Align(alignment: Alignment(-1,-0.7),child:messageContainr(),),
-          Align(alignment: Alignment(1,-1),child:pictursContainr(),),
-          Align(alignment: Alignment(0,1),child:mapContainer(),),
-          if(showBigPic)Align(alignment: Alignment(-0.0,0),child:bigImageContainr(),)
 
-        ],),
+      body: Container(
+          padding: EdgeInsets.all(20),
+          color: app_colors.background,
+          child: Stack(children: [
+           Align(alignment: Alignment.topLeft,child: detailsContainr(),),
+            Align(alignment: Alignment(-1,-0.0),child:messageContainr(),),
+            Align(alignment: Alignment(1,-1),child:pictursContainr(),),
+            Align(alignment: Alignment(0,1),child:mapContainer(),),
+            if(showBigPic)Align(alignment: Alignment(-0.0,0),child:bigImageContainr(),),
+            Align(alignment: Alignment.topRight,child:
+            IconButton(onPressed:(){Navigator.pop(context); },icon: const Icon(Icons.clear,color: Colors.red,)),),
+
+
+
+
+
+
+          ],),
+
 
       ),
     );

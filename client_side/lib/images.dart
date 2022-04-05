@@ -11,6 +11,12 @@ class my_images{
     base64EncodeImages.insert(count,img);
     count++;
   }
+  static restart(){
+    int count=0;
+    _paths.clear();
+   base64EncodeImages.clear();
+
+  }
 
   static List<String> getputbase64EncodeImagess(){
     return base64EncodeImages;

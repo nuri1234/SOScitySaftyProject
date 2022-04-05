@@ -10,11 +10,12 @@ class Call{
   final double long ;
   final String msg;
   final int imgSize;
-  final ObjectId images;
+  final String imagesId;
+  final DateTime dateTime;
 
 
 
-  const Call({required this.id,required this.userName,required this.phone,required this.lat,required this.long,required this.msg,required this.imgSize,required this.images});
+  const Call({required this.id,required this.userName,required this.phone,required this.lat,required this.long,required this.msg,required this.imgSize,required this.imagesId,required this.dateTime});
 
   Map<String, dynamic> toMap() {
     return {
@@ -25,7 +26,8 @@ class Call{
       'long': long,
       'msg':msg,
       'imgSize':imgSize,
-      'images':images,
+      'images':imagesId,
+      'dateTime':dateTime.toString()
 
 
     };

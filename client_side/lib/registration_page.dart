@@ -1,4 +1,11 @@
-
+import 'package:client_side/colors.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'texts.dart';
+import 'colors.dart';
+import 'local_data.dart';
+import '/sos_screen.dart';
+import 'local_data.dart';
 import 'package:client_side/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -16,25 +23,32 @@ import 'sos_screen.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-
-class register extends StatefulWidget {
-  const register({Key? key}) : super(key: key);
+class Registor extends StatefulWidget {
+  const Registor({Key? key}) : super(key: key);
 
   @override
-  State<register> createState() => _registerState();
+  State<Registor> createState() => _RegistorState();
 }
 
-class _registerState extends State<register> {
+
+/////////////////////////////////////////////////////
+
+
+//////////////////////////////////////////////////////////////////////
+
+class _RegistorState extends State<Registor> {
+  final TextEditingController _user_name= TextEditingController();
+  bool _save=false;
+  bool _phoneInput=false;
   bool isLoading=true;
   final maskFormatter = MaskTextInputFormatter(mask: 'XX#-#######', filter: { "#": RegExp(r'[0-9]') ,"X": RegExp(r'[0,5]') });
   final TextEditingController _phone= TextEditingController();
-  final TextEditingController _user_name= TextEditingController();
   String codeDigits="+972";
   int state=0;
   String? varificationCode;
   TextEditingController otpCode = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  String appbar=my_texts.home_page;
+
   //////////////////////////////////////////////////verefing phonefunctions/////////
   _onVerificationCompleted(PhoneAuthCredential authCredential) async {
     print("verification completed ${authCredential.smsCode}");
@@ -83,59 +97,13 @@ class _registerState extends State<register> {
     print("here3");
   }
   //////////////////////////end verefing phonefunctions/////////
-  /////////////////////////////////////////////////////
-  @override
-  void initState() {
-    super.initState();
-  }
 
-  void updateData() {
-
-    setState(() {
-      data.phone=maskFormatter.getUnmaskedText();
-      data.phon_verfyed=true;
-      state=3;
-    });
-    data.updateData();
-
-  }
-  ////////////////////////////////////////////////////////
-
-
-
-
-  Widget logo()=>Container(
-      padding: const EdgeInsets.all(0),
-      margin: const EdgeInsets.all(0),
-      child: const Image(
-        image: AssetImage('assets/images/logo.png'),
-        height: 200,
-        width: 200,
-      )
-
-  );
-  Widget welcome()=> DefaultTextStyle(
-    style: GoogleFonts.pacifico(fontSize: 60,fontWeight: FontWeight.w300,color: app_colors.Welcome),
-    child: Text(my_texts.welcome),
-
-  );
-  Widget welcomeContainer()=>Container(
-   // color: Colors.red,
-      height: 250,
-      width:400,
-      child:Stack(children: [
-        Align(alignment: Alignment.topCenter,child: welcome(),),
-        Align(alignment: const Alignment(0.0,1),child: logo(),),
-
-      ],)
-
-  );
-
+  /////////////////////////////////////////////////////////////////
   Widget nextButton()=>ElevatedButton(
     onPressed:(){
       debugPrint(_phone.text);
       debugPrint(maskFormatter.getUnmaskedText());
-       verifyPhoneNumber();
+      verifyPhoneNumber();
       setState(() {
         state=1;
       });
@@ -155,7 +123,7 @@ class _registerState extends State<register> {
     onPressed:(){
       data.user_name=_user_name.text;
       updateData();
-     Navigator.push(context, MaterialPageRoute(builder: (context)=>Sos()),);
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>Sos()),);
     } ,
 
     style: ElevatedButton.styleFrom(
@@ -187,33 +155,6 @@ class _registerState extends State<register> {
     ),
     child: Text(my_texts.try_again, style: TextStyle(color: app_colors.text_button,fontWeight:FontWeight.bold ,fontSize: 18),),
   );
-  Widget inputNameTex()=>DefaultTextStyle(
-    style: GoogleFonts.pacifico(fontSize: 28,fontWeight: FontWeight.w300,color: app_colors.Welcome),
-    child: Text(my_texts.enter_name),);
-
-
-  Widget inputNameTextField()=>TextField(
-  decoration: InputDecoration(
-  enabledBorder: OutlineInputBorder(
-  borderSide: BorderSide(color:app_colors.BorderSide, width: 2.0),
-  borderRadius: BorderRadius.circular(20.0),
-  ),
-  focusedBorder:OutlineInputBorder(
-  borderSide: BorderSide(color:app_colors.BorderSide, width: 2.0),
-  borderRadius: BorderRadius.circular(20.0) ,
-
-  ),
-  prefixIcon: Icon(Icons.supervised_user_circle,color:app_colors.BorderSide,size: 20.0,),
-  fillColor: app_colors.textInputFill,
-  filled: true,
-  prefix: Padding(
-  padding: EdgeInsets.all(4),
-  ) ),
-  maxLength: 11,
-
-  keyboardType: TextInputType.name,
-  controller: _user_name,
-  );
   Widget pinPut()=>PinCodeTextField(
       appContext: context,
       length: 6,
@@ -236,6 +177,7 @@ class _registerState extends State<register> {
             if(value.user!=null){
               print("worked");
               updateData();
+              _phoneInput=false;
 
 
             }
@@ -260,11 +202,6 @@ class _registerState extends State<register> {
 
 
 
-
-
-
-
-
   );
   Widget verifyingTextContainer()=>Container(
     height: 50,
@@ -277,9 +214,9 @@ class _registerState extends State<register> {
   );
   Widget phoneVerificationContainer()=>Container(
     padding: EdgeInsets.all(20),
-   //  color: Colors.blue,
-      height: 250,
-      width:400,
+    //  color: Colors.blue,
+    height: 250,
+    width:400,
     child: Center(
       child: Column(
         children: [
@@ -332,76 +269,232 @@ class _registerState extends State<register> {
     ),
 
 
-
-
   );
   Widget phoneVerificationContainer2()=>Container(
-      padding: EdgeInsets.all(20),
-  //    color: Colors.pinkAccent,
-      height: 250,
-      width:400,
-      child: Center(
-        child: Column(
-          children: [
-            GestureDetector(
-              onTap: (){},
-              child:verifyingTextContainer(),
-
-              ),
-
-           const SizedBox(height: 20,),
-            Center(child: pinPut()),
-            const SizedBox(height: 20,),
-            tryAgainButton(),
-
-          ],
-        ),
-      ),
-  );
-  Widget inputName()=>Container(
-    padding:const EdgeInsets.all(20),
-    //color: Colors.deepOrangeAccent,
+    padding: EdgeInsets.all(20),
+    //    color: Colors.pinkAccent,
     height: 250,
     width:400,
-    child: Column(children: [
-      inputNameTex(),
-      inputNameTextField(),
-      nextButton2(),
-    ],),
+    child: Center(
+      child: Column(
+        children: [
+          GestureDetector(
+            onTap: (){},
+            child:verifyingTextContainer(),
+
+          ),
+
+          const SizedBox(height: 20,),
+          Center(child: pinPut()),
+          const SizedBox(height: 20,),
+          tryAgainButton(),
+
+        ],
+      ),
+    ),
+  );
+  Widget phoneVerificationMainContainer()=>Container(
 
   );
-
-  Widget mainStack()=>Stack(
-   children: [
-      welcomeContainer(),
-  SingleChildScrollView( child:Column(
-  children: [
-  const SizedBox(height: 210,),
-  if(state==0)
-  phoneVerificationContainer(),
-  if(state==1)
-  phoneVerificationContainer2(),
-  if(state==3) inputName(),
-  ],
-  ),),
+  ////////////////////////////////////////
 
 
-    ],
+  @override
+  void initState(){
+    super.initState();
+    data.getData();
+    setState(() {
+      _user_name.text=data.user_name;
+    });
+
+  }
+  void save(){
+    setState(() {
+      _save=false;
+    });
+    print("save");
+
+    data.user_name=_user_name.text;
+    data.updateData();
+
+  }
+  void updateData() {
+
+    setState(() {
+      data.phone=maskFormatter.getUnmaskedText();
+      data.phon_verfyed=true;
+      state=3;
+    });
+    data.updateData();
+
+  }
+
+///////////////////////////////
+  Widget logo()=>Container(
+      padding: const EdgeInsets.all(0),
+      margin: const EdgeInsets.all(0),
+      child: const Image(
+        image: AssetImage('assets/images/logo.png'),
+        height: 150,
+        width: 150,
+      )
 
   );
+  Widget welcome()=> DefaultTextStyle(
+    style: GoogleFonts.pacifico(fontSize: 50,fontWeight: FontWeight.w300,color: app_colors.Welcome),
+    child: Text(my_texts.welcome),
 
+  );
+  Widget welcomeContainer()=>Container(
+    // color: Colors.red,
+      height: 200,
+      width:350,
+      child:Stack(children: [
+        Align(alignment: Alignment.topCenter,child: welcome(),),
+        Align(alignment: const Alignment(0.0,1),child: logo(),),
+
+      ],)
+
+  );
+  Widget saveButton()=>IconButton(
+    onPressed: save,
+    icon:Icon(Icons.save,size: 50,color: _save? Colors.green: Colors.grey,) ,
+
+  );
+  Widget clear_phone()=>IconButton(
+    onPressed: (){
+      setState(() {
+        data.phone="non";
+        data.phon_verfyed=false;
+        _phoneInput=true;
+      });
+      data.updateData();
+    },
+    icon:Icon(Icons.clear,size: 20,color:Colors.red,) ,
+
+  );
+  Widget inputPhone_Button()=>Container(
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(90),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: Offset(8,5)
+
+          ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: Offset(-8,-5)
+          ),
+        ]
+    ),
+    child: ElevatedButton(
+      onPressed: (){
+        setState(() {
+          _phoneInput=true;
+        });
+      },
+      child:Text(my_texts.inputPhone,style:TextStyle(color: app_colors.text_button,fontWeight:FontWeight.bold ,fontSize: 18)),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
+        primary:app_colors.button,
+        minimumSize: Size(70.0, 70.0),
+
+      ),
+    ),
+  );
+////////////////////////////////////////////////////
+  Widget inputuserNameTextField()=>Container(
+    height:110,
+    width:300,
+    padding: EdgeInsets.all(20),
+    child: TextField(
+      decoration: InputDecoration(
+        enabledBorder: OutlineInputBorder(
+          borderSide: BorderSide(color:app_colors.BorderSide, width: 5.0),
+          borderRadius: BorderRadius.circular(20.0),
+        ),
+        focusedBorder:OutlineInputBorder(
+          borderSide: BorderSide(color:app_colors.BorderSide, width: 2.0),
+          borderRadius: BorderRadius.circular(20.0) ,
+
+        ),
+          prefixIcon:Padding(
+            padding: const EdgeInsets.all(8.0),
+            child: Text("${my_texts.username} : ",style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight:FontWeight.bold),),
+          ),
+          fillColor: app_colors.textInputFill,
+
+          filled: true,
+          ),
+      maxLines: 15,
+      controller: _user_name,
+      style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight:FontWeight.bold),
+      textAlign: TextAlign.center,
+      onChanged: (_user_name){setState(() {
+        _save=true;
+      });},
+    ),
+  );
+
+
+  Widget deatailsContainer()=>Container(
+    // color: Colors.red,
+    height: 110,
+    width:350,
+   // color: Colors.pink,
+    child: Stack(
+        children: [
+          Align(alignment: const Alignment(-1,-1),child:inputuserNameTextField(),),
+          Align(alignment: const Alignment(0.9,-0.4),child:saveButton(),),
+
+
+        ],
+
+    ),
+  );
+
+
+
+
+  Widget mainColumn()=>Column(
+      children: [
+        welcomeContainer(),
+        Container(
+            height: 100,
+            width: 300,
+            //color: Colors.grey,
+            child: Center(child: my_texts.explaneText)),
+        deatailsContainer(),
+       if(data.phon_verfyed) Center(
+         child: Row(
+           children: [
+             Text(" ${my_texts.phoneNumber}: ${data.phone}",style: TextStyle(fontSize: 20),),
+             clear_phone()
+           ],
+         ),
+       ),
+       if(!_phoneInput) inputPhone_Button(),
+        if(_phoneInput) if(state==0)
+          phoneVerificationContainer(),
+        if(state==1)
+          phoneVerificationContainer2(),
+
+      ]);
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-        backgroundColor: app_colors.background,
-        appBar: AppBar(
+      backgroundColor: app_colors.background,
+      appBar: AppBar(
         backgroundColor: app_colors.app_bar_background,
-          title: Text(my_texts.registration) ,),
+        title: Text(my_texts.fillyourdetails) ,),
       body: SingleChildScrollView(
         reverse: true,
-        padding:  const EdgeInsets.all(5.0),
-        child: mainStack(),
+        padding:  const EdgeInsets.all(0.2),
+        child:Center(child: mainColumn()),
       ),
       //mainContainer(),
     );

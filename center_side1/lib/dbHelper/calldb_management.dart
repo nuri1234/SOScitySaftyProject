@@ -1,3 +1,4 @@
+
 import 'mongodb.dart';
 import 'package:flutter/material.dart';
 import 'package:center_side/dbHelper/call_class.dart';
@@ -5,9 +6,10 @@ import 'package:mongo_dart/mongo_dart.dart';
 
 
 
-Future<Call> newCall(String userName, String phone,double lat,double long,String msg,int imgSize,ObjectId images )async{
-
-  final id = ObjectId();
+Future<Call> newCall(String userName, String phone,double lat,double long,String msg,int imgSize,String imagesId)async{
+final dateTime=DateTime.now();
+final id = ObjectId();
+print("ff");
   final  call = Call(
       id:id,
         phone: phone,
@@ -16,7 +18,8 @@ Future<Call> newCall(String userName, String phone,double lat,double long,String
         long: long,
         msg: msg,
         imgSize: imgSize,
-        images:images
+        imagesId:imagesId,
+      dateTime:  dateTime ,
     );
   print("hii");
   print(call.toString());
@@ -26,7 +29,10 @@ Future<Call> newCall(String userName, String phone,double lat,double long,String
   return call;
   }
 
+
+
 dynamic searchCall(String id)async{
+  id="ObjectId(\"${id}\")";
 
   List l=await MongoDB.getCallDocuments();
   int i;
@@ -35,19 +41,20 @@ dynamic searchCall(String id)async{
     print(l[i]['_id'].toString());
     if(l[i]['_id'].toString()==id){
       print("found");
-      final imgs=Call(
+      final call=Call(
         id: l[i]['_id'],
         userName:l[i]['userName'],
-         phone: l[i]['phone'],
+        phone: l[i]['phone'],
         lat: l[i]['lat'],
         long: l[i]['long'],
         msg: l[i]['msg'],
         imgSize: l[i]['imgSize'],
-         images: l[i]['images'],
+        imagesId: l[i]['images'],
+        dateTime :DateTime.parse(l[i]['dateTime']),
 
 
       );
-      return imgs;
+      return call;
     }
   }
 
