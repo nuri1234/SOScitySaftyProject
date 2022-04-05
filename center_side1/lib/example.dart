@@ -66,12 +66,12 @@ class _examplePageState extends State<examplePage> {
     });
 
     my_socket.socket.onConnect((data) {
-      if(my_socket.isconnect==false){
+
         print("Connected to server2");
         my_socket.socket.emit("centerSignin", my_socket.socket.id.toString());
         setState(() {
           my_socket.isconnect=true;
-        });}
+        });
     });
 
 
