@@ -1,27 +1,21 @@
-import 'package:flutter/material.dart';
-import 'package:firebase_core/firebase_core.dart';
 import 'package:client_side/colors.dart';
+import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'texts.dart';
 import 'colors.dart';
-import 'dbHelper/mongodb.dart';
-import 'socket_class.dart';
-import 'home_page.dart';
+import 'local_data.dart';
+import 'sos_screen.dart';
 import 'registration_page.dart';
 
+class Home extends StatefulWidget {
+  const Home({Key? key}) : super(key: key);
 
-void main() async{
-  runApp(const splashScreen());
- WidgetsFlutterBinding.ensureInitialized();
- my_socket.connect();
- await MongoDB.connect();
- await Firebase.initializeApp();
+  @override
+  State<Home> createState() => _HomeState();
+}
 
-runApp(const MyApp());}
-
-class splashScreen extends StatelessWidget {
-  const splashScreen({Key? key}) : super(key: key);
-
+class _HomeState extends State<Home> {
+  bool isLoading=true;
 
   Widget loading()=>const Center(child: CircularProgressIndicator(color: Colors.black, ));
   Widget logo()=>Container(
@@ -51,11 +45,33 @@ class splashScreen extends StatelessWidget {
 
   );
 
+
+  void loadData() async{
+    //  await data.initData();
+    await data.getData();
+    print("is first time?");
+    print(data.first_time);
+  if(data.first_time){
+    data.first_time=false;
+    data.updateData();
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>(Registor())),);}
+  else Navigator.push(context, MaterialPageRoute(builder: (context)=>(Sos())),);
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadData();
+
+
+  }
+
+
   @override
   Widget build(BuildContext context) {
-    return  MaterialApp(
-        debugShowCheckedModeBanner: false,
-        home: Container(
+    return Container(
       color: app_colors.background,
       child: Center(
         child: Column(children: [
@@ -66,27 +82,6 @@ class splashScreen extends StatelessWidget {
         ],),
       ),
 
-    ));
+    );
   }
-}
-
-class MyApp extends StatefulWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-  @override
-  State<MyApp> createState() => _MyAppState();
-}
-
-class _MyAppState extends State<MyApp> {
-  // This widget is the root of your application.
-  @override
-  Widget build(BuildContext context) {
-      return const MaterialApp(
-        title: 'home page',
-        debugShowCheckedModeBanner: false,
-        home: Home() ,
-      );
-  }
-
-
 }

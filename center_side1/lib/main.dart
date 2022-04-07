@@ -4,7 +4,6 @@ import 'package:flutter/material.dart';
 import 'package:objectid/objectid.dart';
 import 'example.dart';
 import 'dbHelper/mongodb.dart';
-import 'nuri/getimage.dart';
 import 'package:flutter/gestures.dart';
 import 'socket_class.dart';
 

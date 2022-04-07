@@ -33,11 +33,11 @@ class _camera_pageState extends State<camera_page> {
     height: 350,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      color: Colors.grey,
+      color:app_colors.cameraPageInputimage,
       border: Border.all(width: 8, color: Colors.black12),
       borderRadius: BorderRadius.circular(12.0),
     ),
-    child: Center(child: Icon(
+    child: const Center(child: Icon(
       Icons.add_box_outlined, color: Colors.black54, size: 50,)),
   );
   Widget bigImgContainer(File img) =>Container(
@@ -45,7 +45,7 @@ class _camera_pageState extends State<camera_page> {
     height: 350,
     alignment: Alignment.center,
     decoration: BoxDecoration(
-      color: Colors.grey,
+      color:app_colors.cameraPageInputimage,
       border: Border.all(width: 8, color: Colors.black12),
       borderRadius: BorderRadius.circular(12.0),
       image: DecorationImage(image: FileImage(img), fit: BoxFit.cover),
@@ -364,20 +364,17 @@ class _camera_pageState extends State<camera_page> {
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: app_colors.background,
-      appBar: AppBar(
-        backgroundColor: app_colors.app_bar_background,
-        title: Text(my_texts.capturing_Image, style: my_texts.buttonTextStyle,),
-        centerTitle: true,
-        actions: [
-          cameraCancel(),
-          cameraAccept(),
-
-        ],
-      ),
       body: Padding(
         padding: const EdgeInsets.fromLTRB(10, 5, 5, 1),
         child: Column(
           children: [
+            const SizedBox(height:50 ,),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+              cameraAccept(),
+              cameraCancel()],),
+            const SizedBox(height:10 ,),
             if(imageFile == null)
               nonImgContainer()
             else

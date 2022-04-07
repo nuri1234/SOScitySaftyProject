@@ -5,24 +5,13 @@ import 'texts.dart';
 import 'colors.dart';
 import 'local_data.dart';
 import '/sos_screen.dart';
-import 'local_data.dart';
-import 'package:client_side/colors.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'texts.dart';
-import 'colors.dart';
-import 'local_data.dart';
-import 'sos_screen.dart';
-import 'package:client_side/colors.dart';
-import 'package:flutter/material.dart';
-import 'package:google_fonts/google_fonts.dart';
-import 'texts.dart';
-import 'colors.dart';
-import 'local_data.dart';
 import 'sos_screen.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'sos_screen.dart';
+
+
 class Registor extends StatefulWidget {
   const Registor({Key? key}) : super(key: key);
 
@@ -221,22 +210,7 @@ class _RegistorState extends State<Registor> {
       child: Column(
         children: [
           Text(my_texts.EnterPhon,
-            style: GoogleFonts.stylish(
-              fontSize:28,
-              color: app_colors.explaneText,
-              fontWeight: FontWeight.w100,
-              shadows: [
-                Shadow(
-                  blurRadius: 10.0,
-                  color: app_colors.buttom_shadow,
-                  offset: const Offset(1.0, 1.0),
-                ),
-
-              ],
-
-            ),
-
-          ),
+            style: GoogleFonts.abel(fontSize: 16,fontWeight: FontWeight.w800,color: Colors.black),),
           SizedBox(height: 10,),
           TextField(
             decoration: InputDecoration(
@@ -294,6 +268,7 @@ class _RegistorState extends State<Registor> {
     ),
   );
   Widget phoneVerificationMainContainer()=>Container(
+    color: Colors.green,
 
   );
   ////////////////////////////////////////
@@ -322,7 +297,7 @@ class _RegistorState extends State<Registor> {
 
     setState(() {
       data.phone=maskFormatter.getUnmaskedText();
-      data.phon_verfyed=true;
+      data.phone_verified=true;
       state=3;
     });
     data.updateData();
@@ -365,7 +340,7 @@ class _RegistorState extends State<Registor> {
     onPressed: (){
       setState(() {
         data.phone="non";
-        data.phon_verfyed=false;
+        data.phone_verified=false;
         _phoneInput=true;
       });
       data.updateData();
@@ -413,7 +388,7 @@ class _RegistorState extends State<Registor> {
     child: TextField(
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
-          borderSide: BorderSide(color:app_colors.BorderSide, width: 5.0),
+          borderSide: BorderSide(color:app_colors.BorderSide, width: 0.0),
           borderRadius: BorderRadius.circular(20.0),
         ),
         focusedBorder:OutlineInputBorder(
@@ -423,7 +398,7 @@ class _RegistorState extends State<Registor> {
         ),
           prefixIcon:Padding(
             padding: const EdgeInsets.all(8.0),
-            child: Text("${my_texts.username} : ",style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight:FontWeight.bold),),
+            child: Text("${my_texts.username} : ",style: GoogleFonts.aBeeZee(fontSize:20,fontWeight: FontWeight.bold,color: Colors.black),),
           ),
           fillColor: app_colors.textInputFill,
 
@@ -431,8 +406,8 @@ class _RegistorState extends State<Registor> {
           ),
       maxLines: 15,
       controller: _user_name,
-      style: const TextStyle(color:Colors.black,fontSize: 25,fontWeight:FontWeight.bold),
-      textAlign: TextAlign.center,
+      style:  GoogleFonts.aBeeZee(fontSize:20,fontWeight: FontWeight.bold,color: Colors.lightGreenAccent),
+      textAlign: TextAlign.left,
       onChanged: (_user_name){setState(() {
         _save=true;
       });},
@@ -459,44 +434,53 @@ class _RegistorState extends State<Registor> {
 
 
 
-  Widget mainColumn()=>Column(
-      children: [
-        welcomeContainer(),
-        Container(
-            height: 100,
-            width: 300,
-            //color: Colors.grey,
-            child: Center(child: my_texts.explaneText)),
-        deatailsContainer(),
-       if(data.phon_verfyed) Center(
-         child: Row(
-           children: [
-             Text(" ${my_texts.phoneNumber}: ${data.phone}",style: TextStyle(fontSize: 20),),
-             clear_phone()
-           ],
+  Widget mainColumn()=>SingleChildScrollView(
+    reverse: true,
+    child: Column(
+        children: [
+          Container(
+              height: 100,
+              width: 300,
+             // color: Colors.grey,
+              child: Center(child: my_texts.explaneText)),
+          deatailsContainer(),
+         if(data.phone_verified) Center(
+           child: Row(
+             children: [
+               Text(" ${my_texts.phoneNumber}: ${data.phone}",style: TextStyle(fontSize: 20),),
+               clear_phone()
+             ],
+           ),
          ),
-       ),
-       if(!_phoneInput) inputPhone_Button(),
-        if(_phoneInput) if(state==0)
-          phoneVerificationContainer(),
-        if(state==1)
-          phoneVerificationContainer2(),
+         if(!_phoneInput) inputPhone_Button(),
+          if(_phoneInput) if(state==0)
+            phoneVerificationContainer(),
+          if(state==1)
+            phoneVerificationContainer2(),
 
-      ]);
+        ]),
+  );
+  Widget mainStack()=>Stack(
+    children: [
+      Align(alignment: const Alignment(0,0.2),child:mainColumn(),),
+      Align(alignment: const Alignment(0,-0.7),child:welcomeContainer()),
+      Align(alignment: const Alignment(1,-0.9),child:IconButton(
+        icon: Icon(Icons.next_plan,color:Colors.lightGreenAccent,size: 40,),
+        onPressed: (){
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>(Sos())),);
+
+        },
+      )),
+
+    ],
+
+  );
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       backgroundColor: app_colors.background,
-      appBar: AppBar(
-        backgroundColor: app_colors.app_bar_background,
-        title: Text(my_texts.fillyourdetails) ,),
-      body: SingleChildScrollView(
-        reverse: true,
-        padding:  const EdgeInsets.all(0.2),
-        child:Center(child: mainColumn()),
-      ),
-      //mainContainer(),
+      body:mainStack(),
     );
   }
 }

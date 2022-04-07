@@ -2,9 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'colors.dart';
 class my_texts {
-  static String CitySafty = "City Safety";
+  static String CitySafty = "SOS City Safety";
   static String capturing_Image = "capturing Image";
-  static String captur_image = "captur image";
+  static String captur_image = "capture image";
   static String select_image = "select image";
   static String delet_image = "delete image";
   static String cancel = "cancel";
@@ -28,10 +28,13 @@ class my_texts {
   static String fillyourdetails="fill you details";
   static String username="username";
   static String inputPhone="input phone";
-  static Text explaneText= Text("The details you enter now are saved only locally .Only when an SOS call is made the application will use the data. The data can be changed in any tree",
+  static String inputDescription="You can describe here the reason for the referral";
+  static String enterYourMessage="your message";
+  static Text explaneText= Text("The details you enter now are saved only locally .Only when an SOS call is made the application will use the data. The data can be changed in any time",
   style: GoogleFonts.abel(fontSize: 16,fontWeight: FontWeight.w800,color: Colors.black),);
 
   static const TextStyle buttonTextStyle=TextStyle(fontSize: 18,color:Colors.white);
+
 }
 
 

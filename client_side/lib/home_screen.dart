@@ -86,7 +86,7 @@ class _homeState extends State<home> {
     await Future.delayed(Duration(milliseconds: 5000),(){});
   //  await data.initData();
     await data.getData();
-    print(data.phon_verfyed);
+    print(data.phone_verified);
     setState(() {
       isLoading=false;
       appbar=my_texts.phone_verification;
@@ -97,7 +97,7 @@ class _homeState extends State<home> {
 
    setState(() {
      data.phone=maskFormatter.getUnmaskedText();
-     data.phon_verfyed=true;
+     data.phone_verified=true;
    });
    data.updateData();
 
@@ -295,7 +295,7 @@ class _homeState extends State<home> {
   Widget build(BuildContext context) {
     if(isLoading) return homeScaffold();
     else{
-      if(data.phon_verfyed==true)
+      if(data.phone_verified==true)
         return Sos();
       else
         return homeScaffold();

@@ -58,10 +58,49 @@ io.on("connection", (socket) => {
     }
    });
 
+   
+   socket.on("message",(data)=>{
+    console.log("msg: ",data['msg']);
+
+    if(clients[socket.id])clients[socket.id].emit("message_send",data);
+    if(centers[data['targitId']])centers[data['targitId']].emit("get_message",data);
+
+ 
+   });
+
+
+   socket.on("chatReqest",(msg)=>{
+    console.log(msg);
+    if(clients[socket.id])clients[socket.id].emit("message_send",data);
+
+    for (const key of Object.keys(centers)) {  
+      console.log("chatReqest to");
+      console.log(key + ":" + centers[key])  
+      centers[key].emit("chatReqest",{'msg':msg,'socketId':socket.id});     
+    }
+
+ 
+   });
+
+   socket.on("chatReqestRespons",(socketId)=>{
+    if( clients[socketId]) clients[socketId].emit("chatReqestRespons",(socket.id));
+    for (const key of Object.keys(centers)) {  
+      console.log("chatReqest to");
+      console.log(key + ":" + centers[key])  
+      centers[key].emit("chatReqestCoplited",socketId);     
+    }
+
+ 
+   });
+
+   
+
+
+
 
    socket.on("cancel",()=>{
     console.log("cancel call");
-    console.log(msg)
+   
 
     for (const key of Object.keys(centers)) {  
       console.log("centers to send cancel");
