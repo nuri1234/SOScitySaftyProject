@@ -6,6 +6,7 @@ import 'colors.dart';
 import 'local_data.dart';
 import 'sos_screen.dart';
 import 'registration_page.dart';
+import 'sos_main_screen.dart';
 
 class Home extends StatefulWidget {
   const Home({Key? key}) : super(key: key);
@@ -17,7 +18,7 @@ class Home extends StatefulWidget {
 class _HomeState extends State<Home> {
   bool isLoading=true;
 
-  Widget loading()=>const Center(child: CircularProgressIndicator(color: Colors.black, ));
+  Widget loading()=>const Center(child: CircularProgressIndicator(color: Colors.white, ));
   Widget logo()=>Container(
       padding: const EdgeInsets.all(0),
       margin: const EdgeInsets.all(0),
@@ -54,8 +55,10 @@ class _HomeState extends State<Home> {
   if(data.first_time){
     data.first_time=false;
     data.updateData();
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>(Registor())),);}
-  else Navigator.push(context, MaterialPageRoute(builder: (context)=>(Sos())),);
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>(const Registor())),);}
+  else {
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
+  }
 
   }
 

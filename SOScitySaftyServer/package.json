@@ -1,17 +1,19 @@
 {
   "dependencies": {
     "express": "^4.17.3",
+    "node-engine": "^0.0.5",
     "nodemon": "^2.0.15",
     "socket.io": "^2.3.0"
   },
   "name": "soscitysaftyserver",
   "version": "1.0.0",
   "main": "index.js",
-  "devDependencies": {},
   "scripts": {
-    "dev":"nodemon index"
+    "dev": "nodemon index"
   },
   "author": "",
   "license": "ISC",
+  "devDependencies": {},
+  "keywords": [],
   "description": ""
 }

@@ -1,4 +1,6 @@
 const express = require("express");
+const req = require("express/lib/request");
+const res = require("express/lib/response");
 var http = require("http");
 const { fileURLToPath } = require("url");
 const app = express();
@@ -121,6 +123,9 @@ io.on("connection", (socket) => {
    });
   
    
+});
+app.route("/chek").get((req,res)=>{
+  return res.json("your App is working fine");
 });
   
 

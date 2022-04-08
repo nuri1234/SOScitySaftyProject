@@ -2,7 +2,6 @@ import 'package:shared_preferences/shared_preferences.dart';
 class data{
   static String phone="non";
   static bool phone_verified=false;
-  static bool anonymous=true;
   static String user_name="guest";
   static bool first_time=true;
 

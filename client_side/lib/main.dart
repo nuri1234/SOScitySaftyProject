@@ -23,7 +23,7 @@ class splashScreen extends StatelessWidget {
   const splashScreen({Key? key}) : super(key: key);
 
 
-  Widget loading()=>const Center(child: CircularProgressIndicator(color: Colors.black, ));
+  Widget loading()=>const Center(child: CircularProgressIndicator(color: Colors.white, ));
   Widget logo()=>Container(
       padding: const EdgeInsets.all(0),
       margin: const EdgeInsets.all(0),

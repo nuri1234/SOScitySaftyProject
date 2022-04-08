@@ -21,8 +21,8 @@ class my_texts {
   static String non_anonymous= "non anonymous";
   static String try_again= "try again";
   static String enter_name= "enter tour name";
-  static String connectedToServer="SERVER CONNECTED";
-  static String NotconnectedToServer="SERVER NOT CONNECTED YET";
+  static String connectedToServer="CONNECTED TO SERVER ";
+  static String NotconnectedToServer="NOT CONNECTED TO SERVER";
   static String sentReferral="The SOS referral has been sent";
   static String sosReceived="The SOS referral has been Received";
   static String fillyourdetails="fill you details";
