@@ -176,9 +176,9 @@ class _SosState extends State<Sos> {
 void getMessage( msg){
     print("getMessage( msg)");
     print(msg);
-   MessageModel newmsg=MessageModel(type: msg['type'], message: msg['message'], time: msg['time']);
+  // MessageModel newmsg=MessageModel(senderType: msg['type'], message: msg['message'], time: msg['time']);
    setState(() {
-     messages.add(newmsg);
+    // messages.add(newmsg);
    });
 
 
@@ -192,10 +192,11 @@ void getMessage( msg){
       _sendingMessage=true;
 
     });
-     newMsg=MessageModel(
-        type: 0,
+     /*newMsg=MessageModel(
+        senderType: 0,
         message: _message.text,
-        time: DateTime.now().toString().substring(10, 16));
+        time: DateTime.now().toString().substring(10, 16))
+    */
 
     if(chatTargetSocket==null){my_socket.socket.emit("chatReqest", {newMsg.toMap()});}
      else{ my_socket.socket.emit("message", {'msg':newMsg.toMap(),'targetId':chatTargetSocket});}
@@ -204,10 +205,10 @@ void getMessage( msg){
 
   void Testchat(){
     chatTargetSocket=my_socket.socket.id.toString();
-    newMsgTest=MessageModel(
-        type: 1,
+   /* newMsgTest=MessageModel(
+        senderType: 1,
         message: _message.text,
-        time: DateTime.now().toString().substring(10, 16));
+        time: DateTime.now().toString().substring(10, 16));*/
 
     my_socket.socket.emit("message", {'msg':newMsgTest.toMap(),'targetId':chatTargetSocket});
 
@@ -646,11 +647,11 @@ Widget chatSendContainer()=>Container(
   Widget messageBox(MessageModel message) =>  Row(
     children: [
       Text(message.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
-      if(message.type==0)Text(message.client,style:const TextStyle(color: Colors.blue,fontSize: 10,fontWeight: FontWeight.bold),),
-      if(message.type==1)Text("Service representative",style:const TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
+      //if(message.senderType==0)Text(message.client,style:const TextStyle(color: Colors.blue,fontSize: 10,fontWeight: FontWeight.bold),),
+      if(message.senderType==1)Text("Service representative",style:const TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
       const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),
-      if(message.type==0) Text(message.message,style:const TextStyle(color: Colors.blue,fontSize: 20,fontWeight: FontWeight.bold),),
-      if(message.type==1) Text(message.message,style:const TextStyle(color: Colors.orangeAccent,fontSize: 20,fontWeight: FontWeight.bold),),
+      if(message.senderType==0) Text(message.message,style:const TextStyle(color: Colors.blue,fontSize: 20,fontWeight: FontWeight.bold),),
+      if(message.senderType==1) Text(message.message,style:const TextStyle(color: Colors.orangeAccent,fontSize: 20,fontWeight: FontWeight.bold),),
     ],
   );
 

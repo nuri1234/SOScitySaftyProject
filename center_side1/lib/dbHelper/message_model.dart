@@ -1,4 +1,3 @@
-import 'package:client_side/local_data.dart';
 
 class MessageModel {
   int senderType; //0-client 1-center

@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'package:client_side/camera_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_map/flutter_map.dart';
@@ -10,14 +9,18 @@ import 'package:image_picker/image_picker.dart';
 import 'colors.dart';
 import 'texts.dart';
 import 'dart:async';
-import 'camera_page.dart';
 import 'images.dart';
-import 'dbHelper/call_class.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'local_data.dart';
 import 'socket_class.dart';
 import 'registration_page.dart';
 import 'dbHelper/message_model.dart';
+import 'package:path_provider/path_provider.dart';
+import 'dart:io';
+
+
+
+
 
 
 class SOS extends StatefulWidget {
@@ -33,10 +36,9 @@ class _SOSState extends State<SOS> {
   int img_size=0;
   final TextEditingController _describe= TextEditingController();
   final TextEditingController _message= TextEditingController();
-  bool _description=false;
   bool calling=false;
   bool sendrequest=false;
-  bool requestResponse=true;
+  bool requestResponse=false;
   late MessageModel newMsg;
   late MessageModel newMsgTest;
   List<MessageModel> messages = [];
@@ -52,8 +54,11 @@ class _SOSState extends State<SOS> {
   late String targetSocket;
   bool buttonsCollection=false;
   bool _sendingMessage=false;
-
-
+  bool _sendingPhotoMessage=false;
+  File? imageFile;
+  bool imageShow=false;
+  final ScrollController _controller = ScrollController();
+  int photoIndex=0;
 
 
 
@@ -62,10 +67,7 @@ class _SOSState extends State<SOS> {
 
 
   void socketListner() {
-    my_socket.socket.on("sos_send", (msg){
-      print("sos_send");
-      print(msg);
-     ;});
+
 
     my_socket.socket.on("sos_call_request_send", (client){
       print("sos_call_request_send");
@@ -86,24 +88,28 @@ class _SOSState extends State<SOS> {
 
     });
 
-    my_socket.socket.on("get_message", (data){
-      print("get_message");
+
+
+    my_socket.socket.on("get_message",(msg) async{
+      newMsg=MessageModel(senderType:msg['senderType'] ,
+          messageType: msg['senderType'],
+          message: msg['message'],
+          describe:msg['describe'],
+          time: msg['time']);
+     addNewMsg();
 
     });
-    my_socket.socket.on("chatReqestRespons", (socketId){
-      print("chatReqestRespons $socketId");
-      setState(() {
-       // chatTargetSocket=socketId;
-      });
-    });
 
-    my_socket.socket.on("message_send", (msg){
+    my_socket.socket.on("message_send", (data) async{
       print("message_send");
-      print(msg);
-      setState(() {
-        messages.add(newMsg);
-        _message.text="";
-      });
+      addNewMsg();
+
+    });
+
+    my_socket.socket.on("error", (msg){
+      print("error: $msg");
+
+
 
     });
 
@@ -127,10 +133,12 @@ class _SOSState extends State<SOS> {
 
 
   }
-  void SOScallRespon(){
 
+  void SOScallRespon(){
+print("SOScallRespon()");
     setState(() {
       requestResponse=true;
+      calling=false;
     });
 
   }
@@ -151,19 +159,70 @@ void ButtonRotator(){
 
 
 }
-  void sosCall()async{
-    print("sosCall()");
-    Position position=await _determinePosition();
+  void SOS_Call()async{
+    print("SOS_Call()");
     setState(() {
-      lat=position.latitude;
-      long=position.longitude;
-      _mapController.move(LatLng(lat,long), 13.0);
       calling=true;
-
-
+      chatOpen=true;
     });
     my_socket.socket.emit("SOS_Call",{'user_name':data.user_name,'phone':data.phone,'lat':lat,'long':long});
+    my_socket.socket.emit("SOS_Call_Respone",my_socket.socket.id);
   }
+
+  void getImage({required ImageSource source}) async {
+    final file = await ImagePicker().pickImage(source: source);
+
+    if (file?.path != null) {
+      setState(() {
+        imageFile = File(file!.path);
+        imageShow=true;
+      });
+    }
+  }
+  void addNewMsg() async{
+    if(newMsg.messageType==1){
+      final decodedBytes = base64Decode(newMsg.message);
+      final directory = await getApplicationDocumentsDirectory();
+      File fileImge = File('${directory.path}/testImage${photoIndex}.png');
+      print(fileImge.path);
+      fileImge.writeAsBytesSync(List.from(decodedBytes));
+      newMsg.insert_path(fileImge.path);
+      photoIndex++;
+
+    }
+    setState(() {
+
+      if(_sendingPhotoMessage) {
+        _sendingPhotoMessage=false;
+        imageShow=false;
+      }
+      _sendingMessage=false;
+      _message.text="";
+      messages.add(newMsg);
+
+    });
+    await Future.delayed(const Duration(seconds: 1));
+    setState(() {
+      _controller.jumpTo(_controller.position.maxScrollExtent);
+    });
+
+
+  }
+  void sendMessage()async{
+    print("sendMessage()");
+
+    targetSocket=my_socket.socket.id.toString();
+    requestResponse=true;
+    if(requestResponse) {
+      my_socket.socket.emit("message",{'msg':newMsg.toMap(),'targetId':targetSocket});
+    }
+    else {
+      my_socket.socket.emit("laterMessage", {newMsg.toMap()});
+    }
+
+
+  }
+
   @override
   void initState() {
     super.initState();
@@ -248,15 +307,43 @@ void ButtonRotator(){
     ),
     child: ElevatedButton(
       onPressed: (){
-        setState(() {
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>const camera_page()));
-        });
+        getImage(source: ImageSource.camera);
       },
-      child: Icon(Icons.camera_alt,size: 40.0,),
+      child: const Icon(Icons.camera_alt,size: 30.0,),
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
         primary: app_colors.cmera_button,
-        minimumSize: Size(70.0, 70.0),
+        minimumSize:const Size(60.0, 60.0),
+
+      ),
+    ),
+  );
+  Widget gallery_Button()=>Container(
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(90),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: Offset(8,5)
+
+          ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: Offset(-8,-5)
+          ),
+        ]
+    ),
+    child: ElevatedButton(
+      onPressed: (){
+        getImage(source: ImageSource.gallery);
+      },
+      child: const Icon(Icons.image,size: 30.0,),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
+        primary: app_colors.galarry_button,
+        minimumSize:const Size(60.0, 60.0),
 
       ),
     ),
@@ -292,45 +379,13 @@ void ButtonRotator(){
         backgroundColor: my_socket.isconnect? app_colors.sos_button: app_colors.sos_disablbutton,
         onPressed: () {
           print("SOS button pressed");
-          if(my_socket.isconnect)sosCall();
+          if(my_socket.isconnect)SOS_Call();
 
         },
       ),
     ),
   );
-  Widget CancelButton()=>Container(
-    decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(90),
-        boxShadow:[
-          BoxShadow(
-              color: app_colors.buttom_shadow,
-              blurRadius: 20,
-              offset: Offset(8,5)
 
-          ),
-          BoxShadow(
-              color: app_colors.buttom_shadow,
-              blurRadius: 20,
-              offset: Offset(-8,-5)
-
-          ),
-        ]
-    ),
-
-    child: SizedBox(height:  cancelButtonHigh,
-      width: cancelButtonWidth ,
-      child:
-      FloatingActionButton(
-        //child: Icon(Icons.ac_unit),
-        child: Icon(Icons.clear,size:80,),
-        backgroundColor: app_colors.cansel_button,
-        onPressed: () {
-          print("Cancel button pressed");
-
-        },
-      ),
-    ),
-  );
   Widget CancelButton2()=>Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(90),
@@ -338,13 +393,13 @@ void ButtonRotator(){
           BoxShadow(
               color: app_colors.buttom_shadow,
               blurRadius: 20,
-              offset: Offset(8,5)
+              offset: const Offset(8,5)
 
           ),
           BoxShadow(
               color: app_colors.buttom_shadow,
               blurRadius: 20,
-              offset: Offset(-8,-5)
+              offset: const Offset(-8,-5)
 
           ),
         ]
@@ -355,45 +410,97 @@ void ButtonRotator(){
       child:
       FloatingActionButton(
         //child: Icon(Icons.ac_unit),
-        child: Icon(Icons.clear,size:40,),
+        child: const Icon(Icons.clear,size:40,),
         backgroundColor: app_colors.cansel_button,
         onPressed: () {
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
           print("Cancel button pressed");
 
         },
       ),
     ),
   );
-  Widget descriptionButton()=>Container(
+  Widget CancelPhoto()=>Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(90),
         boxShadow:[
           BoxShadow(
               color: app_colors.buttom_shadow,
               blurRadius: 20,
-              offset: Offset(8,5)
+              offset: const Offset(8,5)
 
           ),
           BoxShadow(
               color: app_colors.buttom_shadow,
               blurRadius: 20,
-              offset: Offset(-8,-5)
+              offset: const Offset(-8,-5)
+
           ),
         ]
     ),
-    child: ElevatedButton(
-      onPressed: (){
+
+    child: SizedBox(height: 50,
+      width: 50 ,
+      child:
+      FloatingActionButton(
+        //child: Icon(Icons.ac_unit),
+        child: const Icon(Icons.clear,size:40,color:Colors.red),
+        backgroundColor: Colors.black.withOpacity(0),
+        onPressed: () {
+          print("Cancel photo button pressed");
+          setState(() {
+            imageShow=false;
+            imageFile=null;
+          });
+
+        },
+      ),
+    ),
+  );
+  Widget sendPhoto()=>Container(
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(90),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: const Offset(8,5)
+
+          ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: const Offset(-8,-5)
+
+          ),
+        ]
+    ),
+
+    child: SizedBox(height: 50,
+      width: 50 ,
+      child:
+      FloatingActionButton(
+        //child: Icon(Icons.ac_unit),
+        child: const Icon(Icons.check,size:40,color:Colors.lightGreenAccent),
+        backgroundColor: Colors.black.withOpacity(0),
+        onPressed: () {
+          print("send photo button pressed");
+          List<int> imageBytes = imageFile!.readAsBytesSync();
+          String base64Image = base64Encode(imageBytes);
+          String discription;
+        if(_describe.text.isNotEmpty){ discription=_describe.text;}
+        else {discription="non";}
+        newMsg=MessageModel(senderType: 0,
+            messageType: 1,
+            message: base64Image,
+            describe: discription,
+            time: DateTime.now().toString().substring(10, 16));
 
         setState(() {
-          if(_description) _description=false;
-          else _description=true;
+          _sendingPhotoMessage=true;
         });
-      },
-      child: Icon(Icons.drive_file_rename_outline,size: 40.0,),
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
-        primary: app_colors.description_button,
-        minimumSize: Size(70.0, 70.0),
+          sendMessage();
+        },
 
       ),
     ),
@@ -431,9 +538,24 @@ void ButtonRotator(){
       ),
     ),
   );
-  Widget sendMessageButton()=>Container(
+
+
+  Widget optionsButtons()=>Container(
+    height:70,
+    width: 400,
+     // color:Colors.lightGreenAccent,
+
+    child: Row(children: [Camera_Button(),const SizedBox(width: 10,),gallery_Button()],)
+  );
+  ///////////////////////////////////////////////
+
+  Widget photoContainer()=>Container(
+    height: 450,
+    width: 360,
+    padding: const EdgeInsets.all(10),
     decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(100),
+        color: app_colors.messageInputFill,
+        borderRadius: BorderRadius.circular(20),
         boxShadow:[
           BoxShadow(
               color: app_colors.buttom_shadow,
@@ -448,21 +570,36 @@ void ButtonRotator(){
           ),
         ]
     ),
-    child: ElevatedButton(
-      onPressed: (){
-      //  if(my_socket.isconnect && (_message.text.length>0) ) sendMessage();
+    child:
+    Stack(
+      children: [
+        Center(
+          child: Column(children: [
+            Container(
+              width: 300,
+              height: 300,
+              alignment: Alignment.center,
+              decoration: BoxDecoration(
+                color:app_colors.cameraPageInputimage,
+                border: Border.all(width: 8, color: Colors.black12),
+                borderRadius: BorderRadius.circular(12.0),
+                image: DecorationImage(image: FileImage(imageFile!), fit: BoxFit.cover),
+              ),),
+            SizedBox(height: 5,),
+            inputdescriptionTextField(),
 
-      },
-      child:_sendingMessage? const CircularProgressIndicator(color: Colors.white, ): const Icon(Icons.send,size: 18,),
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
-        primary:(my_socket.isconnect && (_message.text.length>0))? app_colors.sentMessagebutton:Colors.grey,
-        minimumSize: const Size(50, 50),
+          ]
+          ),
+        ),
+        Align(alignment: const Alignment(0,1),child:Container(
+          //color: Colors.green,
+            width: 105,
+            child: Row(children: [CancelPhoto(),const SizedBox(width: 5,),sendPhoto()],))),
+        if(_sendingPhotoMessage)Center(child: loading(),),
 
-      ),
+      ],
     ),
   );
-  ///////////////////////////////////////////////
   Widget chatSendContainer()=>Container(
     height:70,
     width: 500,
@@ -514,7 +651,6 @@ void ButtonRotator(){
 
 
   );
-
   Widget messagesContainer()=>Container(
     height: 380,
     width: 380,
@@ -536,71 +672,121 @@ void ButtonRotator(){
           ),
         ]
     ),
-    //child: messageListView(),
+    child: messageListView(),
 
 
 
   );
-  Widget messageBox(MessageModel message) =>  Row(
+  Widget messageBox(MessageModel message) => Column(
     children: [
-      Text(message.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
-      if(message.type==0)Text(message.client,style:const TextStyle(color: Colors.blue,fontSize: 10,fontWeight: FontWeight.bold),),
-      if(message.type==1)Text("Service representative",style:const TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
-      const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),
-      if(message.type==0) Text(message.message,style:const TextStyle(color: Colors.blue,fontSize: 20,fontWeight: FontWeight.bold),),
-      if(message.type==1) Text(message.message,style:const TextStyle(color: Colors.orangeAccent,fontSize: 20,fontWeight: FontWeight.bold),),
+      Row(children: [Text(message.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
+        if(message.senderType==0)Text(data.user_name,style:const TextStyle(color: Colors.blue,fontSize: 10,fontWeight: FontWeight.bold),),
+        if(message.senderType==1)const Text("Service representative",style:TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
+        const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),],),
+
+      if(message.senderType==0) Text(message.message,style:const TextStyle(color: Colors.blue,fontSize: 20,fontWeight: FontWeight.bold),),
+      if(message.senderType==1) Text(message.message,style:const TextStyle(color: Colors.orangeAccent,fontSize: 20,fontWeight: FontWeight.bold),),
     ],
   );
+  Widget imageBox(MessageModel message) => Container(
+    child: Column(children: [
+      Row(children: [Text(message.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
+        if(message.senderType==0)Text(data.user_name,style:const TextStyle(color: Colors.blue,fontSize: 10,fontWeight: FontWeight.bold),),
+        if(message.senderType==1)const Text("Service representative",style:TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
+        const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),],),
+      Container(
+        width: 300,
+        height: 300,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color:app_colors.cameraPageInputimage,
+          border: Border.all(width: 8, color: Colors.black12),
+          borderRadius: BorderRadius.circular(12.0),
+          image: DecorationImage(image: FileImage(File(message.get_path())), fit: BoxFit.cover),
+        ),),
+      Text(message.describe),
 
+
+
+    ],),
+
+
+  );
   Widget messageListView() => ListView(
-
+     controller:_controller,
     children: <Widget>[
-      for(MessageModel msg in messages) messageBox(msg),
-
-
-
+      for(MessageModel msg in messages) if(msg.messageType==0)messageBox(msg)
+      else imageBox(msg),
 
     ],
   );
+  Widget sendMessageButton()=>Container(
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(100),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: const Offset(8,5)
 
-  Widget chatContainer()=>SingleChildScrollView(
-    reverse: true,
-    child: Container(
-      height:480,
-      width: 400,
-      decoration: BoxDecoration(
-          color: app_colors.chatbackground,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow:[
-            BoxShadow(
-                color: app_colors.buttom_shadow,
-                blurRadius: 20,
-                offset: Offset(8,5)
-
-            ),
-            BoxShadow(
-                color: app_colors.buttom_shadow,
-                blurRadius: 20,
-                offset: Offset(-8,-5)
-            ),
-          ]
-      ),
-      padding: const EdgeInsets.all(10),
-      child: Stack(
-        children: [
-          Center(
-            child: Column(children: [
-              messagesContainer(),
-              const SizedBox(height: 10,),
-              chatSendContainer(),
-
-            ],),
           ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: const Offset(-8,-5)
+          ),
+        ]
+    ),
+    child: ElevatedButton(
+      onPressed: (){
+        if(_message.text.isNotEmpty) {
+          setState(() {
+            _sendingMessage=true;
+          });
+          newMsg=MessageModel(senderType: 0,
+              messageType: 0,
+              message: _message.text,
+              describe: "non",
+              time:  DateTime.now().toString().substring(10, 16));
+          sendMessage();
 
-        ],
+        }
+
+      },
+      child:_sendingMessage? const CircularProgressIndicator(color: Colors.white, ): const Icon(Icons.send,size: 10,),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
+        primary:(my_socket.isconnect && (_message.text.isNotEmpty))? app_colors.sentMessagebutton:Colors.grey,
+        minimumSize: const Size(40, 40),
+
       ),
+    ),
+  );
 
 
+  Widget inputdescriptionTextField()=>Container(
+    height:80,
+    width:300,
+    child: TextField(
+      decoration: InputDecoration(
+          hintText: my_texts.inputDescription,
+          enabledBorder: OutlineInputBorder(
+            borderSide: BorderSide(color:app_colors.BorderSide, width: 5.0),
+            borderRadius: BorderRadius.circular(20.0),
+          ),
+          focusedBorder:OutlineInputBorder(
+            borderSide: BorderSide(color:app_colors.BorderSide, width: 2.0),
+            borderRadius: BorderRadius.circular(20.0) ,
+
+          ),
+          fillColor: app_colors.describeInputFill,
+          filled: true,
+          prefix: const Padding(
+            padding: EdgeInsets.all(4),
+          ) ),
+      maxLines: 10,
+      maxLength: 100,
+      controller: _describe,
     ),
   );
   /////////////////////////Containers/////////////////////////////////////////////
@@ -631,7 +817,7 @@ void ButtonRotator(){
 ////////######################TEXT############/////////////////////////////
   Widget connectedToServer()=> Text(
     my_texts.connectedToServer,
-    style:TextStyle(
+    style:const TextStyle(
       fontSize:20,
       color:Colors.greenAccent,
       fontWeight: FontWeight.w800,
@@ -652,7 +838,7 @@ void ButtonRotator(){
   );
   Widget notConnectedToServer()=> Text(
     my_texts.NotconnectedToServer,
-    style:TextStyle(
+    style:const TextStyle(
       fontSize:20,
       color:Colors.red,
       fontWeight: FontWeight.w800,
@@ -752,21 +938,63 @@ void ButtonRotator(){
   );
   Widget mainStack()=>Stack(
   children: [
-    //Align(alignment: const Alignment(0.0,-0.5),child: mapContainer(),),
-    Align(alignment: const Alignment(0.0,-0.5),child: chatContainer(),),
- if(calling) Align(alignment: const Alignment(0.0,1),child:CancelButton() ),
-   // if(!calling && !requestResponse)Align(alignment: const Alignment(0.0,0.9),child:SOS_Button()),
-
+   if(chatOpen) Align(alignment: const Alignment(0.0,-0.5),child: chatContainer(),),
+    if(!chatOpen) Align(alignment: const Alignment(0.0,-0.5),child: mapContainer(),),
+    if(!chatOpen) Align(alignment: const Alignment(0.0,0.9),child: SOS_Button(),),
   if(my_socket.isconnect) Align(alignment: const Alignment(0.0,-1),child:connectedToServer())
   else Align(alignment: const Alignment(0.0,-1),child:notConnectedToServer()),
     if(calling) Align(alignment: const Alignment(0.0,-1),child:loading(),),
-    Align(alignment: const Alignment(-0.8,0.9),child: Camera_Button(),),
 
-    if(requestResponse)Align(alignment: const Alignment(1,-1),child:CancelButton2() )
+
 
 
 
   ],
+  );
+  Widget chatContainer()=>SingleChildScrollView(
+    reverse: true,
+    child: Container(
+      height:540,
+      width: 400,
+      decoration: BoxDecoration(
+          color: app_colors.chatbackground,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow:[
+            BoxShadow(
+                color: app_colors.buttom_shadow,
+                blurRadius: 20,
+                offset: Offset(8,5)
+
+            ),
+            BoxShadow(
+                color: app_colors.buttom_shadow,
+                blurRadius: 20,
+                offset: Offset(-8,-5)
+            ),
+          ]
+      ),
+      padding: const EdgeInsets.all(10),
+      child: Stack(
+        children: [
+          Center(
+            child: Column(children: [
+              messagesContainer(),
+              optionsButtons(),
+              if(!imageShow)chatSendContainer(),
+            ],
+
+            ),
+          ),
+          Align(alignment: Alignment.topRight,child: CancelButton2(),),
+          if(imageShow)Align(alignment: Alignment.topCenter,child: photoContainer(),),
+
+
+
+        ],
+      ),
+
+
+    ),
   );
   ///////////////////////////////////////////////////////////////////
   @override
@@ -778,11 +1006,12 @@ void ButtonRotator(){
         title: Text(my_texts.CitySafty, style: TextStyle(color: app_colors.city_safty),),
         backgroundColor: app_colors.app_bar_background,
         elevation: 10,
+        leading:  Icon(Icons.online_prediction,size: 40,color:requestResponse? Colors.lightGreenAccent:Colors.grey,),
         actions: [
-          Icon(Icons.online_prediction,size: 40,color:requestResponse? Colors.lightGreenAccent:Colors.grey,),
+
           PopupMenuButton(
               color: Colors.grey,
-              child:const Icon(Icons.language) ,
+              child:const Icon(Icons.language,color:Colors.orangeAccent,size: 40,) ,
               itemBuilder: (context) => [
                 PopupMenuItem(
                   child: const Text("عربيه"),
@@ -798,7 +1027,7 @@ void ButtonRotator(){
           ),
           IconButton(
             onPressed:() {Navigator.push(context, MaterialPageRoute(builder: (context)=> (Registor())));},
-            icon: const Icon(Icons.perm_identity_rounded),
+            icon: const Icon( Icons.perm_identity_rounded,color:Colors.purple,size: 40,),
           ),
 
 

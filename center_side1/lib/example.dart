@@ -1,5 +1,3 @@
-import 'dart:async';
-
 import 'package:center_side/dbHelper/calldb_management.dart';
 import 'package:center_side/nuri/colors.dart';
 import 'package:flutter/material.dart';

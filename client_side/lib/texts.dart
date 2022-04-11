@@ -28,7 +28,7 @@ class my_texts {
   static String fillyourdetails="fill you details";
   static String username="username";
   static String inputPhone="input phone";
-  static String inputDescription="You can describe here the reason for the referral";
+  static String inputDescription="description";
   static String enterYourMessage="your message";
   static Text explaneText= Text("The details you enter now are saved only locally .Only when an SOS call is made the application will use the data. The data can be changed in any time",
   style: GoogleFonts.abel(fontSize: 16,fontWeight: FontWeight.w800,color: Colors.black),);

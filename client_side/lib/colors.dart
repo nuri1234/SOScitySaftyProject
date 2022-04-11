@@ -2,7 +2,8 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class app_colors{
-  static Color cmera_button = const Color(0xff0000ff);
+  static Color cmera_button = const Color(0xff24F1E8);
+  static Color galarry_button = const Color(0xffF124DF);
   static Color sos_background = const Color(0xffcfe2f3);
   static Color city_safty = const Color(0xffffffff);
   static Color app_bar_background = Colors.blueGrey;

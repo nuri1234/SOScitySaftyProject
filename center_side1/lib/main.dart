@@ -6,6 +6,7 @@ import 'example.dart';
 import 'dbHelper/mongodb.dart';
 import 'package:flutter/gestures.dart';
 import 'socket_class.dart';
+import 'example2.dart';
 
 
 
@@ -27,7 +28,7 @@ class MyApp extends StatelessWidget {
     return const MaterialApp(
       title: 'Flutter Demo',
       debugShowCheckedModeBanner: false,
-      home:examplePage(),
+      home:examplePage2(),
     );
   }
 }

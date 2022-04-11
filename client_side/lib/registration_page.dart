@@ -9,7 +9,7 @@ import 'sos_screen.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'sos_screen.dart';
+import 'sos_main_screen.dart';
 
 
 class Registor extends StatefulWidget {
@@ -467,7 +467,7 @@ class _RegistorState extends State<Registor> {
       Align(alignment: const Alignment(1,-0.9),child:IconButton(
         icon: Icon(Icons.next_plan,color:Colors.lightGreenAccent,size: 40,),
         onPressed: (){
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>(Sos())),);
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>(SOS())),);
 
         },
       )),
