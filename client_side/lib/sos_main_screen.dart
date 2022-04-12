@@ -67,8 +67,6 @@ class _SOSState extends State<SOS> {
 
 
   void socketListner() {
-
-
     my_socket.socket.on("sos_call_request_send", (client){
       print("sos_call_request_send");
       print(client);
@@ -88,15 +86,17 @@ class _SOSState extends State<SOS> {
 
     });
 
+    my_socket.socket.on("get_message",(msg) {
 
-
-    my_socket.socket.on("get_message",(msg) async{
-      newMsg=MessageModel(senderType:msg['senderType'] ,
-          messageType: msg['senderType'],
+      print("get msg");
+      MessageModel getNewMsg=MessageModel(senderType:msg['senderType'] ,
+          messageType: msg['messageType'],
           message: msg['message'],
           describe:msg['describe'],
           time: msg['time']);
-     addNewMsg();
+     setState(() {
+       messages.add(getNewMsg);
+     });
 
     });
 
@@ -165,8 +165,8 @@ void ButtonRotator(){
       calling=true;
       chatOpen=true;
     });
-    my_socket.socket.emit("SOS_Call",{'user_name':data.user_name,'phone':data.phone,'lat':lat,'long':long});
-    my_socket.socket.emit("SOS_Call_Respone",my_socket.socket.id);
+    my_socket.socket.emit("SOS_Call",{'userName':data.user_name,'phone':data.phone,'lat':lat,'long':long});
+  //  my_socket.socket.emit("SOS_Call_Respone",my_socket.socket.id);
   }
 
   void getImage({required ImageSource source}) async {
@@ -211,8 +211,7 @@ void ButtonRotator(){
   void sendMessage()async{
     print("sendMessage()");
 
-    targetSocket=my_socket.socket.id.toString();
-    requestResponse=true;
+
     if(requestResponse) {
       my_socket.socket.emit("message",{'msg':newMsg.toMap(),'targetId':targetSocket});
     }

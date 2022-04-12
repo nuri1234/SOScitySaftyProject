@@ -41,6 +41,7 @@ class _examplePage2State extends State<examplePage2> {
   File? imageFile;
   late MessageModel newMsg;
   late MessageModel newMsgTest;
+  bool imageShow=false;
   int photoIndex=0;
   int forTest=0;
 
@@ -74,12 +75,15 @@ class _examplePage2State extends State<examplePage2> {
     });
 
     my_socket.socket.on("get_message",(data) async{
-      newMsg=MessageModel(senderType:data['msg']['senderType'] ,
-          messageType: data['msg']['senderType'],
+      MessageModel newMsgtoGet=MessageModel(senderType:data['msg']['senderType'] ,
+          messageType: data['msg']['messageType'],
           message: data['msg']['message'],
           describe:data['msg']['describe'],
           time: data['msg']['time']);
-      addNewMsg();
+
+
+      getNewMessage(data['sourceId'],newMsgtoGet);
+
 
     });
 
@@ -132,6 +136,29 @@ class _examplePage2State extends State<examplePage2> {
 
 
   }
+////////////////
+  void getNewMessage(String sourceId,MessageModel msg) async {
+    if (msg.messageType == 1) {
+      print("its photo type");
+      final decodedBytes = base64Decode(msg.message);
+     final directory = await getApplicationDocumentsDirectory();
+      File fileImge = File('${directory.path}/testImage${photoIndex}.png');
+      print(fileImge.path);
+      fileImge.writeAsBytesSync(List.from(decodedBytes));
+      msg.insert_path(fileImge.path);
+      photoIndex++;
+    }
+    else print("its a regular msg");
+
+    for (Client client in _clients) {
+      if (client.socketId == sourceId) {
+        setState(() {
+          client.addMessage(msg);
+        });
+      }
+    }
+
+  }
 
   /////////chat functions///////////////
   void addNewMsg() async{
@@ -159,9 +186,10 @@ class _examplePage2State extends State<examplePage2> {
 
 
   }
-  void sendMessage()async{
+  void sendMessage(Client client)async{
     print("sendMessage()");
-    my_socket.socket.emit("message",{'msg':newMsg.toMap(),'targetId':_client.socketId});
+    print(client.socketId);
+    my_socket.socket.emit("message",{'msg':newMsg.toMap(),'targetId':client.socketId});
 
   }
 
@@ -328,6 +356,8 @@ class _examplePage2State extends State<examplePage2> {
       if(message.senderType==1) Text(message.message,style:const TextStyle(color: Colors.orangeAccent,fontSize: 20,fontWeight: FontWeight.bold),),
     ],
   );
+
+
   Widget imageBox(MessageModel message) => Container(
     child: Column(children: [
       Row(children: [Text(message.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
@@ -335,23 +365,70 @@ class _examplePage2State extends State<examplePage2> {
         if(message.senderType==1)const Text("Service representative",style:TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
         const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),],),
       Container(
-        width: 100,
-        height: 100,
+        width: 300,
+        height: 300,
         alignment: Alignment.center,
-        decoration: BoxDecoration(
-          color:Colors.purple,
-          border: Border.all(width: 8, color: Colors.black12),
-          borderRadius: BorderRadius.circular(12.0),
-          image: DecorationImage(image: FileImage(File(message.get_path())), fit: BoxFit.cover),
-        ),),
+       child: IconButton(
+         onPressed: (){
+           setState(() {
+             imageFile=File(message.get_path());
+             imageShow=true;
+           });
+
+
+
+         },
+         icon:Image(image:FileImage(File(message.get_path())) ,) ,
+
+      ),),
       Text(message.describe),
 
 
 
     ],),
 
+  );
+
+  Widget bigImageContainr()=>Container(
+      height: 650,
+      width: 650,
+      // color: Colors.green,
+      child: Stack(children: [
+        Align(alignment: Alignment.center,child: Image.file(imageFile!) ,),
+        Align(alignment: const Alignment(0.7,-1),child:
+        Container(
+          height: 80,
+          width: 80,
+          // color: Colors.yellow,
+          alignment: Alignment(-1,-1),
+          child: IconButton(
+            highlightColor: Colors.pink,
+            onPressed:() {
+              print("pressed");
+              setState(() {imageShow=false;});
+            },
+
+
+
+
+
+
+            icon: const Center(child: Icon(Icons.clear,color: Colors.red,size: 80,)),
+
+          ),
+        ),),
+
+
+      ],)
+
+
 
   );
+
+
+
+
+
   Widget messageListView(List<MessageModel> msgs) => ListView(
     children: <Widget>[
       for(MessageModel msg in msgs) if(msg.messageType==0)messageBox(msg)
@@ -387,7 +464,7 @@ class _examplePage2State extends State<examplePage2> {
               message: _message.text,
               describe: "non",
               time:  DateTime.now().toString().substring(10, 16));
-          sendMessage();
+          sendMessage(_client);
 
 
         }
@@ -559,6 +636,7 @@ class _examplePage2State extends State<examplePage2> {
       Align(alignment:const Alignment(-1,1),child:chatContainer(),),
       Align(alignment:const Alignment(-1,1),child:chatContainer(),),
       Align(alignment:const Alignment(1,-0.3),child:TestsendMessageButton(),),
+     if(imageShow) Align(alignment:const Alignment(0,0),child:bigImageContainr(),),
 
 
 
@@ -581,6 +659,9 @@ class _examplePage2State extends State<examplePage2> {
 
 
   );
+
+
+
   Widget callBox(Client client) => Container(
     height: 80,
     width:100,
