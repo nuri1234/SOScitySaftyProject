@@ -1,15 +1,13 @@
 import 'dart:convert';
 import 'dart:io';
 import 'package:flutter/services.dart' show rootBundle;
-import 'package:center_side/dbHelper/calldb_management.dart';
-import 'package:center_side/nuri/colors.dart';
+import 'package:center_side/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'nuri/texts.dart';
+import 'texts.dart';
 import 'socket_class.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-import 'dbHelper/call_class.dart';
-import 'nuri/sos_page.dart';
+
 import 'dbHelper/message_model.dart';
 import 'dbHelper/client_model.dart';
 import 'package:path_provider/path_provider.dart';
