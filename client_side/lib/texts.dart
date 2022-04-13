@@ -30,6 +30,8 @@ class my_texts {
   static String inputPhone="input phone";
   static String inputDescription="description";
   static String enterYourMessage="your message";
+  static String centerDissconected="center Dissconected";
+  static String endCall="this contact is ended";
   static Text explaneText= Text("The details you enter now are saved only locally .Only when an SOS call is made the application will use the data. The data can be changed in any time",
   style: GoogleFonts.abel(fontSize: 16,fontWeight: FontWeight.w800,color: Colors.black),);
 

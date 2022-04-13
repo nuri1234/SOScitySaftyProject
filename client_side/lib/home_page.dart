@@ -4,7 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'texts.dart';
 import 'colors.dart';
 import 'local_data.dart';
-import 'sos_screen.dart';
 import 'registration_page.dart';
 import 'sos_main_screen.dart';
 

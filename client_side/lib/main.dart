@@ -4,17 +4,16 @@ import 'package:client_side/colors.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'texts.dart';
 import 'colors.dart';
-import 'dbHelper/mongodb.dart';
 import 'socket_class.dart';
 import 'home_page.dart';
 import 'registration_page.dart';
+
 
 
 void main() async{
   runApp(const splashScreen());
  WidgetsFlutterBinding.ensureInitialized();
  my_socket.connect();
- await MongoDB.connect();
  await Firebase.initializeApp();
 
 runApp(const MyApp());}
@@ -84,7 +83,7 @@ class _MyAppState extends State<MyApp> {
       return const MaterialApp(
         title: 'home page',
         debugShowCheckedModeBanner: false,
-        home: Home() ,
+        home: Home(),
       );
   }
 

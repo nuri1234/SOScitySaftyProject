@@ -1,13 +1,11 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:flutter/services.dart' show rootBundle;
 import 'package:center_side/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'texts.dart';
 import 'socket_class.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
-
 import 'dbHelper/message_model.dart';
 import 'dbHelper/client_model.dart';
 import 'package:path_provider/path_provider.dart';
@@ -15,7 +13,7 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter_map/flutter_map.dart';
-import 'package:image_picker/image_picker.dart';
+
 
 import 'dart:async';
 
@@ -91,6 +89,23 @@ class _examplePage2State extends State<examplePage2> {
 
     });
 
+    my_socket.socket.on("cancel", (sourceId) async{
+      print("cancel $sourceId");
+      cancel(sourceId);
+
+
+    });
+
+    my_socket.socket.on("clientDisconnected", (sourceId) async{
+      print("clientDisconnected $sourceId");
+      clientDisconnected(sourceId);
+
+
+    });
+
+
+
+
 
 
     my_socket.socket.onDisconnect((_){
@@ -111,7 +126,13 @@ class _examplePage2State extends State<examplePage2> {
 
 
   }
+  void endCall() {
+    my_socket.socket.emit("end_call",_client.socketId);
+    setState(() {
+      _client.changeStatus(4);
+    });
 
+  }
   void openCall(Client client){
     print("open call");
     setState(() {
@@ -134,7 +155,33 @@ class _examplePage2State extends State<examplePage2> {
 
 
   }
-////////////////
+  void cancel(sourceId) async{
+    for(Client client in _clients){
+      if(client.socketId==sourceId) {
+        setState(() {
+          client.STATUS=2;
+        });
+      }
+
+    }
+
+
+
+  }
+  void clientDisconnected(sourceId) async{
+    for(Client client in _clients){
+      if(client.socketId==sourceId) {
+        setState(() {
+          client.STATUS=3;
+        });
+      }
+
+    }
+
+
+
+  }
+/////////////////////////chat functions///////////////
   void getNewMessage(String sourceId,MessageModel msg) async {
     if (msg.messageType == 1) {
       print("its photo type");
@@ -157,8 +204,6 @@ class _examplePage2State extends State<examplePage2> {
     }
 
   }
-
-  /////////chat functions///////////////
   void addNewMsg() async{
     if(newMsg.messageType==1){
       print("yes");
@@ -179,7 +224,7 @@ class _examplePage2State extends State<examplePage2> {
       _client.addMessage(newMsg);
 
     });
-    await Future.delayed(const Duration(seconds: 1));
+
 
 
 
@@ -354,8 +399,6 @@ class _examplePage2State extends State<examplePage2> {
       if(message.senderType==1) Text(message.message,style:const TextStyle(color: Colors.orangeAccent,fontSize: 20,fontWeight: FontWeight.bold),),
     ],
   );
-
-
   Widget imageBox(MessageModel message) => Container(
     child: Column(children: [
       Row(children: [Text(message.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
@@ -386,7 +429,6 @@ class _examplePage2State extends State<examplePage2> {
     ],),
 
   );
-
   Widget bigImageContainr()=>Container(
       height: 650,
       width: 650,
@@ -422,11 +464,6 @@ class _examplePage2State extends State<examplePage2> {
 
 
   );
-
-
-
-
-
   Widget messageListView(List<MessageModel> msgs) => ListView(
     children: <Widget>[
       for(MessageModel msg in msgs) if(msg.messageType==0)messageBox(msg)
@@ -511,9 +548,8 @@ class _examplePage2State extends State<examplePage2> {
       ),
 
   );
-
   /////////////////////client page methods///////////////////////////////////
-  Widget detailsContainr()=>Container(
+  Widget detailsContainer()=>Container(
     color: Colors.purpleAccent,
     height: 100,
     width: 350,
@@ -630,16 +666,30 @@ class _examplePage2State extends State<examplePage2> {
 
       ),),
       Align(alignment:const Alignment(1,1),child:mapContainer(),),
-      Align(alignment:const Alignment(-1,-1),child:detailsContainr(),),
+      Align(alignment:const Alignment(-1,-1),child:detailsContainer(),),
       Align(alignment:const Alignment(-1,1),child:chatContainer(),),
       Align(alignment:const Alignment(-1,1),child:chatContainer(),),
       Align(alignment:const Alignment(1,-0.3),child:TestsendMessageButton(),),
+      Align(alignment:const Alignment(1,-0.7),child:statusContainer(),),
+      Align(alignment:const Alignment(0,-1),child:endCallButton(),),
      if(imageShow) Align(alignment:const Alignment(0,0),child:bigImageContainr(),),
 
 
 
     ],),
   );
+  Widget statusContainer()=>Container(
+    color: Colors.white,
+    height: 50,
+    width: 100,
+    child: Stack(children: [
+      if(_client.STATUS==1) const Text("client connected"),
+      if(_client.STATUS==2) const Text("canceled"),
+      if(_client.STATUS==3) const Text("client disconnected"),
+      if(_client.STATUS==4) const Text("call ended"),
+
+    ],)
+     );
   /////////////////////////////////////////////////////////
   Widget mangeCallsContainer()=>Container(
     height: 350,
@@ -658,7 +708,40 @@ class _examplePage2State extends State<examplePage2> {
 
   );
 
+  Widget endCallButton()=>Container(
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(90),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: Offset(8,5)
 
+          ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: Offset(-8,-5)
+
+          ),
+        ]
+    ),
+
+    child: SizedBox(
+      height: 100.0,
+      width: 100.0,
+      child:
+      FloatingActionButton(
+        //child: Icon(Icons.ac_unit),
+        child: Text("End call",style: TextStyle(fontSize: 15,color: Colors.black),),
+
+        backgroundColor:Colors.red,
+        onPressed: () {
+          endCall();
+        },
+      ),
+    ),
+  );
 
   Widget callBox(Client client) => Container(
     height: 80,

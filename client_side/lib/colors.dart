@@ -27,7 +27,7 @@ class app_colors{
   static Color description_button= const Color(0xffFF5F1F);
   static Color chat_button= const Color(0xff00ff00);
   static Color sos_button=const Color(0xffff0000);
-  static Color cansel_button=const Color(0xffFF4C4C);
+  static Color cancel_button=const Color(0xffFF4C4C);
   static Color sos_disablbutton=const Color(0xffffb3b3);
   static Color sentMessagebutton=const Color(0xff00ffff);
   static Color chatmessages=const Color(0xff1919ff);

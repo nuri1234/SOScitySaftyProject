@@ -8,7 +8,7 @@ class Client{
   final double lat ;
   final double long ;
   final DateTime dateTime;
-  int STATUS=0; //0-new 1-opened/received 3-canceled
+  int STATUS=0; //0-new 1-opened/received 2-canceled 3-disconnected 4-call end
   final String socketId;
  List<MessageModel>  messages=[];
 
