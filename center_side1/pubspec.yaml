@@ -54,6 +54,7 @@ dependencies:
   socket_io: ^0.9.0+2
   objectid: ^2.1.0
   crossplat_objectid: ^3.0.0
+  carousel_slider: ^4.0.0
 
 dev_dependencies:
   flutter_test:

@@ -5,6 +5,7 @@ import 'dbHelper/mongodb.dart';
 import 'socket_class.dart';
 import 'example2.dart';
 import 'signin_page.dart';
+import 'homePage.dart';
 
 
 
@@ -15,19 +16,16 @@ void main() async {
   await my_socket.connect();
 
 
-  runApp(const MyApp());
+  runApp(MyApp());
 }
 
 class MyApp extends StatelessWidget {
-  const MyApp({Key? key}) : super(key: key);
-
-
   @override
   Widget build(BuildContext context) {
-    return const MaterialApp(
-      title: 'Flutter Demo',
+    return  MaterialApp(
+      title: 'Home Page',
       debugShowCheckedModeBanner: false,
-      home:SignIn(),
+      home:HomePage(),
     );
   }
 }
