@@ -33,10 +33,26 @@ io.on("connection", (socket) => {
 
   socket.on("disconnect",()=>{
     console.log(socket.id, "disconected");
-    clients.hasOwnProperty(socket.id) // true
-      delete clients[socket.id]
-      centers.hasOwnProperty(socket.id) // true
-      delete centers[socket.id] 
+   if(clients.hasOwnProperty(socket.id)) {
+     delete clients[socket.id];
+
+     for (const key of Object.keys(centers)) {  
+      console.log("centers to send sos call");
+      console.log(key + ":" + centers[key])  ;
+      centers[key].emit("clientDisconnected",socket.id);     
+    }
+     
+   }
+      
+   if( centers.hasOwnProperty(socket.id) ){
+     delete centers[socket.id] ;
+     for (const key of Object.keys(clients)) {  
+      console.log("clients to send sos call");
+      console.log(key + ":" + centers[key])  ;
+      centers[key].emit("centerDisconnected",socket.id);     
+    }
+   }
+      
 
     
    });
@@ -48,7 +64,7 @@ io.on("connection", (socket) => {
     if(clients[socket.id])clients[socket.id].emit("sos_call_request_send",client);
     for (const key of Object.keys(centers)) {  
       console.log("centers to send sos call");
-      console.log(key + ":" + centers[key])  
+      console.log(key + ":" + centers[key]);
       centers[key].emit("SOS_Call",{'client_socketId':socket.id,'client':client});     
     }
    });
@@ -77,7 +93,7 @@ io.on("connection", (socket) => {
     }
 
 
-    
+  
 
     for (const key of Object.keys(laterMesages)) {  
       console.log(key + ":" + laterMesages[key])

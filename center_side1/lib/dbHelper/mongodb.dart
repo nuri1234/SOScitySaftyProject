@@ -1,42 +1,32 @@
 import 'dart:developer';
-
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:center_side/dbHelper/constants.dart';
-import 'package:center_side/dbHelper/call_class.dart';
-import 'package:center_side/dbHelper/images_class.dart';
+import 'package:center_side/dbHelper/user_model.dart';
 
 class MongoDB{
-  static var db,callCollection,ImagesCollection;
+  static var db,UserCollection;
   static connect() async {
     db = await Db.create(MONGO_CONN_URL);
     await db.open();
-    callCollection = db.collection(CALL_COLLECTION);
-    ImagesCollection = db.collection(IMAGES_COLLECTION);
-  }
-
-  static insertCall(Call call) async {
-    await callCollection.insertAll([call.toMap()]);
-  }
-  static insertImages(ImagesClass imgs) async {
-    await  ImagesCollection.insertAll([imgs.toMap()]);
+    UserCollection=db.collection(USER_COLLECTION);
   }
 
 
 
-  static Future<List<Map<String, dynamic>>> getCallDocuments() async {
+
+  static insertUser(User user) async {
+    await UserCollection.insertAll([user.toMap()]);
+
+  }
+
+
+
+
+
+  static Future<List<Map<String, dynamic>>> getUsers() async {
     try {
-      final cals = await callCollection.find().toList();
-      return cals;
-    } catch (e) {
-      print(e);
-      throw Future.value(e);
-    }
-  }
-
-  static Future<List<Map<String, dynamic>>> getImagesDocuments() async {
-    try {
-      final images = await ImagesCollection.find().toList();
-      return images;
+      final users = await UserCollection.find().toList();
+      return users;
     } catch (e) {
       print(e);
       throw Future.value(e);
@@ -44,7 +34,7 @@ class MongoDB{
   }
 
 
-  static update(Call call) async {
+  /*static update(Call call) async {
     var c = await callCollection.findOne({"_id": call.id});
     c["userName"];
     c["phone"] = call.phone;
@@ -56,7 +46,7 @@ class MongoDB{
 
   static delete(Call call) async {
     await callCollection.remove(where.id(call.id));
-  }
+  }*/
 
 
 }

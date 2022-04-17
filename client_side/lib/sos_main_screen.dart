@@ -9,17 +9,13 @@ import 'package:image_picker/image_picker.dart';
 import 'colors.dart';
 import 'texts.dart';
 import 'dart:async';
-import 'images.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'local_data.dart';
 import 'socket_class.dart';
 import 'registration_page.dart';
-import 'dbHelper/message_model.dart';
+import 'message_model.dart';
 import 'package:path_provider/path_provider.dart';
 import 'dart:io';
-
-
-
 
 
 
@@ -31,8 +27,7 @@ class SOS extends StatefulWidget {
 }
 
 class _SOSState extends State<SOS> {
-  late final MapController _mapController;
-  List<String> _paths=my_images.getPaths();
+   final MapController _mapController=MapController();
   int img_size=0;
   final TextEditingController _describe= TextEditingController();
   final TextEditingController _message= TextEditingController();
@@ -55,6 +50,8 @@ class _SOSState extends State<SOS> {
   bool buttonsCollection=false;
   bool _sendingMessage=false;
   bool _sendingPhotoMessage=false;
+  bool _centeDissconected=false;
+  bool _endCall=false;
   File? imageFile;
   bool imageShow=false;
   final ScrollController _controller = ScrollController();
@@ -62,10 +59,9 @@ class _SOSState extends State<SOS> {
 
 
 
+
+
   ////////////////////////Functions/////////////////////////////////////////////
-
-
-
   void socketListner() {
     my_socket.socket.on("sos_call_request_send", (client){
       print("sos_call_request_send");
@@ -73,6 +69,26 @@ class _SOSState extends State<SOS> {
       setState(() {
         sendrequest=true;
       });
+
+    });
+
+
+    my_socket.socket.on("end_call",(_){
+      print("end_call");
+      endCall();
+
+    });
+
+
+
+
+    my_socket.socket.on("clientDisconnected", (sourceId) async{
+      print("clientDisconnected $sourceId");
+      if(sourceId==targetSocket){
+        centerDisconnected();
+      }
+
+
 
     });
 
@@ -134,6 +150,26 @@ class _SOSState extends State<SOS> {
 
   }
 
+  void endCall()async{
+    setState(() {
+      _endCall=true;
+    });
+    await Future.delayed(const Duration(seconds: 3));
+
+
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
+
+  }
+  void centerDisconnected()async{
+    setState(() {
+      _centeDissconected=true;
+    });
+    await Future.delayed(const Duration(seconds: 3));
+
+
+    Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
+
+  }
   void SOScallRespon(){
 print("SOScallRespon()");
     setState(() {
@@ -168,7 +204,6 @@ void ButtonRotator(){
     my_socket.socket.emit("SOS_Call",{'userName':data.user_name,'phone':data.phone,'lat':lat,'long':long});
   //  my_socket.socket.emit("SOS_Call_Respone",my_socket.socket.id);
   }
-
   void getImage({required ImageSource source}) async {
     final file = await ImagePicker().pickImage(source: source);
 
@@ -226,7 +261,6 @@ void ButtonRotator(){
   void initState() {
     super.initState();
     print("init sos page");
-    _mapController = MapController();
     data.getData();
     socketListner();
     timer = Timer.periodic(const Duration(seconds:1), (Timer t) => ButtonRotator());
@@ -385,7 +419,7 @@ void ButtonRotator(){
     ),
   );
 
-  Widget CancelButton2()=>Container(
+  Widget CancelButton()=>Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(90),
         boxShadow:[
@@ -410,8 +444,10 @@ void ButtonRotator(){
       FloatingActionButton(
         //child: Icon(Icons.ac_unit),
         child: const Icon(Icons.clear,size:40,),
-        backgroundColor: app_colors.cansel_button,
+        backgroundColor: app_colors.cancel_button,
         onPressed: () {
+          my_socket.socket.emit("cancel");
+
           Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
           print("Cancel button pressed");
 
@@ -790,7 +826,7 @@ void ButtonRotator(){
   );
   /////////////////////////Containers/////////////////////////////////////////////
   Widget mapContainer()=>Container(
-      height:480,
+      height:450,
       width: 400,
       decoration: BoxDecoration(
           color: app_colors.chatmessages,
@@ -819,6 +855,48 @@ void ButtonRotator(){
     style:const TextStyle(
       fontSize:20,
       color:Colors.greenAccent,
+      fontWeight: FontWeight.w800,
+      shadows: <Shadow>[
+        Shadow(
+          offset: Offset(0, 0),
+          blurRadius: 3.0,
+          color: Color.fromARGB(500, 7, 0, 0),
+        ),
+        Shadow(
+          offset: Offset(0.0, 10.0),
+          blurRadius: 8.0,
+          color: Color.fromARGB(125, 0, 0, 255),
+        ),
+      ],
+    ),
+
+  );
+  Widget centerDisconnectedText()=> Text(
+    my_texts.centerDissconected,
+    style:const TextStyle(
+      fontSize:15,
+      color:Colors.red,
+      fontWeight: FontWeight.w800,
+      shadows: <Shadow>[
+        Shadow(
+          offset: Offset(0, 0),
+          blurRadius: 3.0,
+          color: Color.fromARGB(500, 7, 0, 0),
+        ),
+        Shadow(
+          offset: Offset(0.0, 10.0),
+          blurRadius: 8.0,
+          color: Color.fromARGB(125, 0, 0, 255),
+        ),
+      ],
+    ),
+
+  );
+  Widget endCallText()=> Text(
+    my_texts.endCall,
+    style:const TextStyle(
+      fontSize:15,
+      color:Colors.red,
       fontWeight: FontWeight.w800,
       shadows: <Shadow>[
         Shadow(
@@ -984,8 +1062,10 @@ void ButtonRotator(){
 
             ),
           ),
-          Align(alignment: Alignment.topRight,child: CancelButton2(),),
+          Align(alignment: Alignment.topRight,child: CancelButton(),),
           if(imageShow)Align(alignment: Alignment.topCenter,child: photoContainer(),),
+          if(_centeDissconected) Align(alignment: Alignment.center,child: centerDisconnectedText()),
+          if(_endCall) Align(alignment: Alignment.center,child: endCallText()),
 
 
 
@@ -1025,7 +1105,7 @@ void ButtonRotator(){
               ]
           ),
           IconButton(
-            onPressed:() {Navigator.push(context, MaterialPageRoute(builder: (context)=> (Registor())));},
+            onPressed:() {Navigator.push(context, MaterialPageRoute(builder: (context)=> (const Registor())));},
             icon: const Icon( Icons.perm_identity_rounded,color:Colors.purple,size: 40,),
           ),
 

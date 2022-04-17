@@ -4,8 +4,6 @@ import 'package:google_fonts/google_fonts.dart';
 import 'texts.dart';
 import 'colors.dart';
 import 'local_data.dart';
-import '/sos_screen.dart';
-import 'sos_screen.dart';
 import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
 import 'package:pin_code_fields/pin_code_fields.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -112,7 +110,7 @@ class _RegistorState extends State<Registor> {
     onPressed:(){
       data.user_name=_user_name.text;
       updateData();
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>Sos()),);
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>SOS()),);
     } ,
 
     style: ElevatedButton.styleFrom(
