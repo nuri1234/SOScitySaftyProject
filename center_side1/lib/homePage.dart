@@ -31,26 +31,20 @@ class HomeState extends State<HomePage> {
               color: Colors.white,
               child: ListView(children: [
                 Container(
-                    height: 400,
+                    height: 200,
                     width: double.infinity,
-                    child: Container(
-                      height: 400,
-                      width: double.infinity,
-                      decoration: BoxDecoration(
-                        image: DecorationImage(
-                          image: AssetImage(
-                              'assets/assets/logo.png'),
-                          fit: BoxFit.fill,
-                        ),
-                        shape: BoxShape.circle,
-                      ),
+                    child: const Image(
+                      image: AssetImage('assets/images/logo.png'),
                     ),
+                )
 
-                ),
 
               ])
           )
       ),
     );
+
+
+
   }
 }
