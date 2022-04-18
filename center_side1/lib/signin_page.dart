@@ -21,23 +21,19 @@ class _SignInState extends State<SignIn> {
     if(user.password==_password.text){
       print("ok");
       Navigator.push(context, MaterialPageRoute(builder: (context)=>(const examplePage2())),);
-
     }
     else print("no match");
 
     if(user==null) print("user not found");
-
-
-
   }
 
-  Widget NextButton()=>SizedBox(
+  Widget NextButton()=>Container(
     height: 100.0,
-    width: 100.0,
+    width: 200.0,
     child:
     FloatingActionButton(
       //child: Icon(Icons.ac_unit),
-      child: Text("Next",style: TextStyle(fontSize: 15,color: Colors.black),),
+      child: Text("כניסה",style: TextStyle(fontSize: 20,color: Colors.black),),
 
       backgroundColor: Colors.blue,
       onPressed: () {
@@ -102,8 +98,8 @@ class _SignInState extends State<SignIn> {
   Widget inputContainer()=>Container(
     height: 300,
     width: 300,
-    color: Colors.redAccent,
-    padding: EdgeInsets.all(5),
+    color: Colors.white,
+    padding: EdgeInsets.all(8),
     child: Stack(children: [
       Align(alignment: const Alignment(0, -1),child: userNameTextField(),),
       Align(alignment: const Alignment(0, 0),child: passwordTextField(),),
@@ -113,8 +109,18 @@ class _SignInState extends State<SignIn> {
   );
 
   Widget mainStak()=>Stack(children: [
-    Align(alignment: const Alignment(0, 0),child: inputContainer(),),
-    Align(alignment: const Alignment(0, 0.8),child: NextButton(),),
+    Container(
+      height: 180,
+      width: double.infinity,
+      child:Image.asset('assets/images/logo.png',fit: BoxFit.contain,)
+
+    ),
+    Container(
+      child:Align(alignment: const Alignment(0, 0),child: inputContainer(),),
+    ),
+    Container(
+      child:Align(alignment: const Alignment(0, 0.8),child: NextButton(),),
+    )
 
 
   ],);
@@ -125,12 +131,11 @@ class _SignInState extends State<SignIn> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("app bar"),
+        title: Text('כניסה למערכת'),
+        centerTitle: true,
       ),
-      backgroundColor: Colors.lightGreen,
+      backgroundColor: Colors.white,
       body: mainStak(),
-
-
 
     );
   }

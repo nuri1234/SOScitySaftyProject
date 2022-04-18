@@ -7,6 +7,7 @@ import 'example2.dart';
 import 'signin_page.dart';
 import 'homePage.dart';
 import 'compount/drawer.dart';
+import 'package:center_side/pages/login.dart';
 
 
 
@@ -25,7 +26,7 @@ class MyApp extends StatelessWidget {
     return  MaterialApp(
       title: 'HomePage',
       debugShowCheckedModeBanner: false,
-      home:HomePage(),
+      home:SignIn(),
     );
   }
 }
