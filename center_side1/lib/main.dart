@@ -6,7 +6,7 @@ import 'socket_class.dart';
 import 'example2.dart';
 import 'signin_page.dart';
 import 'homePage.dart';
-import 'pages/drawer.dart';
+import 'compount/drawer.dart';
 
 
 
@@ -23,7 +23,7 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
-      title: 'Home Page',
+      title: 'HomePage',
       debugShowCheckedModeBanner: false,
       home:HomePage(),
     );

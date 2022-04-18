@@ -1,8 +1,8 @@
-import 'package:center_side/pages/drawer.dart';
+import 'package:center_side/compount/drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/material/app.dart';
-import 'pages/drawer.dart';
+import 'compount/drawer.dart';
 import 'package:carousel_pro/carousel_pro.dart';
 
 class HomePage extends StatefulWidget {
@@ -18,7 +18,7 @@ class HomeState extends State<HomePage> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
           appBar: AppBar(
-            title: Text("Home Page"),
+            title: Text("ברוכים הבאים"),
             backgroundColor: Colors.blue,
             centerTitle: true,
             elevation: 6,
