@@ -31,6 +31,9 @@ class _LogInState extends State<LogIn> {
       appBar: AppBar(
         title: Text('כניסה למערכת'),
         centerTitle: true,
+        actions: [
+          IconButton(onPressed: () {}, icon: Icon(Icons.back_hand)),
+        ],
       ),
       body: ListView(children: [
         Form(child: Column(children: [

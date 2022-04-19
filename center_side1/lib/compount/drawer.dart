@@ -47,7 +47,9 @@ class MyDrawerState extends State<MyDrawer>{
             ListTile(
               title:Text("התנתקות",style: TextStyle(color: Colors.black,fontSize: 15)),
               leading: Icon(Icons.logout,color: Colors.black,size: 30,),
-              onTap: (){},
+              onTap: (){
+                Navigator.of(context).popAndPushNamed('homePage');
+              },
             ),
             Divider(color: Colors.blue,thickness: 1.0,),
           ],

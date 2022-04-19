@@ -1,9 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
-import 'package:center_side/colors.dart';
+import 'package:center_side/compount/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-import 'texts.dart';
+import 'compount/texts.dart';
 import 'socket_class.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'dbHelper/message_model.dart';

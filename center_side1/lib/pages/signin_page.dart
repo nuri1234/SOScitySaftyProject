@@ -1,8 +1,9 @@
+import 'package:center_side/compount/drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'dbHelper/user_management.dart';
-import 'dbHelper/user_model.dart';
-import 'example2.dart';
+import '../dbHelper/user_management.dart';
+import '../dbHelper/user_model.dart';
+import '../example2.dart';
 
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
@@ -109,18 +110,21 @@ class _SignInState extends State<SignIn> {
   );
 
   Widget mainStak()=>Stack(children: [
-    Container(
-      height: 180,
-      width: double.infinity,
-      child:Image.asset('assets/images/logo.png',fit: BoxFit.contain,)
+    ListView(children: [
+      Container(
+          height: 180,
+          width: double.infinity,
+          child:Image.asset('assets/images/logo.png',fit: BoxFit.contain,)
 
-    ),
-    Container(
-      child:Align(alignment: const Alignment(0, 0),child: inputContainer(),),
-    ),
-    Container(
-      child:Align(alignment: const Alignment(0, 0.8),child: NextButton(),),
-    )
+      ),
+      Container(
+        child:Align(alignment: const Alignment(0, 0),child: inputContainer(),),
+      ),
+      Container(
+        child:Align(alignment: const Alignment(0, 0.8),child: NextButton(),),
+      )
+
+    ],)
 
 
   ],);
@@ -129,14 +133,17 @@ class _SignInState extends State<SignIn> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text('כניסה למערכת'),
-        centerTitle: true,
-      ),
-      backgroundColor: Colors.white,
-      body: mainStak(),
+    return Directionality(
+        textDirection: TextDirection.rtl,
+        child:Scaffold(
+          appBar: AppBar(
+            backgroundColor: Colors.blue,
+            title: Text('כניסה למערכת'),
+            centerTitle: true,
+          ),
+          backgroundColor: Colors.white,
+          body: mainStak(),
 
-    );
+    ));
   }
 }

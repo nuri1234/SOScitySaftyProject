@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 
-import '../Header.dart';
+import 'Header.dart';
 import 'InputWrapper.dart';
 
 class LoginPage extends StatelessWidget {

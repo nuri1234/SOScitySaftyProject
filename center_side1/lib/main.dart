@@ -1,13 +1,17 @@
 
-import 'package:flutter/material.dart';
 
+import 'package:center_side/pages/addUser.dart';
+import 'package:flutter/material.dart';
+import 'package:center_side/pages/maneger.dart';
 import 'dbHelper/mongodb.dart';
 import 'socket_class.dart';
 import 'example2.dart';
-import 'signin_page.dart';
-import 'homePage.dart';
+import 'pages/signin_page.dart';
+import 'pages/homePage.dart';
 import 'compount/drawer.dart';
 import 'package:center_side/pages/login.dart';
+import 'package:center_side/pages/workPage.dart';
+
 
 
 
@@ -26,7 +30,24 @@ class MyApp extends StatelessWidget {
     return  MaterialApp(
       title: 'HomePage',
       debugShowCheckedModeBanner: false,
-      home:SignIn(),
+      home:HomePage(),
+      routes: {
+        'homePage':(context){
+          return HomePage();
+        },
+        'login':(context){
+          return SignIn();
+        },
+        'maneger':(context){
+          return Maneger();
+        },
+        'workPage':(context){
+          return WorkPage();
+        },
+        'addUser':(context){
+          return AddUser();
+        }
+      },
     );
   }
 }
