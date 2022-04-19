@@ -1,6 +1,3 @@
-
-
-import 'package:center_side/pages/addUser.dart';
 import 'package:flutter/material.dart';
 import 'package:center_side/pages/maneger.dart';
 import 'dbHelper/mongodb.dart';
@@ -11,6 +8,7 @@ import 'pages/homePage.dart';
 import 'compount/drawer.dart';
 import 'package:center_side/pages/login.dart';
 import 'package:center_side/pages/workPage.dart';
+import 'package:center_side/pages/addWorker.dart';
 
 
 
@@ -30,7 +28,7 @@ class MyApp extends StatelessWidget {
     return  MaterialApp(
       title: 'HomePage',
       debugShowCheckedModeBanner: false,
-      home:HomePage(),
+      home:AddWorker(),
       routes: {
         'homePage':(context){
           return HomePage();
@@ -45,7 +43,7 @@ class MyApp extends StatelessWidget {
           return WorkPage();
         },
         'addUser':(context){
-          return AddUser();
+          return AddWorker();
         }
       },
     );

@@ -4,11 +4,13 @@ import 'package:center_side/dbHelper/constants.dart';
 import 'package:center_side/dbHelper/user_model.dart';
 
 class MongoDB{
-  static var db,UserCollection;
+  static var db,UserCollection,WorkerCollectin;
   static connect() async {
     db = await Db.create(MONGO_CONN_URL);
     await db.open();
+    //inspect(db);
     UserCollection=db.collection(USER_COLLECTION);
+    WorkerCollectin=db.collection(WORKER_COLLECTION);
   }
 
 

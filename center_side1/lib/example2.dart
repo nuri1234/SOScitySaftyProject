@@ -13,8 +13,6 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter_map/flutter_map.dart';
-
-
 import 'dart:async';
 
 
@@ -248,6 +246,7 @@ class _examplePage2State extends State<examplePage2> {
     my_socket.socket.emit("SOS_Call_Test",{'socketId':i.toString(),'client':{'userName':"testName$i",'phone':"0542259977",'lat':51.5,'long':-0.5}});
     i++;
   }
+
   Widget SOSTestButton()=>Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(90),
@@ -284,6 +283,9 @@ class _examplePage2State extends State<examplePage2> {
       ),
     ),
   );
+
+
+
   ////////////////////כל אלה בשביל תצוגת הלוגו והברוכים הבאים/////////////////////////////////
   Widget logo()=>Container(
       padding: const EdgeInsets.all(0),
