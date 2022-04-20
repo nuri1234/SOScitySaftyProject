@@ -30,8 +30,7 @@ class _AddWorkerState extends State<AddWorker> {
           color: Colors.white,
           height: 100,
           width: 100,
-          child:
-            TextField:Text("hallo")
+          child:Text("hallo")
         ),
           ],),),),
     );
