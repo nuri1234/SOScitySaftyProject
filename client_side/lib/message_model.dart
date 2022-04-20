@@ -1,12 +1,14 @@
-import 'package:client_side/local_data.dart';
-
+import 'package:audioplayers/audioplayers.dart';
+import 'audio_model.dart';
 class MessageModel {
   int senderType; //0-client 1-center
-  int messageType;//0-message 1-photo
+  int messageType;//0-Text 1-photo 2-audio
   String message;
   String describe;
   String time;
   String? _path;
+  AudioModel? audio;
+
 
 
   MessageModel({required this.senderType,required this.messageType,required this.message,required this.describe, required this.time});
@@ -28,6 +30,8 @@ class MessageModel {
   get_path(){
     return _path;
   }
+
+
 
 
 }

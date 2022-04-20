@@ -54,7 +54,7 @@ dependencies:
   socket_io: ^0.9.0+2
   objectid: ^2.1.0
   crossplat_objectid: ^3.0.0
-  carousel_pro: ^1.0.0
+  audioplayers: ^0.20.1
 
 dev_dependencies:
   flutter_test:
@@ -80,7 +80,7 @@ flutter:
 
   # To add assets to your application, add an assets section, like this:
   assets:
-   - assets/images/
+     - assets/images/
 
 
   # An image asset can refer to one or more resolution-specific "variants", see
@@ -94,11 +94,10 @@ flutter:
   # "family" key with the font family name, and a "fonts" key with a
   # list giving the asset and other descriptors for the font. For
   # example:
-  #fonts:
-   # - family: CustomFamilyName
-      #fonts:
-      #  - asset: assets/fontfile.ttf
-
+  # fonts:
+  #   - family: Schyler
+  #     fonts:
+  #       - asset: fonts/Schyler-Regular.ttf
   #       - asset: fonts/Schyler-Italic.ttf
   #         style: italic
   #   - family: Trajan Pro

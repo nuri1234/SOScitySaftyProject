@@ -15,7 +15,11 @@ import 'socket_class.dart';
 import 'registration_page.dart';
 import 'message_model.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'package:flutter_sound/flutter_sound.dart' as FS;
+import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
+import 'audio_model.dart';
 
 
 
@@ -48,17 +52,26 @@ class _SOSState extends State<SOS> {
   double cancelButtonWidth=90;
   late String targetSocket;
   bool buttonsCollection=false;
+   bool onProgress=false;
   bool _sendingMessage=false;
   bool _sendingPhotoMessage=false;
   bool _centeDissconected=false;
   bool _endCall=false;
+   bool _record=false;
   File? imageFile;
   bool imageShow=false;
   final ScrollController _controller = ScrollController();
   int photoIndex=0;
-
-
-
+   int audioIndex=0;
+  static AudioCache player = AudioCache(prefix:'assets/sounds/');
+   final recorder =FS.FlutterSoundRecorder() ;
+   late File audioRecordFile;
+   static late AudioPlayer audioPlayer;
+   bool isRecorderReady=false;
+   bool isAudioReady=false;
+   bool isPlaying=false;
+   Duration duration=Duration.zero;
+   Duration position=Duration.zero;
 
 
   ////////////////////////Functions/////////////////////////////////////////////
@@ -80,15 +93,11 @@ class _SOSState extends State<SOS> {
     });
 
 
-
-
-    my_socket.socket.on("clientDisconnected", (sourceId) async{
+    my_socket.socket.on("centerDisconnected", (sourceId) async{
       print("clientDisconnected $sourceId");
       if(sourceId==targetSocket){
         centerDisconnected();
       }
-
-
 
     });
 
@@ -103,6 +112,7 @@ class _SOSState extends State<SOS> {
     });
 
     my_socket.socket.on("get_message",(msg) {
+      player.play('message.wav');
 
       print("get msg");
       MessageModel getNewMsg=MessageModel(senderType:msg['senderType'] ,
@@ -124,7 +134,6 @@ class _SOSState extends State<SOS> {
 
     my_socket.socket.on("error", (msg){
       print("error: $msg");
-
 
 
     });
@@ -149,7 +158,6 @@ class _SOSState extends State<SOS> {
 
 
   }
-
   void endCall()async{
     setState(() {
       _endCall=true;
@@ -171,6 +179,7 @@ class _SOSState extends State<SOS> {
 
   }
   void SOScallRespon(){
+    player.play('sosResponse.wav');
 print("SOScallRespon()");
     setState(() {
       requestResponse=true;
@@ -202,7 +211,8 @@ void ButtonRotator(){
       chatOpen=true;
     });
     my_socket.socket.emit("SOS_Call",{'userName':data.user_name,'phone':data.phone,'lat':lat,'long':long});
-  //  my_socket.socket.emit("SOS_Call_Respone",my_socket.socket.id);
+
+
   }
   void getImage({required ImageSource source}) async {
     final file = await ImagePicker().pickImage(source: source);
@@ -225,11 +235,35 @@ void ButtonRotator(){
       photoIndex++;
 
     }
+    if(newMsg.messageType==2){
+      print("its audio");
+      final decodedBytes = base64Decode(newMsg.message);
+      final directory = await getApplicationDocumentsDirectory();
+      File file= File('${directory.path}/testRecord${audioIndex}.mp3');
+      print(file.path);
+      file.writeAsBytesSync(List.from(decodedBytes));
+      newMsg.insert_path(file.path);
+      audioIndex++;
+      newMsg.audio=AudioModel();
+      audioListner2(newMsg);
+      newMsg.audio!.audioPlayer.setUrl(file.path,isLocal: true);
+      await newMsg.audio!.audioPlayer.seek(newMsg.audio!.position);
+
+    }
+
     setState(() {
 
       if(_sendingPhotoMessage) {
         _sendingPhotoMessage=false;
         imageShow=false;
+      }
+      if(newMsg.messageType==2) {
+        _record=false;
+        isAudioReady=false;
+        duration=Duration.zero;
+        position=Duration.zero;
+        audioPlayer.stop();
+
       }
       _sendingMessage=false;
       _message.text="";
@@ -257,6 +291,113 @@ void ButtonRotator(){
 
   }
 
+  //////////////////////////////////////////////////
+  Future recordAudio() async {
+    setState(() {
+      _record=true;
+    });
+    await recorder.startRecorder(toFile:'audio');
+
+  }
+   Future stopRecord() async {
+     if (!isRecorderReady) return;
+    final path= await recorder.stopRecorder();
+     audioRecordFile=File(path!);
+     print('Recorder audio: $audioRecordFile');
+     position=Duration.zero;
+     audioPlayer=AudioPlayer();
+     audioListner();
+     audioPlayer.setUrl(path,isLocal: true);
+     await audioPlayer.seek(position);
+     setState(() {
+       isAudioReady=true;
+       position=Duration.zero;
+     });
+
+     print("yoyo");
+
+   }
+   Future initRecorder()async{
+     print("record init");
+     final status=await Permission.microphone.request();
+     print("record init1");
+     if(status!=PermissionStatus.granted){
+       throw 'microphone permission not granted';
+     }
+     print("record init2");
+     await recorder.openRecorder();
+     isRecorderReady=true;
+     print("record init3");
+     recorder.setSubscriptionDuration(
+       const Duration(milliseconds:500),
+     );
+   }
+   Future audioListner()async{
+     audioPlayer.onPlayerStateChanged.listen((state) {
+       setState(() {
+         isPlaying=state==PlayerState.PLAYING;});
+     });
+
+     audioPlayer.onDurationChanged.listen((newDuration) {
+       print("newDuration");
+       setState(() {duration=newDuration;});
+
+     });
+
+     audioPlayer.onAudioPositionChanged.listen((newPosition) {
+       setState(() {position=newPosition;});
+
+     });
+
+   }
+   Future audioListner2(MessageModel msg)async{
+
+     msg.audio!.audioPlayer.onPlayerStateChanged.listen((state) {
+       setState(() {
+         msg.audio!.isPlaying=state==PlayerState.PLAYING;});
+     });
+
+     msg.audio?.audioPlayer.onDurationChanged.listen((newDuration) {
+       print("newDuration");
+       setState(() {msg.audio!.duration=newDuration;});
+
+     });
+
+     msg.audio?.audioPlayer.onAudioPositionChanged.listen((newPosition) {
+       setState(() {msg.audio!.position=newPosition;});
+
+     });
+
+   }
+   String formatTime(Duration duration){
+     String toDigits(int n)=>n.toString().padLeft(2,'0');
+     final Seconds=toDigits(duration.inSeconds.remainder(60));
+     final minutes=toDigits(duration.inMinutes.remainder(60));
+     final hours=toDigits(duration.inHours);
+     return [
+       if(duration.inHours>0) hours,
+       minutes,
+       Seconds,
+     ].join(':');
+
+   }
+   void sendAudio(){
+    print('$audioRecordFile');
+    List<int> audioBytes = audioRecordFile.readAsBytesSync();
+    String base64Image = base64Encode(audioBytes);
+    newMsg=MessageModel(senderType: 0,
+        messageType:2,
+        message: base64Image,
+        describe: "non",
+        time: DateTime.now().toString().substring(10, 16));
+
+
+    sendMessage();
+
+   }
+
+   ////////////////////////////////////
+
   @override
   void initState() {
     super.initState();
@@ -264,12 +405,15 @@ void ButtonRotator(){
     data.getData();
     socketListner();
     timer = Timer.periodic(const Duration(seconds:1), (Timer t) => ButtonRotator());
+    initRecorder();
 
     initMap();
   }
   @override
   void dispose() {
     timer?.cancel();
+    recorder.closeRecorder();
+    audioPlayer.dispose();
     super.dispose();
   }
 ////////////////////////////////////////////////////////
@@ -319,7 +463,145 @@ void ButtonRotator(){
 
   }
   ///////////////////////EN DFunctions///////////////////////////////////////
+  Widget recordShowStreamBuilder()=>StreamBuilder<FS.RecordingDisposition>(
+      stream: recorder.onProgress,
+      builder:(context,snapshot){
+        final duration=snapshot.hasData
+            ? snapshot.data!.duration
+            : Duration.zero;
+        //  return Text('${duration.inSeconds} s',style: TextStyle(color: Colors.black,fontSize: 50),);
+        String toDigits(int n)=>n.toString().padLeft(2,'0');
+        final toDigitMinutes=toDigits(duration.inMinutes.remainder(60));
+        final toDigitSeconds=toDigits(duration.inSeconds.remainder(60));
+        return Text(
+          '$toDigitMinutes:$toDigitSeconds',
+          style: const TextStyle(
+            fontSize: 40,
+            fontWeight: FontWeight.bold,
+          ),
+        );
+      }
+  );
 
+  Widget mainRecordAudioContainer()=>Container(
+    height:200,
+    width: 350,
+   // color: Colors.green,
+    child: Stack(children: [
+      if(isAudioReady) Align(alignment:Alignment.center,child: playRecordPartContainer(),)
+      else Align(alignment:Alignment.center ,child: recordPartContainer(),),
+
+    ],),
+
+  );
+  Widget recordPartContainer()=>Container(
+    height:80,
+    width: 200,
+    padding: const EdgeInsets.all(15),
+    decoration: BoxDecoration(
+        color: app_colors.recorderTimeShow,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: Offset(8,5)
+
+          ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: Offset(-8,-5)
+          ),
+        ]
+    ),
+    child:Center(child: recordShowStreamBuilder()),
+
+  );
+  Widget recordPlayStateShowContainer()=>Container(
+    height: 50,
+    width: 250,
+    child: Stack(children: [
+      Align(alignment: Alignment.centerLeft,child:Text(formatTime(position)) ,),
+      Align(alignment: Alignment.centerRight,child:  Text(formatTime(duration-position)),),
+
+    ],),
+  );
+
+  Widget playRecordPartContainer()=>Container(
+    height:130,
+    width: 400,
+    padding: const EdgeInsets.all(15),
+    decoration: BoxDecoration(
+        color: app_colors.recorderTimeShow,
+        borderRadius: BorderRadius.circular(10),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: Offset(8,5)
+
+          ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: Offset(-8,-5)
+          ),
+        ]
+    ),
+    child: Stack(children: [
+      Align(alignment: const Alignment(0,-1) ,child: audioPlaySlider(),),
+      Align(alignment:const Alignment(0,1) ,child: playRecordButton()),
+      Align(alignment:const Alignment(0,0)  ,child:recordPlayStateShowContainer()),
+      Align(alignment:const Alignment(1,1)  ,child:sendAudioButton()),
+      Align(alignment:const Alignment(0.7,1)  ,child:cancelAudio()),
+
+    ],),
+
+
+  );
+  Widget audioPlaySlider()=>SizedBox(
+    height: 50,
+    width: 350,
+    child: Slider(
+        min: 0,
+        max: duration.inSeconds.toDouble(),
+        value: position.inSeconds.toDouble(),
+        onChanged: (value)async{
+          final position=Duration(seconds: value.toInt());
+          await audioPlayer.seek(position);
+          await audioPlayer.resume();
+
+
+
+        }),
+  );
+  Widget audioPlaySlider2(MessageModel msg)=>SizedBox(
+    height: 50,
+    width: 300,
+    child: Slider(
+        min: 0,
+        max: msg.audio!.duration.inSeconds.toDouble(),
+        value: msg.audio!.position.inSeconds.toDouble(),
+        activeColor: Colors.green,
+        inactiveColor: Colors.grey,
+        onChanged: (value)async{
+          final position=Duration(seconds: value.toInt());
+          await msg.audio!.audioPlayer!.seek(position);
+          await msg.audio!.audioPlayer!.resume();
+
+        }),
+  );
+  Widget recordPlayStateShowContainer2(Duration dr , Duration ps)=>Container(
+
+    height: 50,
+    width: 250,
+    child: Stack(children: [
+      Align(alignment: Alignment.centerLeft,child:Text(formatTime(ps)) ,),
+      Align(alignment: Alignment.centerRight,child:  Text(formatTime(dr-ps)),),
+
+    ],),
+  );
 ////////////////////////BUTTONSSSS//////////////////////////////////////////
   Widget Camera_Button()=>Container(
     decoration: BoxDecoration(
@@ -340,6 +622,7 @@ void ButtonRotator(){
     ),
     child: ElevatedButton(
       onPressed: (){
+        player.play('button.mp3');
         getImage(source: ImageSource.camera);
       },
       child: const Icon(Icons.camera_alt,size: 30.0,),
@@ -370,6 +653,7 @@ void ButtonRotator(){
     ),
     child: ElevatedButton(
       onPressed: (){
+        player.play('button.mp3');
         getImage(source: ImageSource.gallery);
       },
       child: const Icon(Icons.image,size: 30.0,),
@@ -377,6 +661,123 @@ void ButtonRotator(){
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
         primary: app_colors.galarry_button,
         minimumSize:const Size(60.0, 60.0),
+
+      ),
+    ),
+  );
+  Widget recordAudioButton()=>Container(
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(90),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: const Offset(8,5)
+
+          ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: const Offset(-8,-5)
+          ),
+        ]
+    ),
+    child: ElevatedButton(
+      onPressed: (){
+        if(_record) {
+          stopRecord();
+
+        } else {
+          _record=true;
+          recordAudio();
+        }
+
+      },
+      child: Icon(_record? Icons.stop :Icons.mic, size: 30.0,),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
+        primary: app_colors.record_audio_button,
+        minimumSize:const Size(60.0, 60.0),
+
+      ),
+    ),
+  );
+  Widget playRecordButton()=>Container(
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(90),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: const Offset(8,5)
+
+          ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: const Offset(-8,-5)
+          ),
+        ]
+    ),
+    child: ElevatedButton(
+      onPressed: () async{
+
+        if(isPlaying){
+          await audioPlayer.pause();
+        }
+        else{
+          //  String url='https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3';
+          audioPlayer.resume();
+
+        }
+
+
+      },
+      child: Icon(isPlaying? Icons.pause :Icons.play_arrow,size: 20,),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
+        primary: app_colors.record_audio_button,
+        minimumSize:const Size(50.0, 50.0),
+
+      ),
+    ),
+  );
+  Widget playRecordButton2(MessageModel msg)=>Container(
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(100),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 100,
+              offset: const Offset(8,5)
+
+          ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 100,
+              offset: const Offset(-8,-5)
+          ),
+        ]
+    ),
+    child: ElevatedButton(
+      onPressed: () async{
+
+        if(msg.audio!.isPlaying){
+          await msg.audio!.audioPlayer.pause();
+        }
+        else{
+          //  String url='https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3';
+          msg.audio!.audioPlayer.resume();
+
+        }
+
+
+      },
+      child: Icon(msg.audio!.isPlaying? Icons.pause :Icons.play_arrow,size: 8,),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
+        primary: app_colors.record_audio_button,
+     minimumSize:const Size(30, 30),
 
       ),
     ),
@@ -411,6 +812,7 @@ void ButtonRotator(){
 
         backgroundColor: my_socket.isconnect? app_colors.sos_button: app_colors.sos_disablbutton,
         onPressed: () {
+          player.play('SOScall.wav');
           print("SOS button pressed");
           if(my_socket.isconnect)SOS_Call();
 
@@ -446,6 +848,7 @@ void ButtonRotator(){
         child: const Icon(Icons.clear,size:40,),
         backgroundColor: app_colors.cancel_button,
         onPressed: () {
+          player.play('cancel.wav');
           my_socket.socket.emit("cancel");
 
           Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
@@ -492,7 +895,7 @@ void ButtonRotator(){
       ),
     ),
   );
-  Widget sendPhoto()=>Container(
+  Widget sendPhotoButton()=>Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(90),
         boxShadow:[
@@ -540,50 +943,99 @@ void ButtonRotator(){
       ),
     ),
   );
-  Widget chatButton()=>Container(
+  Widget sendAudioButton()=>Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(90),
         boxShadow:[
           BoxShadow(
               color: app_colors.buttom_shadow,
               blurRadius: 20,
-              offset: Offset(8,5)
+              offset: const Offset(5,3)
 
           ),
           BoxShadow(
               color: app_colors.buttom_shadow,
               blurRadius: 20,
-              offset: Offset(-8,-5)
+              offset: const Offset(-5,-3)
+
           ),
         ]
     ),
-    child: ElevatedButton(
-      onPressed: (){
-        setState(() {
-          chatOpen=true;
-        });
 
-      },
-      child: const Icon(Icons.chat,size: 40.0,),
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
-        primary:app_colors.chat_button,
-        minimumSize: Size(70.0, 70.0),
+    child: SizedBox(height: 20,
+      width: 20 ,
+      child:
+      FloatingActionButton(
+        //child: Icon(Icons.ac_unit),
+        child: const Icon(Icons.check,size:20,color:Colors.lightGreenAccent),
+        backgroundColor: Colors.black.withOpacity(0),
+        onPressed: () {
+          print("send audio button pressed");
+          sendAudio();
+
+        },
 
       ),
     ),
   );
+  Widget cancelAudio()=>Container(
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(90),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: const Offset(5,3)
+
+          ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: const Offset(-5,-3)
+
+          ),
+        ]
+    ),
+
+    child: SizedBox(height: 20,
+      width: 20 ,
+      child:
+      FloatingActionButton(
+        //child: Icon(Icons.ac_unit),
+        child: const Icon(Icons.clear,size:20,color:Colors.red),
+        backgroundColor: Colors.black.withOpacity(0),
+        onPressed: ()async {
+          setState(() {
+            _record=false;
+            isAudioReady=false;
+            duration=Duration.zero;
+            position=Duration.zero;
+            audioPlayer.stop();
+
+          });
+          print("Cancel audio button pressed");
 
 
+        },
+      ),
+    ),
+  );
   Widget optionsButtons()=>Container(
     height:70,
-    width: 400,
-     // color:Colors.lightGreenAccent,
+    width: 230,
+    //color:Colors.lightGreenAccent,
 
-    child: Row(children: [Camera_Button(),const SizedBox(width: 10,),gallery_Button()],)
+    child: Stack(
+        children: [
+          if(!_record) Align(alignment: Alignment.centerLeft,child: Camera_Button(),),
+          if(!_record) Align(alignment: Alignment.centerRight,child: gallery_Button(),),
+          if(!isAudioReady) Align(alignment: Alignment.center,child:recordAudioButton(),),
+
+      ]
+
+    ),
   );
   ///////////////////////////////////////////////
-
   Widget photoContainer()=>Container(
     height: 450,
     width: 360,
@@ -629,7 +1081,7 @@ void ButtonRotator(){
         Align(alignment: const Alignment(0,1),child:Container(
           //color: Colors.green,
             width: 105,
-            child: Row(children: [CancelPhoto(),const SizedBox(width: 5,),sendPhoto()],))),
+            child: Row(children: [CancelPhoto(),const SizedBox(width: 5,),sendPhotoButton()],))),
         if(_sendingPhotoMessage)Center(child: loading(),),
 
       ],
@@ -689,7 +1141,7 @@ void ButtonRotator(){
   Widget messagesContainer()=>Container(
     height: 380,
     width: 380,
-    padding: const EdgeInsets.all(15),
+    padding: const EdgeInsets.fromLTRB(5, 15, 5, 15),
     decoration: BoxDecoration(
         color: app_colors.chatmessages,
         borderRadius: BorderRadius.circular(10),
@@ -712,23 +1164,29 @@ void ButtonRotator(){
 
 
   );
-  Widget messageBox(MessageModel message) => Column(
+  Widget messageDetails(MessageModel msg)=>Row(
     children: [
-      Row(children: [Text(message.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
-        if(message.senderType==0)Text(data.user_name,style:const TextStyle(color: Colors.blue,fontSize: 10,fontWeight: FontWeight.bold),),
-        if(message.senderType==1)const Text("Service representative",style:TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
-        const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),],),
+      Text(msg.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
+      if(msg.senderType==0)Text(data.user_name,style:const TextStyle(color: Colors.blue,fontSize: 10,fontWeight: FontWeight.bold),),
+      if(msg.senderType==1)const Text("Service representative",style:TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
+      const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),
+    ]);
 
-      if(message.senderType==0) Text(message.message,style:const TextStyle(color: Colors.blue,fontSize: 20,fontWeight: FontWeight.bold),),
-      if(message.senderType==1) Text(message.message,style:const TextStyle(color: Colors.orangeAccent,fontSize: 20,fontWeight: FontWeight.bold),),
-    ],
+  Widget messageBox(MessageModel msg) => Container(
+    width: 350,
+    //color: Colors.pink,
+    alignment: Alignment.topLeft,
+    child: Text(
+      msg.message,
+        style: TextStyle(
+          color: (msg.senderType==0)?Colors.blue:Colors.orangeAccent,
+          fontSize: 20,
+          fontWeight: FontWeight.bold,
+        ),
+
+    ),
   );
-  Widget imageBox(MessageModel message) => Container(
-    child: Column(children: [
-      Row(children: [Text(message.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
-        if(message.senderType==0)Text(data.user_name,style:const TextStyle(color: Colors.blue,fontSize: 10,fontWeight: FontWeight.bold),),
-        if(message.senderType==1)const Text("Service representative",style:TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
-        const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),],),
+  Widget imageBox(MessageModel message) =>  Column(children: [
       Container(
         width: 300,
         height: 300,
@@ -741,17 +1199,33 @@ void ButtonRotator(){
         ),),
       Text(message.describe),
 
+    ],
+
+
+  );
+  Widget audioBox(MessageModel message) => Container(
+    height: 80,
+   // color: Colors.black38,
+    child: Stack(children: [
+      Align(alignment: const Alignment(0,-1) ,child: audioPlaySlider2(message),),
+      Align(alignment: const Alignment(-1,-1) ,child: playRecordButton2(message),),
+      Align(alignment:const Alignment(0,0)  ,child:recordPlayStateShowContainer2(message.audio!.duration,message.audio!.position)),
 
 
     ],),
-
-
   );
   Widget messageListView() => ListView(
      controller:_controller,
     children: <Widget>[
-      for(MessageModel msg in messages) if(msg.messageType==0)messageBox(msg)
-      else imageBox(msg),
+      for(MessageModel msg in messages)
+        Column(children: [
+          messageDetails(msg),
+          if(msg.messageType==0)messageBox(msg)
+          else if(msg.messageType==1) imageBox(msg)
+          else audioBox(msg)
+
+        ],)
+
 
     ],
   );
@@ -797,7 +1271,6 @@ void ButtonRotator(){
       ),
     ),
   );
-
 
   Widget inputdescriptionTextField()=>Container(
     height:80,
@@ -976,9 +1449,7 @@ void ButtonRotator(){
     ),
 
   );
-
   Widget loading()=> Center(child: CircularProgressIndicator(color: sendrequest?Colors.blue:Colors.grey, ));
-
 ////////######################END TEXT############/////////////////////////////
   Widget map_widget()=>FlutterMap(
     mapController: _mapController,
@@ -1015,12 +1486,12 @@ void ButtonRotator(){
   );
   Widget mainStack()=>Stack(
   children: [
-   if(chatOpen) Align(alignment: const Alignment(0.0,-0.5),child: chatContainer(),),
+   if(chatOpen) Align(alignment: const Alignment(0.0,-0.5),child: mainChatContainer(),),
     if(!chatOpen) Align(alignment: const Alignment(0.0,-0.5),child: mapContainer(),),
     if(!chatOpen) Align(alignment: const Alignment(0.0,0.9),child: SOS_Button(),),
   if(my_socket.isconnect) Align(alignment: const Alignment(0.0,-1),child:connectedToServer())
   else Align(alignment: const Alignment(0.0,-1),child:notConnectedToServer()),
-    if(calling) Align(alignment: const Alignment(0.0,-1),child:loading(),),
+    //if(calling) Align(alignment: const Alignment(0.0,-1),child:loading(),),
 
 
 
@@ -1028,7 +1499,7 @@ void ButtonRotator(){
 
   ],
   );
-  Widget chatContainer()=>SingleChildScrollView(
+  Widget mainChatContainer()=>SingleChildScrollView(
     reverse: true,
     child: Container(
       height:540,
@@ -1057,7 +1528,7 @@ void ButtonRotator(){
             child: Column(children: [
               messagesContainer(),
               optionsButtons(),
-              if(!imageShow)chatSendContainer(),
+              if(!imageShow && !_record)chatSendContainer(),
             ],
 
             ),
@@ -1066,6 +1537,7 @@ void ButtonRotator(){
           if(imageShow)Align(alignment: Alignment.topCenter,child: photoContainer(),),
           if(_centeDissconected) Align(alignment: Alignment.center,child: centerDisconnectedText()),
           if(_endCall) Align(alignment: Alignment.center,child: endCallText()),
+          if(_record)Align(alignment: const Alignment(0,0),child: mainRecordAudioContainer()),
 
 
 
@@ -1087,7 +1559,6 @@ void ButtonRotator(){
         elevation: 10,
         leading:  Icon(Icons.online_prediction,size: 40,color:requestResponse? Colors.lightGreenAccent:Colors.grey,),
         actions: [
-
           PopupMenuButton(
               color: Colors.grey,
               child:const Icon(Icons.language,color:Colors.orangeAccent,size: 40,) ,
@@ -1105,7 +1576,8 @@ void ButtonRotator(){
               ]
           ),
           IconButton(
-            onPressed:() {Navigator.push(context, MaterialPageRoute(builder: (context)=> (const Registor())));},
+            onPressed:() {
+              Navigator.push(context, MaterialPageRoute(builder: (context)=> (const Registor())));},
             icon: const Icon( Icons.perm_identity_rounded,color:Colors.purple,size: 40,),
           ),
 

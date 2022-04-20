@@ -1,3 +1,4 @@
+import 'package:audioplayers/audioplayers.dart';
 import 'package:client_side/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -35,6 +36,7 @@ class _RegistorState extends State<Registor> {
   String? varificationCode;
   TextEditingController otpCode = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  static AudioCache player = AudioCache(prefix:'assets/sounds/');
 
   //////////////////////////////////////////////////verefing phonefunctions/////////
   _onVerificationCompleted(PhoneAuthCredential authCredential) async {
@@ -88,6 +90,7 @@ class _RegistorState extends State<Registor> {
   /////////////////////////////////////////////////////////////////
   Widget nextButton()=>ElevatedButton(
     onPressed:(){
+      player.play('button.mp3');
       debugPrint(_phone.text);
       debugPrint(maskFormatter.getUnmaskedText());
       verifyPhoneNumber();
@@ -108,6 +111,7 @@ class _RegistorState extends State<Registor> {
   );
   Widget nextButton2()=>ElevatedButton(
     onPressed:(){
+      player.play('button.mp3');
       data.user_name=_user_name.text;
       updateData();
       Navigator.push(context, MaterialPageRoute(builder: (context)=>SOS()),);
@@ -123,7 +127,9 @@ class _RegistorState extends State<Registor> {
     child: Text(my_texts.Next, style: TextStyle(color: app_colors.text_button,fontWeight:FontWeight.bold ,fontSize: 18),),
   );
   Widget tryAgainButton()=>ElevatedButton(
+
     onPressed:(){
+      player.play('button.mp3');
       debugPrint(_phone.text);
       debugPrint(maskFormatter.getUnmaskedText());
       // verifyPhoneNumber();
@@ -282,6 +288,7 @@ class _RegistorState extends State<Registor> {
 
   }
   void save(){
+    player.play('button.mp3');
     setState(() {
       _save=false;
     });
@@ -336,6 +343,7 @@ class _RegistorState extends State<Registor> {
   );
   Widget clear_phone()=>IconButton(
     onPressed: (){
+      player.play('button.mp3');
       setState(() {
         data.phone="non";
         data.phone_verified=false;
@@ -343,7 +351,7 @@ class _RegistorState extends State<Registor> {
       });
       data.updateData();
     },
-    icon:Icon(Icons.clear,size: 20,color:Colors.red,) ,
+    icon:const Icon(Icons.clear,size: 20,color:Colors.red,) ,
 
   );
   Widget inputPhone_Button()=>Container(
@@ -365,6 +373,7 @@ class _RegistorState extends State<Registor> {
     ),
     child: ElevatedButton(
       onPressed: (){
+        player.play('button.mp3');
         setState(() {
           _phoneInput=true;
         });
@@ -465,6 +474,7 @@ class _RegistorState extends State<Registor> {
       Align(alignment: const Alignment(1,-0.9),child:IconButton(
         icon: Icon(Icons.next_plan,color:Colors.lightGreenAccent,size: 40,),
         onPressed: (){
+          player.play('button.mp3');
           Navigator.push(context, MaterialPageRoute(builder: (context)=>(SOS())),);
 
         },
