@@ -13,6 +13,8 @@ import 'package:latlong2/latlong.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:flutter_map/flutter_map.dart';
+import 'package:audioplayers/audioplayers.dart';
+import 'dbHelper/audio_model.dart';
 
 
 import 'dart:async';
@@ -39,6 +41,7 @@ class _examplePage2State extends State<examplePage2> {
   late MessageModel newMsgTest;
   bool imageShow=false;
   int photoIndex=0;
+  int audioIndex=0;
   int forTest=0;
 
   void socketListner() {
@@ -76,6 +79,7 @@ class _examplePage2State extends State<examplePage2> {
           message: data['msg']['message'],
           describe:data['msg']['describe'],
           time: data['msg']['time']);
+
 
 
       getNewMessage(data['sourceId'],newMsgtoGet);
@@ -181,8 +185,29 @@ class _examplePage2State extends State<examplePage2> {
 
 
   }
+  Future audioListner(MessageModel msg)async{
+
+    msg.audio!.audioPlayer.onPlayerStateChanged.listen((state) {
+      setState(() {
+        msg.audio!.isPlaying=state==PlayerState.PLAYING;});
+    });
+
+    msg.audio?.audioPlayer.onDurationChanged.listen((newDuration) {
+      print("newDuration");
+      setState(() {msg.audio!.duration=newDuration;});
+
+    });
+
+    msg.audio?.audioPlayer.onAudioPositionChanged.listen((newPosition) {
+      setState(() {msg.audio!.position=newPosition;});
+
+    });
+
+  }
 /////////////////////////chat functions///////////////
   void getNewMessage(String sourceId,MessageModel msg) async {
+
+    print("get msg");
     if (msg.messageType == 1) {
       print("its photo type");
       final decodedBytes = base64Decode(msg.message);
@@ -193,7 +218,22 @@ class _examplePage2State extends State<examplePage2> {
       msg.insert_path(fileImge.path);
       photoIndex++;
     }
-    else print("its a regular msg");
+    if(msg.messageType ==2){
+      print("its audio");
+      final decodedBytes = base64Decode(msg.message);
+      final directory = await getApplicationDocumentsDirectory();
+      File file= File('${directory.path}/testRecord${audioIndex}.mp3');
+      print(file.path);
+      file.writeAsBytesSync(List.from(decodedBytes));
+      msg.insert_path(file.path);
+      audioIndex++;
+      msg.audio=AudioModel();
+      audioListner(msg);
+      msg.audio!.audioPlayer.setUrl(file.path,isLocal: true);
+      await msg.audio!.audioPlayer.seek(msg.audio!.position);
+
+    }
+
 
     for (Client client in _clients) {
       if (client.socketId == sourceId) {
@@ -205,17 +245,8 @@ class _examplePage2State extends State<examplePage2> {
 
   }
   void addNewMsg() async{
-    if(newMsg.messageType==1){
-      print("yes");
-      final decodedBytes = base64Decode(newMsg.message);
-      final directory = await getApplicationDocumentsDirectory();
-      File fileImge = File('${directory.path}/testImage${photoIndex}.png');
-      print(fileImge.path);
-      fileImge.writeAsBytesSync(List.from(decodedBytes));
-      newMsg.insert_path(fileImge.path);
-      photoIndex++;
 
-    }
+
     print("hereeeeeeeeeeeeeeeeeeee");
     setState(() {
 
@@ -367,7 +398,7 @@ class _examplePage2State extends State<examplePage2> {
     width: 380,
     padding: const EdgeInsets.all(15),
     decoration: BoxDecoration(
-        color: Colors.black,
+        color: Colors.black38,
         borderRadius: BorderRadius.circular(10),
         boxShadow:[
           BoxShadow(
@@ -464,7 +495,116 @@ class _examplePage2State extends State<examplePage2> {
 
 
   );
+  Widget messageDetails(MessageModel msg)=>Row(
+      children: [
+        Text(msg.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
+        if(msg.senderType==0)Text(_client.userName,style:const TextStyle(color: Colors.blue,fontSize: 10,fontWeight: FontWeight.bold),),
+        if(msg.senderType==1)const Text("Service representative",style:TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
+        const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),
+      ]);
+  Widget audioPlaySlider(MessageModel msg)=>SizedBox(
+    height: 50,
+    width: 300,
+    child: Slider(
+        min: 0,
+        max: msg.audio!.duration.inSeconds.toDouble(),
+        value: msg.audio!.position.inSeconds.toDouble(),
+        activeColor: Colors.green,
+        inactiveColor: Colors.grey,
+        onChanged: (value)async{
+          final position=Duration(seconds: value.toInt());
+          await msg.audio!.audioPlayer.seek(position);
+          await msg.audio!.audioPlayer.resume();
+
+        }),
+  );
+  String formatTime(Duration duration){
+    String toDigits(int n)=>n.toString().padLeft(2,'0');
+    final Seconds=toDigits(duration.inSeconds.remainder(60));
+    final minutes=toDigits(duration.inMinutes.remainder(60));
+    final hours=toDigits(duration.inHours);
+    return [
+      if(duration.inHours>0) hours,
+      minutes,
+      Seconds,
+    ].join(':');
+
+  }
+  Widget recordPlayStateShowContainer(Duration dr , Duration ps)=>Container(
+
+    height: 50,
+    width: 250,
+    child: Stack(children: [
+      Align(alignment: Alignment.centerLeft,child:Text(formatTime(ps)) ,),
+      Align(alignment: Alignment.centerRight,child:  Text(formatTime(dr-ps)),),
+
+    ],),
+  );
+  Widget playRecordButton(MessageModel msg)=>Container(
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(100),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 100,
+              offset: const Offset(8,5)
+
+          ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 100,
+              offset: const Offset(-8,-5)
+          ),
+        ]
+    ),
+    child: ElevatedButton(
+      onPressed: () async{
+
+        if(msg.audio!.isPlaying){
+          await msg.audio!.audioPlayer.pause();
+        }
+        else{
+          //  String url='https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3';
+          msg.audio!.audioPlayer.resume();
+
+        }
+
+
+      },
+      child: Icon(msg.audio!.isPlaying? Icons.pause :Icons.play_arrow,size: 8,),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
+        primary: Colors.green,
+        minimumSize:const Size(30, 30),
+
+      ),
+    ),
+  );
+  Widget audioBox(MessageModel message) => Container(
+    height: 80,
+    // color: Colors.black38,
+    child: Stack(children: [
+      Align(alignment: const Alignment(0,-1) ,child: audioPlaySlider(message),),
+      Align(alignment: const Alignment(-1,-1) ,child: playRecordButton(message),),
+      Align(alignment:const Alignment(0,0)  ,child:recordPlayStateShowContainer(message.audio!.duration,message.audio!.position)),
+
+
+    ],),
+  );
   Widget messageListView(List<MessageModel> msgs) => ListView(
+    children: <Widget>[
+      for(MessageModel msg in msgs)  Column(children: [
+        messageDetails(msg),
+        if(msg.messageType==0)messageBox(msg)
+        else if(msg.messageType==1) imageBox(msg)
+        else audioBox(msg)
+
+      ],)
+
+
+    ],
+  );
+  Widget messageListView2(List<MessageModel> msgs) => ListView(
     children: <Widget>[
       for(MessageModel msg in msgs) if(msg.messageType==0)messageBox(msg)
       else imageBox(msg),

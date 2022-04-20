@@ -54,6 +54,7 @@ dependencies:
   socket_io: ^0.9.0+2
   objectid: ^2.1.0
   crossplat_objectid: ^3.0.0
+  audioplayers: ^0.20.1
 
 dev_dependencies:
   flutter_test:

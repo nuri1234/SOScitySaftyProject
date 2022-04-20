@@ -7,6 +7,8 @@ import 'colors.dart';
 import 'socket_class.dart';
 import 'home_page.dart';
 import 'registration_page.dart';
+import 'Record.dart';
+import 'sos_main_screen.dart';
 
 
 
@@ -83,7 +85,8 @@ class _MyAppState extends State<MyApp> {
       return const MaterialApp(
         title: 'home page',
         debugShowCheckedModeBanner: false,
-        home: Home(),
+       // home: Home(),
+        home: SOS(),
       );
   }
 
