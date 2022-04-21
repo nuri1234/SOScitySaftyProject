@@ -8,20 +8,18 @@ class WorkerModel {
   String userName;
   String password;
 
-  WorkerModel({
-    required this.id,
-    required this.fullName,
-    required this.userName,
-    required this.password,  });
+  WorkerModel({required this.id, required this.fullName,required this.userName,required this.password,});
+
+  Map<String, dynamic> toMap() {
+    return {
+      '_id': id,
+      "fullName": fullName,
+      'userName': userName,
+      'password': password,
+    };
+  }
 
 
 
 
-
-  Map<String, dynamic> toMap() => {
-    "_id": id,
-    "fullName": fullName,
-    "userName": userName,
-    "password": password,
-  };
 }
