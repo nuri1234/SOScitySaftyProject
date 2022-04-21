@@ -4,7 +4,10 @@ import 'dart:io';
 import 'package:center_side/compount/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
-
+import 'compount/colors.dart';
+import 'package:flutter/material.dart';
+import 'package:google_fonts/google_fonts.dart';
+import 'compount/texts.dart';
 import 'socket_class.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import 'dbHelper/message_model.dart';
@@ -16,8 +19,6 @@ import 'package:geocoding/geocoding.dart';
 import 'package:flutter_map/flutter_map.dart';
 import 'package:audioplayers/audioplayers.dart';
 import 'dbHelper/audio_model.dart';
-
-
 import 'dart:async';
 
 
@@ -44,6 +45,7 @@ class _examplePage2State extends State<examplePage2> {
   int photoIndex=0;
   int audioIndex=0;
   int forTest=0;
+  ///test
 
   void socketListner() {
     my_socket.socket.on("SOS_Call", (data) async{
