@@ -3,7 +3,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/material/app.dart';
 import '../compount/drawer.dart';
-import 'package:carousel_pro/carousel_pro.dart';
+
 import 'package:center_side/pages/signin_page.dart';
 
 class HomePage extends StatefulWidget {
