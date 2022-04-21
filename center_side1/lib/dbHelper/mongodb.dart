@@ -2,6 +2,7 @@ import 'dart:developer';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:center_side/dbHelper/constants.dart';
 import 'package:center_side/dbHelper/user_model.dart';
+import 'worker_model.dart';
 
 class MongoDB{
   static var db,UserCollection,WorkerCollectin;
@@ -22,6 +23,12 @@ class MongoDB{
   }
 
 
+  static insertWorker(WorkerModel worker) async {
+    await WorkerCollectin.insertAll([worker.toMap()]);
+
+  }
+
+
 
 
 
@@ -29,6 +36,17 @@ class MongoDB{
     try {
       final users = await UserCollection.find().toList();
       return users;
+    } catch (e) {
+      print(e);
+      throw Future.value(e);
+    }
+  }
+
+
+  static Future<List<Map<String, dynamic>>> getWorkers() async {
+    try {
+      final workers = await WorkerCollectin.find().toList();
+      return workers;
     } catch (e) {
       print(e);
       throw Future.value(e);
