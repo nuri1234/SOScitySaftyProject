@@ -43,6 +43,7 @@ class _examplePage2State extends State<examplePage2> {
   int photoIndex=0;
   int audioIndex=0;
   int forTest=0;
+  ///test
 
   void socketListner() {
     my_socket.socket.on("SOS_Call", (data) async{
