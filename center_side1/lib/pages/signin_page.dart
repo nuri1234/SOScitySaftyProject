@@ -5,6 +5,7 @@ import '../dbHelper/worker_managment.dart';
 import '../dbHelper/worker_model.dart';
 import '../example2.dart';
 
+
 class SignIn extends StatefulWidget {
   const SignIn({Key? key}) : super(key: key);
 
@@ -14,6 +15,7 @@ class SignIn extends StatefulWidget {
 
 
 class _SignInState extends State<SignIn> {
+  var islogin;
   final TextEditingController _userName= TextEditingController();
   final TextEditingController _password= TextEditingController();
 

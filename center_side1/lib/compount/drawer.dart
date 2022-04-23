@@ -43,7 +43,6 @@ class MyDrawerState extends State<MyDrawer>{
               leading: Icon(Icons.language,color: Colors.black,size: 30,),
               onTap: (){},
             ),
-            Divider(color: Colors.blue,thickness: 1.0,),
             ListTile(
               title:Text("התנתקות",style: TextStyle(color: Colors.black,fontSize: 15)),
               leading: Icon(Icons.logout,color: Colors.black,size: 30,),

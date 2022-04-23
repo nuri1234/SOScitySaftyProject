@@ -9,6 +9,7 @@ import 'compount/drawer.dart';
 import 'package:center_side/pages/login.dart';
 import 'package:center_side/pages/workPage.dart';
 import 'package:center_side/pages/addWorker.dart';
+import 'package:center_side/pages/workerList.dart';
 
 
 
@@ -28,7 +29,7 @@ class MyApp extends StatelessWidget {
     return  MaterialApp(
       title: 'HomePage',
       debugShowCheckedModeBanner: false,
-      home:AddWorker(),
+      home:WorkerList(),
       routes: {
         'homePage':(context){
           return HomePage();

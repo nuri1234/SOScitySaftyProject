@@ -15,7 +15,10 @@ class MongoDB{
     WorkerCollection=db.collection(WORKER_COLLECTION);
   }
 
-
+static  Future<List<Map<String,dynamic>>> getWorker()async{
+    final workersList=await WorkerCollection.find().toList();
+    return workersList;
+}
 
 
   static insertUser(User user) async {
