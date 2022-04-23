@@ -1,17 +1,14 @@
-import 'package:flutter/material.dart';
-import 'package:center_side/dbHelper/worker_model.dart';
 import 'mongodb.dart';
 import 'package:flutter/material.dart';
 import 'package:mongo_dart/mongo_dart.dart';
-import 'user_model.dart';
-import 'package:bson/src/classes/object_id.dart' ;
+import 'worker_model.dart';
+
 
 
 
 
 Future<WorkerModel> newWorker(String fullName,String userName, String password)async{
   final id =ObjectId();
-  print("ff");
   final  worker = WorkerModel(
     id: id,
     fullName:fullName,
@@ -19,29 +16,26 @@ Future<WorkerModel> newWorker(String fullName,String userName, String password)a
     password:password,
 
   );
-
-
   await MongoDB.insertWorker(worker);
-
-
   return worker;
 }
 
 
 
-dynamic searchUser(String userName)async{
-  List l=await MongoDB.getUsers();
+dynamic searchWorker(String userName)async{
+  List l=await MongoDB.getWorkers();
   int i;
   for(i=0;i<l.length;i++){
     if(l[i]['userName']==userName){
       print("found");
-      final user=User(
+      final worker=WorkerModel(
         id: l[i]['_id'],
+        fullName:l[i]['fullName'],
         userName:l[i]['userName'],
         password: l[i]['password'],
 
       );
-      return user;
+      return worker;
     }
   }
 
