@@ -2,10 +2,12 @@ import 'package:center_side/compount/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:center_side/compount/drawer.dart';
 import 'package:flutter/cupertino.dart';
-import 'package:flutter/material.dart';
+import 'package:center_side/dbHelper/mongodb.dart';
 import '../dbHelper/worker_managment.dart';
 import '../dbHelper/worker_model.dart';
 import '../example2.dart';
+import 'package:center_side/dbHelper/worker_model.dart';
+import 'package:mongo_dart/mongo_dart.dart'as M;
 
 class AddWorker extends StatefulWidget {
   const AddWorker({Key? key}) : super(key: key);
@@ -19,29 +21,36 @@ class _AddWorkerState extends State<AddWorker> {
   final TextEditingController _userName= TextEditingController();
   final TextEditingController _password= TextEditingController();
 
-  void addWorker()async{
-    var user=await searchUser(_userName.text);
-    if(user.password==_password.text){
-      print("ok");
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>(const examplePage2())),);
-    }
-    else print("no match");
+  Future<void> addWorker(String fullName,String userName,String password)async{
+    var _id=M.ObjectId();
+    final data=WorkerModel(id: _id, fullName: fullName, userName: userName, password: password);
+    var result=await MongoDB.insertWorker(data);
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text("Inserting "+fullName.toString())));
+    _clearAll();
+    //var worker=await MongoDB.insertWorker(_fullName.text,_userName.text,_password.text);
+    // print("ok");
+    //Navigator.push(context, MaterialPageRoute(builder: (context)=>(Container())),);
 
-    if(user==null) print("user not found");
+  }
+  void _clearAll(){
+    _fullName.text="";
+    _userName.text="";
+    _password.text="";
   }
 
   Widget NextButton()=>Container(
     height: 100.0,
     width: 200.0,
+    padding: EdgeInsets.all(8),
     child:
     FloatingActionButton(
       //child: Icon(Icons.ac_unit),
       child: Text("הוספה",style: TextStyle(fontSize: 20,color: Colors.black),),
 
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.white,
       onPressed: () {
         print("Next");
-        addWorker();
+        addWorker(_fullName.text,_userName.text,_password.text);
 
       },
     ),
@@ -49,10 +58,10 @@ class _AddWorkerState extends State<AddWorker> {
 
   Widget fullNameTextField()=>Container(
     height:100,
-    width:200,
+    width:250,
     child: TextField(
       decoration: InputDecoration(
-          hintText: "fullName",
+          hintText: "שם מלא",
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color:Colors.black, width: 5.0),
             borderRadius: BorderRadius.circular(20.0),
@@ -75,10 +84,10 @@ class _AddWorkerState extends State<AddWorker> {
 
   Widget userNameTextField()=>Container(
     height:100,
-    width:200,
+    width:250,
     child: TextField(
       decoration: InputDecoration(
-          hintText: "userName",
+          hintText: "שם משתמש",
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color:Colors.black, width: 5.0),
             borderRadius: BorderRadius.circular(20.0),
@@ -102,10 +111,10 @@ class _AddWorkerState extends State<AddWorker> {
 
   Widget passwordTextField()=>Container(
     height:100,
-    width:200,
+    width:250,
     child: TextField(
       decoration: InputDecoration(
-          hintText: "password",
+          hintText: "סיסמה",
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color:Colors.black, width: 5.0),
             borderRadius: BorderRadius.circular(20.0),
@@ -130,29 +139,26 @@ class _AddWorkerState extends State<AddWorker> {
   Widget inputContainer()=>Container(
     height:400,
     width:400,
-    color: Colors.black,
+    color: Colors.black12,
     padding: EdgeInsets.all(8),
     child: Stack(children: [
+      Align(alignment: const Alignment(0, -1.1),child:SizedBox(height: 50,)),
       Align(alignment: const Alignment(0, -1),child: fullNameTextField(),),
-      Align(alignment: const Alignment(0, -2),child: userNameTextField(),),
-      Align(alignment: const Alignment(0, 0),child: passwordTextField(),),
+      Align(alignment: const Alignment(0, -0.4),child: userNameTextField(),),
+      Align(alignment: const Alignment(0, 0.3),child: passwordTextField(),),
+      Align(alignment: const Alignment(0, 0.9),child: NextButton(),),
 
     ],),
   );
   Widget mainStack()=>Stack(children: [
     ListView(children: [
       Container(
-          height: 100,
-          width: double.infinity,
-
-
+        height: 100,
+        width: double.infinity,
       ),
       Container(
         child:Align(alignment: const Alignment(0, 0),child: inputContainer(),),
       ),
-      // Container(
-      //   child:Align(alignment: const Alignment(0, 0.8),child: NextButton(),),
-      // )
     ],)
 
 
@@ -163,16 +169,16 @@ class _AddWorkerState extends State<AddWorker> {
     return Directionality(
       textDirection: TextDirection.rtl,
       child: Scaffold(
-          appBar: AppBar(
-            title: Text("הוספת עובד חדש"),
-            backgroundColor: Colors.blue,
-            centerTitle: true,
-            elevation: 6,
+        appBar: AppBar(
+          title: Text("הוספת עובד חדש"),
+          backgroundColor: Colors.blue,
+          centerTitle: true,
+          elevation: 6,
 
-          ),
-          backgroundColor: Colors.white,
-          drawer: MyDrawer(),
-          body:mainStack(),
+        ),
+        backgroundColor: Colors.white,
+        drawer: MyDrawer(),
+        body:mainStack(),
       ),
     );
   }
