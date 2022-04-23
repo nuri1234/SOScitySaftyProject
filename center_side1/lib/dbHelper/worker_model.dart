@@ -1,8 +1,8 @@
 
-import 'dart:convert';
-import 'package:crossplat_objectid/crossplat_objectid.dart';
+import 'package:mongo_dart/mongo_dart.dart';
 
-class WorkerModel {
+
+class WorkerModel{
   ObjectId id;
   String fullName;
   String userName;
@@ -18,8 +18,6 @@ class WorkerModel {
       'password': password,
     };
   }
-
-
 
 
 }
