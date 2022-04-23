@@ -1,8 +1,8 @@
 import 'package:center_side/compount/drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import '../dbHelper/user_management.dart';
-import '../dbHelper/user_model.dart';
+import '../dbHelper/worker_managment.dart';
+import '../dbHelper/worker_model.dart';
 import '../example2.dart';
 
 class SignIn extends StatefulWidget {
@@ -18,7 +18,7 @@ class _SignInState extends State<SignIn> {
   final TextEditingController _password= TextEditingController();
 
   void chekUser()async{
-    var user=await searchUser(_userName.text);
+    var user=await searchWorker(_userName.text);
     if(user.password==_password.text){
       print("ok");
       Navigator.push(context, MaterialPageRoute(builder: (context)=>(const examplePage2())),);
