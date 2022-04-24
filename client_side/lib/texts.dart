@@ -3,8 +3,7 @@ import 'package:google_fonts/google_fonts.dart';
 import 'colors.dart';
 class my_texts {
   static String CitySafty = "SOS City Safety";
-  static String capturing_Image = "capturing Image";
-  static String captur_image = "capture image";
+
   static String select_image = "select image";
   static String delet_image = "delete image";
   static String cancel = "cancel";

@@ -36,7 +36,6 @@ class _RegistorState extends State<Registor> {
   String? varificationCode;
   TextEditingController otpCode = TextEditingController();
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  static AudioCache player = AudioCache(prefix:'assets/sounds/');
 
   //////////////////////////////////////////////////verefing phonefunctions/////////
   _onVerificationCompleted(PhoneAuthCredential authCredential) async {
@@ -73,7 +72,7 @@ class _RegistorState extends State<Registor> {
     return null;
   }
   verifyPhoneNumber() async{
-    print("herejjjjjjjj");
+
     String phone= codeDigits+maskFormatter.getUnmaskedText();
     print(phone);
 
@@ -83,14 +82,13 @@ class _RegistorState extends State<Registor> {
         verificationFailed: _onVerificationFailed,
         codeSent: _onCodeSent,
         codeAutoRetrievalTimeout: _onCodeTimeout);
-    print("here3");
+
   }
   //////////////////////////end verefing phonefunctions/////////
 
   /////////////////////////////////////////////////////////////////
   Widget nextButton()=>ElevatedButton(
     onPressed:(){
-      player.play('button.mp3');
       debugPrint(_phone.text);
       debugPrint(maskFormatter.getUnmaskedText());
       verifyPhoneNumber();
@@ -111,10 +109,7 @@ class _RegistorState extends State<Registor> {
   );
   Widget nextButton2()=>ElevatedButton(
     onPressed:(){
-      player.play('button.mp3');
-      data.user_name=_user_name.text;
       updateData();
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>SOS()),);
     } ,
 
     style: ElevatedButton.styleFrom(
@@ -129,7 +124,6 @@ class _RegistorState extends State<Registor> {
   Widget tryAgainButton()=>ElevatedButton(
 
     onPressed:(){
-      player.play('button.mp3');
       debugPrint(_phone.text);
       debugPrint(maskFormatter.getUnmaskedText());
       // verifyPhoneNumber();
@@ -271,10 +265,7 @@ class _RegistorState extends State<Registor> {
       ),
     ),
   );
-  Widget phoneVerificationMainContainer()=>Container(
-    color: Colors.green,
 
-  );
   ////////////////////////////////////////
 
 
@@ -288,7 +279,7 @@ class _RegistorState extends State<Registor> {
 
   }
   void save(){
-    player.play('button.mp3');
+
     setState(() {
       _save=false;
     });
@@ -341,13 +332,42 @@ class _RegistorState extends State<Registor> {
     icon:Icon(Icons.save,size: 50,color: _save? Colors.green: Colors.grey,) ,
 
   );
+ Widget continueButton()=>Container(
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(90),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: Offset(8,5)
+
+          ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 20,
+              offset: Offset(-8,-5)
+          ),
+        ]
+    ),
+    child: ElevatedButton(
+      onPressed: (){
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
+      },
+      child: const Icon(Icons.next_plan_rounded,size: 20.0,),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
+        primary: app_colors.cmera_button,
+        minimumSize:const Size(50.0, 50.0),
+
+      ),
+    ),
+  );
   Widget clear_phone()=>IconButton(
     onPressed: (){
-      player.play('button.mp3');
+
       setState(() {
         data.phone="non";
         data.phone_verified=false;
-        _phoneInput=true;
       });
       data.updateData();
     },
@@ -373,7 +393,7 @@ class _RegistorState extends State<Registor> {
     ),
     child: ElevatedButton(
       onPressed: (){
-        player.play('button.mp3');
+
         setState(() {
           _phoneInput=true;
         });
@@ -413,7 +433,7 @@ class _RegistorState extends State<Registor> {
           ),
       maxLines: 15,
       controller: _user_name,
-      style:  GoogleFonts.aBeeZee(fontSize:20,fontWeight: FontWeight.bold,color: Colors.lightGreenAccent),
+      style:  GoogleFonts.aBeeZee(fontSize:20,fontWeight: FontWeight.bold,color: Colors.green,),
       textAlign: TextAlign.left,
       onChanged: (_user_name){setState(() {
         _save=true;
@@ -446,20 +466,35 @@ class _RegistorState extends State<Registor> {
     child: Column(
         children: [
           Container(
-              height: 100,
-              width: 300,
-             // color: Colors.grey,
-              child: Center(child: my_texts.explaneText)),
+            height: 230,
+            width: 350,
+            //color: Colors.black12,
+            child: Stack(children: [
+              Align(alignment: Alignment.bottomCenter,child:Container(
+                  height: 100,
+                  width: 300,
+                //  color: Colors.grey,
+                  child: Center(child: my_texts.explaneText)) ,),
+              Align(alignment: Alignment.topCenter,child:logo() ,),
+            ],),
+
+          ),
+
           deatailsContainer(),
          if(data.phone_verified) Center(
-           child: Row(
-             children: [
-               Text(" ${my_texts.phoneNumber}: ${data.phone}",style: TextStyle(fontSize: 20),),
-               clear_phone()
-             ],
+           child: Container(
+             height: 50,
+             width: 310,
+             //color: Colors.white,
+             child: Row(
+               children: [
+                 Text(" ${my_texts.phoneNumber}: ${data.phone}",style: TextStyle(fontSize: 20),),
+                 clear_phone()
+               ],
+             ),
            ),
          ),
-         if(!_phoneInput) inputPhone_Button(),
+         if(!_phoneInput && !data.phone_verified) inputPhone_Button(),
           if(_phoneInput) if(state==0)
             phoneVerificationContainer(),
           if(state==1)
@@ -470,15 +505,8 @@ class _RegistorState extends State<Registor> {
   Widget mainStack()=>Stack(
     children: [
       Align(alignment: const Alignment(0,0.2),child:mainColumn(),),
-      Align(alignment: const Alignment(0,-0.7),child:welcomeContainer()),
-      Align(alignment: const Alignment(1,-0.9),child:IconButton(
-        icon: Icon(Icons.next_plan,color:Colors.lightGreenAccent,size: 40,),
-        onPressed: (){
-          player.play('button.mp3');
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>(SOS())),);
-
-        },
-      )),
+   //   Align(alignment: const Alignment(0,-0.7),child:welcomeContainer()),
+      Align(alignment: const Alignment(1,-0.9),child:continueButton() ),
 
     ],
 

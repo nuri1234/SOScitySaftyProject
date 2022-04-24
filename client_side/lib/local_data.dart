@@ -31,7 +31,7 @@ class data{
     await prefs.setString('phone', phone );
     await prefs.setBool('first_time',first_time );
    // await prefs.setBool('anonymous', anonymous );
-    await prefs.setString('user_name', phone);
+    await prefs.setString('user_name', user_name);
   }
 
 

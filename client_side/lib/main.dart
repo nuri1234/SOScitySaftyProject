@@ -18,13 +18,14 @@ void main() async{
  my_socket.connect();
  await Firebase.initializeApp();
 
+
 runApp(const MyApp());}
 
 class splashScreen extends StatelessWidget {
   const splashScreen({Key? key}) : super(key: key);
 
 
-  Widget loading()=>const Center(child: CircularProgressIndicator(color: Colors.white, ));
+  Widget loading()=> Center(child: CircularProgressIndicator(color:app_colors.Welcome));
   Widget logo()=>Container(
       padding: const EdgeInsets.all(0),
       margin: const EdgeInsets.all(0),
@@ -41,16 +42,30 @@ class splashScreen extends StatelessWidget {
 
   );
   Widget WelcomeContainer()=>Container(
-    // color: Colors.red,
-      height: 250,
+      height: 500,
       width:400,
       child:Stack(children: [
         Align(alignment: Alignment.topCenter,child: welcome(),),
-        Align(alignment: const Alignment(0.0,1),child: logo(),),
+        Align(alignment: const Alignment(0.0,-0.65),child: logo(),),
+        Align(alignment:  const Alignment(0.0,0.0),child: DefaultTextStyle(
+          style: GoogleFonts.pacifico(fontSize: 60,fontWeight: FontWeight.w300,color: app_colors.Welcome),
+          child: const Text("by"),),),
+        Align(alignment:  const Alignment(0.0,1),child: rahatLogo(),),
 
       ],)
 
   );
+  Widget rahatLogo()=>Container(
+      padding: const EdgeInsets.all(0),
+      margin: const EdgeInsets.all(0),
+      child: const Image(
+        image: AssetImage('assets/images/rahatLogo.png'),
+        height: 200,
+        width: 200,
+      )
+
+  );
+
 
   @override
   Widget build(BuildContext context) {
@@ -58,14 +73,13 @@ class splashScreen extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         home: Container(
       color: app_colors.background,
-      child: Center(
         child: Column(children: [
-          const SizedBox(height: 100,),
+          const SizedBox(height: 50,),
           WelcomeContainer(),
           loading(),
 
         ],),
-      ),
+
 
     ));
   }
@@ -85,8 +99,10 @@ class _MyAppState extends State<MyApp> {
       return const MaterialApp(
         title: 'home page',
         debugShowCheckedModeBanner: false,
-       // home: Home(),
-        home: SOS(),
+        home: Home(),
+      //  home: splashScreen(),
+
+
       );
   }
 
