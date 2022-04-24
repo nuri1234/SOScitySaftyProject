@@ -10,20 +10,53 @@ class WorkerList extends StatefulWidget {
   State<WorkerList> createState() => _WorkerListState();
 }
 
-class _WorkerListState extends State<WorkerList> {
 
-  // Future getWorkerList()async{
-  //   var response=await MongoDB.getWorkers();
-  //
-  //   return
-  // }
+class _WorkerListState extends State<WorkerList> {
+  List<WorkerModel> _workers= [];
+
+  void  loadWorkers()async{
+    var workers=await MongoDB.getWorkers();
+    for(var worker in workers){
+      WorkerModel newWorker=WorkerModel(
+          id:worker['_id'],
+          fullName:worker['fullName'],
+          userName:worker['userName'],
+          password: worker['password']);
+      setState(() {
+        _workers.add(newWorker);
+      });
+
+
+    }
+    print(workers);
+
+
+  }
+
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    loadWorkers();
+  }
+
+
+  Widget workerListView() => ListView(
+    children: <Widget>[
+      for(WorkerModel worker in _workers)
+       Text("username ${worker.userName}")
+
+    ],
+
+
+  );
 
   @override
   Widget build(BuildContext context) {
     return Directionality(
         textDirection: TextDirection.rtl,
         child:Scaffold(
-          body:Text("taext")
+          body:workerListView()
         )
     );
   }
