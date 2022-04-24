@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import '../dbHelper/worker_managment.dart';
 import '../dbHelper/worker_model.dart';
 import '../example2.dart';
+import 'package:center_side/uses/share_data.dart';
 
 
 class SignIn extends StatefulWidget {
@@ -18,17 +19,24 @@ class _SignInState extends State<SignIn> {
   var islogin;
   final TextEditingController _userName= TextEditingController();
   final TextEditingController _password= TextEditingController();
-
+  @override
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _password.text="";
+  }
   void chekUser()async{
     var user=await searchWorker(_userName.text);
     if(user.password==_password.text){
       print("ok");
+      data.userName=_userName.text;
       Navigator.push(context, MaterialPageRoute(builder: (context)=>(const examplePage2())),);
     }
     else print("no match");
 
     if(user==null) print("user not found");
   }
+
 
   Widget NextButton()=>Container(
     height: 100.0,
