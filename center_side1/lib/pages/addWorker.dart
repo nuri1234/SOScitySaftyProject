@@ -153,18 +153,8 @@ class _AddWorkerState extends State<AddWorker> {
   Widget mainStack()=>Stack(children: [
     ListView(children: [
       Container(
-        height:50,
-        width:50,
-        color: Colors.white,
-        margin: EdgeInsets.only(left: 25,right: 800,top: 25,bottom: 25),
-        child: RaisedButton(
-        child: Text('הצג כל העובדים', style: TextStyle(fontSize: 20.0),),
-        color: Colors.grey,
-        textColor: Colors.black,
-        onPressed: () {
-          print("Next");
-        },
-      )
+       width: double.infinity,
+       height: 100,
       ),
       Container(
         child:Align(alignment: const Alignment(0, 0),child: inputContainer(),),
@@ -184,9 +174,15 @@ class _AddWorkerState extends State<AddWorker> {
               (
                 icon:Icon(Icons.logout),
             onPressed: (){
-                  print("outtt");
+              Navigator.of(context).popAndPushNamed('homePage');
             },
+
             ),
+          actions: [
+            IconButton(icon: Icon(Icons.arrow_back),onPressed: (){
+              Navigator.of(context).popAndPushNamed('workerList');
+            },),
+          ],
           title: Text("הוספת עובד חדש"),
           backgroundColor: Colors.blue,
           centerTitle: true,
