@@ -63,6 +63,7 @@ class _SOSState extends State<SOS> {
   final ScrollController _controller = ScrollController();
   int photoIndex=0;
    int audioIndex=0;
+   int audioRecordIndex=0;
   static AudioCache player = AudioCache(prefix:'assets/sounds/');
    final recorder =FS.FlutterSoundRecorder() ;
    late File audioRecordFile;
@@ -296,7 +297,8 @@ void ButtonRotator(){
     setState(() {
       _record=true;
     });
-    await recorder.startRecorder(toFile:'audio');
+    await recorder.startRecorder(toFile:'audio$audioRecordIndex');
+    audioRecordIndex++;
 
   }
    Future stopRecord() async {
@@ -587,8 +589,8 @@ void ButtonRotator(){
         inactiveColor: Colors.grey,
         onChanged: (value)async{
           final position=Duration(seconds: value.toInt());
-          await msg.audio!.audioPlayer!.seek(position);
-          await msg.audio!.audioPlayer!.resume();
+          await msg.audio!.audioPlayer.seek(position);
+          await msg.audio!.audioPlayer.resume();
 
         }),
   );
@@ -820,7 +822,6 @@ void ButtonRotator(){
       ),
     ),
   );
-
   Widget CancelButton()=>Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(90),
@@ -1129,9 +1130,9 @@ void ButtonRotator(){
         decoration: InputDecoration(
           border:InputBorder.none,
           hintText: my_texts.enterYourMessage,
-          hintStyle: const TextStyle(color: Colors.white),
+          hintStyle: const TextStyle(color: Colors.black),
         ),
-        style: const TextStyle(color: Colors.white),
+        style: const TextStyle(color: Colors.black),
       ),
     ),
 
@@ -1179,8 +1180,8 @@ void ButtonRotator(){
     child: Text(
       msg.message,
         style: TextStyle(
-          color: (msg.senderType==0)?Colors.blue:Colors.orangeAccent,
-          fontSize: 20,
+          color: (msg.senderType==0)?Colors.blue:Colors.black,
+          fontSize: 25,
           fontWeight: FontWeight.bold,
         ),
 
@@ -1287,7 +1288,7 @@ void ButtonRotator(){
             borderRadius: BorderRadius.circular(20.0) ,
 
           ),
-          fillColor: app_colors.describeInputFill,
+          fillColor: app_colors.textInputFill,
           filled: true,
           prefix: const Padding(
             padding: EdgeInsets.all(4),

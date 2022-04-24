@@ -8,6 +8,7 @@ class app_colors{
   static Color city_safty = const Color(0xffffffff);
   static Color app_bar_background = Colors.blueGrey;
   static Color buttom_shadow = const Color(0xff2E4053);
+  static Color buttom_shadow2 = const Color(0xff2E4053);
 
   static Color Welcome = Colors.white;
 

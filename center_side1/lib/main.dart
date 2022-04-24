@@ -1,4 +1,3 @@
-
 import 'package:flutter/material.dart';
 
 import 'dbHelper/mongodb.dart';
@@ -30,4 +29,3 @@ class MyApp extends StatelessWidget {
     );
   }
 }
-
