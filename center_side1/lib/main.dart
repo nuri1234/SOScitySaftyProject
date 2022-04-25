@@ -1,3 +1,4 @@
+import 'package:center_side/pages/main_page.dart';
 import 'package:flutter/material.dart';
 import 'package:center_side/pages/maneger.dart';
 import 'dbHelper/mongodb.dart';
@@ -10,7 +11,7 @@ import 'package:center_side/pages/login.dart';
 import 'package:center_side/pages/workPage.dart';
 import 'package:center_side/pages/addWorker.dart';
 import 'package:center_side/pages/workerList.dart';
-
+import 'package:center_side/pages/viewMessage.dart';
 
 
 
@@ -29,7 +30,7 @@ class MyApp extends StatelessWidget {
     return  MaterialApp(
       title: 'HomePage',
       debugShowCheckedModeBanner: false,
-      home:WorkerList(),
+      home:WorkPage(),
       routes: {
         'homePage':(context){
           return HomePage();
@@ -49,7 +50,9 @@ class MyApp extends StatelessWidget {
         'workerList':(context){
           return WorkerList();
         },
-
+        'messageList':(context){
+          return MessageList();
+        },
       },
     );
   }

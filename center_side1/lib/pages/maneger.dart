@@ -10,6 +10,6 @@ class Maneger extends StatefulWidget {
 class _ManegerState extends State<Maneger> {
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Container(child: Text("hallo manger"),color: Colors.white,);
   }
 }

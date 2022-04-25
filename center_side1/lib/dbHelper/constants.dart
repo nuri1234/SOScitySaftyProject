@@ -3,3 +3,4 @@ const CALL_COLLECTION="call";
 const IMAGES_COLLECTION="images";
 const USER_COLLECTION="user";
 const WORKER_COLLECTION="worker";
+const CONTACT_COLLECTION="contacts";

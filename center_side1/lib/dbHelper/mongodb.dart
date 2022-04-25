@@ -1,4 +1,5 @@
 import 'dart:developer';
+import 'package:center_side/dbHelper/contacts_model.dart';
 import 'package:get_server/get_server.dart';
 import 'package:mongo_dart/mongo_dart.dart';
 import 'package:center_side/dbHelper/constants.dart';
@@ -6,13 +7,14 @@ import 'package:center_side/dbHelper/user_model.dart';
 import 'package:center_side/dbHelper/worker_model.dart';
 
 class MongoDB{
-  static var db,UserCollection,WorkerCollection;
+  static var db,UserCollection,WorkerCollection,ContactCollection;
   static connect() async {
     db = await Db.create(MONGO_CONN_URL);
     await db.open();
     //inspect(db);
     UserCollection=db.collection(USER_COLLECTION);
     WorkerCollection=db.collection(WORKER_COLLECTION);
+    ContactCollection=db.collection(CONTACT_COLLECTION);
   }
 
 static  Future<List<Map<String,dynamic>>> getWorker()async{
@@ -25,7 +27,22 @@ static  Future<List<Map<String,dynamic>>> getWorker()async{
     await UserCollection.insertAll([user.toMap()]);
 
   }
+  static insertContact(Contact contact) async {
+    await ContactCollection.insertAll([contact.toMap()]);
 
+  }
+  static Future<List<Map<String, dynamic>>> getContacts() async {
+    try {
+      final contacts = await ContactCollection.find().toList();
+      return contacts;
+    } catch (e) {
+      print(e);
+      throw Future.value(e);
+    }
+  }
+  static deleteContact(Contact contact)async{
+    await ContactCollection.remove(where.id(contact.id));
+  }
 
   // static insertWorker(WorkerModel worker) async {
   //   await WorkerCollectin.insertAll([worker.toMap()]);
@@ -70,7 +87,9 @@ static  Future<List<Map<String,dynamic>>> getWorker()async{
       throw Future.value(e);
     }
   }
-
+static deleteWorker(WorkerModel worker)async{
+    await WorkerCollection.remove(where.id(worker.id));
+}
 
   /*static update(Call call) async {
     var c = await callCollection.findOne({"_id": call.id});

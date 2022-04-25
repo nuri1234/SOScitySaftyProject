@@ -112,11 +112,19 @@ class _WorkPageState extends State<WorkPage> {
         textDirection: TextDirection.rtl,
         child: Scaffold(
         appBar: AppBar(
-        title: Text("דף העבודה"),backgroundColor: Colors.blue,
-        centerTitle: true,
-        elevation: 6,
+          title: Text("דף העבודה"),backgroundColor: Colors.blue,
+          centerTitle: true,
+          elevation: 6,
+          actions: [
+            IconButton(icon: Icon(Icons.home),onPressed: (){
+              Navigator.of(context).popAndPushNamed('homePage');
+            },),
+            IconButton(icon: Icon(Icons.admin_panel_settings),onPressed: () {
+              Navigator.of(context).popAndPushNamed('maneger');
+            })
+          ],
         ),
-        drawer: MyDrawer(),
+
         body:Container(
           child: mangeCallsContainer(),
         )

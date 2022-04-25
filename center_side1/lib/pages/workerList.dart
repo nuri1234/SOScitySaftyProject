@@ -27,12 +27,8 @@ class _WorkerListState extends State<WorkerList> {
       setState(() {
         _workers.add(newWorker);
       });
-
-
     }
     print(workers);
-
-
   }
 
   @override
@@ -42,34 +38,58 @@ class _WorkerListState extends State<WorkerList> {
   }
 
 
-  Widget workerListView() => ListView.builder(
-    itemCount:_workers.length,
-    itemBuilder:(context,index){
-      return Padding(
-        padding: const EdgeInsets.symmetric(vertical: 10.0,horizontal: 10.0),
-        child: Card(child:ListTile(
-          onTap: (){},
-          title: Text("שם העובד : "+_workers[index].fullName),
-          leading: CircleAvatar(
-            backgroundImage:AssetImage('assets/images/username2.png') ,
-          ),
-          trailing: Container(
-            width: 100,
-            alignment: Alignment.bottomLeft,
-            padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
-            child: FlatButton(
-              onPressed: (){},
-              color: Colors.redAccent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(20.0),
-              ),
-              child: Text("מחיקה",style: TextStyle(color:Colors.white),),
+  Widget workerListView() => RefreshIndicator(
+    onRefresh: _refresh,
+      child:ListView.builder(
+      itemCount:_workers.length,
+      itemBuilder:(context,index){
+        return Padding(
+          padding: const EdgeInsets.symmetric(vertical: 10.0,horizontal: 10.0),
+          child: Card(child:ListTile(
+            onTap: (){},
+            title: Text("שם העובד : "+_workers[index].fullName),
+            leading: CircleAvatar(
+              backgroundImage:AssetImage('assets/images/username2.png') ,
             ),
+            trailing: Container(
+              width: 100,
+              alignment: Alignment.bottomLeft,
+              padding: EdgeInsets.symmetric(horizontal: 10.0,vertical: 10.0),
+              child:
+              FlatButton(
+                onPressed: (){
+                  showDialog(context: context, builder: (context){
+                    return AlertDialog(
+                      actions: [
+                        FlatButton(onPressed: ()async{
+                          await MongoDB.deleteWorker(_workers[index]);
+                          setState(() {
+                            Navigator.of(context).pop();
+                          });
+                        }, child: Text("OK")),
+                        FlatButton(onPressed: (){
+                          Navigator.of(context).pop();
+                        }, child: Text("Cancel")),
+                      ],
+                      title: Text("Confirm Delete"),
+                      contentPadding: EdgeInsets.all(20),
+                      content: Text("Are you sure to delete: "+_workers[index].fullName),
+                      titleTextStyle: TextStyle(color: Colors.blue,fontSize: 25),
+                      contentTextStyle: TextStyle(color: Colors.red,fontSize:15),
+                    );
+                  });
+                },
+                color: Colors.redAccent,
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                child: Text("מחיקה",style: TextStyle(color:Colors.white),),
+              ),
+            ),
+          )
           ),
-        )
-        ),
-      );
-    }
+        );
+      }
     // children: <Widget>[
     //   for(WorkerModel worker in _workers)
     //    Text("username ${worker.userName}")
@@ -77,8 +97,11 @@ class _WorkerListState extends State<WorkerList> {
     // ],
 
 
+  )
   );
-
+  Future _refresh(){
+    return Future.delayed(Duration(seconds:0));
+  }
   @override
   Widget build(BuildContext context) {
     return Directionality(
@@ -95,6 +118,9 @@ class _WorkerListState extends State<WorkerList> {
               actions: [
                 IconButton(icon: Icon(Icons.home),onPressed: (){
                   Navigator.of(context).popAndPushNamed('homePage');
+                },),
+                IconButton(icon: Icon(Icons.refresh),onPressed: (){
+                  Navigator.of(context).popAndPushNamed('workerList');
                 },),
                 IconButton(icon: Icon(Icons.exit_to_app),onPressed: (){
                   examplePage2();
