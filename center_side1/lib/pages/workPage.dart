@@ -41,7 +41,7 @@ class _WorkPageState extends State<WorkPage> {
     if(mng.userName==_textFieldController.text){
       print("ok");
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (c) => Scaffold(body: Text('maneger'))
+          builder: (c) => Scaffold(body: ManagerPage())
       ));
     }
     else print("no match");

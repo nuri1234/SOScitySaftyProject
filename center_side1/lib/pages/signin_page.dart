@@ -1,4 +1,6 @@
+import 'package:center_side/compount/colors.dart';
 import 'package:center_side/compount/drawer.dart';
+import 'package:center_side/pages/workPage.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../dbHelper/worker_managment.dart';
@@ -30,7 +32,7 @@ class _SignInState extends State<SignIn> {
     if(user.password==_password.text){
       print("ok");
       data.userName=_userName.text;
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>(const examplePage2())),);
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>(const WorkPage())),);
     }
     else print("no match");
 
@@ -46,7 +48,7 @@ class _SignInState extends State<SignIn> {
       //child: Icon(Icons.ac_unit),
       child: Text("כניסה",style: TextStyle(fontSize: 20,color: Colors.black),),
 
-      backgroundColor: Colors.blue,
+      backgroundColor: Colors.orange,
       onPressed: () {
         print("Next");
         chekUser();
@@ -70,7 +72,7 @@ class _SignInState extends State<SignIn> {
             borderRadius: BorderRadius.circular(20.0) ,
 
           ),
-          fillColor: Colors.white,
+          fillColor: app_colors.background,
           filled: true,
           prefix: const Padding(
             padding: EdgeInsets.all(4),
@@ -95,7 +97,7 @@ class _SignInState extends State<SignIn> {
             borderRadius: BorderRadius.circular(20.0) ,
 
           ),
-          fillColor: Colors.white,
+          fillColor: app_colors.background,
           filled: true,
           prefix: const Padding(
             padding: EdgeInsets.all(4),
@@ -109,7 +111,7 @@ class _SignInState extends State<SignIn> {
   Widget inputContainer()=>Container(
     height: 300,
     width: 300,
-    color: Colors.white,
+    color: app_colors.background,
     padding: EdgeInsets.all(8),
     child: Stack(children: [
       Align(alignment: const Alignment(0, -1),child: userNameTextField(),),
@@ -147,13 +149,13 @@ class _SignInState extends State<SignIn> {
         textDirection: TextDirection.rtl,
         child:Scaffold(
           appBar: AppBar(
-            backgroundColor: Colors.blue,
+            backgroundColor: app_colors.app_bar_background,
             title: Text('כניסה למערכת'),
             centerTitle: true,
           ),
-          backgroundColor: Colors.white,
+          backgroundColor: app_colors.background,
           body: mainStak(),
 
-    ));
+        ));
   }
 }

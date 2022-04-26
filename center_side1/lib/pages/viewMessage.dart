@@ -1,3 +1,4 @@
+import 'package:center_side/compount/colors.dart';
 import 'package:center_side/dbHelper/mongodb.dart';
 import 'package:center_side/dbHelper/contacts_model.dart';
 import 'package:center_side/example2.dart';
@@ -88,7 +89,7 @@ class _MessageListState extends State<MessageList> {
                         );
                       });
                     },
-                    color: Colors.green,
+                    color:app_colors.app_bar_background,
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
@@ -108,9 +109,10 @@ class _MessageListState extends State<MessageList> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: app_colors.background,
       appBar: AppBar(
         title:Text("רשימת ההתראות"),
-        backgroundColor: Colors.green,
+        backgroundColor: app_colors.app_bar_background,
         centerTitle: true,
         elevation: 6,
         actions: [

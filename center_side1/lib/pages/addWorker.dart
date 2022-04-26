@@ -1,3 +1,4 @@
+import 'package:center_side/compount/colors.dart';
 import 'package:center_side/compount/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:center_side/compount/drawer.dart';
@@ -47,7 +48,7 @@ class _AddWorkerState extends State<AddWorker> {
       //child: Icon(Icons.ac_unit),
       child: Text("הוספה",style: TextStyle(fontSize: 20,color: Colors.black),),
 
-      backgroundColor: Colors.white,
+      backgroundColor: app_colors.app_bar_background,
       onPressed: () {
         print("Next");
         addWorker(_fullName.text,_userName.text,_password.text);
@@ -71,7 +72,7 @@ class _AddWorkerState extends State<AddWorker> {
             borderRadius: BorderRadius.circular(20.0) ,
 
           ),
-          fillColor: Colors.white,
+          fillColor: app_colors.background,
           filled: true,
           prefix: const Padding(
             padding: EdgeInsets.all(4),
@@ -97,7 +98,7 @@ class _AddWorkerState extends State<AddWorker> {
             borderRadius: BorderRadius.circular(20.0) ,
 
           ),
-          fillColor: Colors.white,
+          fillColor: app_colors.background,
           filled: true,
           prefix: const Padding(
             padding: EdgeInsets.all(4),
@@ -124,7 +125,7 @@ class _AddWorkerState extends State<AddWorker> {
             borderRadius: BorderRadius.circular(20.0) ,
 
           ),
-          fillColor: Colors.white,
+          fillColor: app_colors.background,
           filled: true,
           prefix: const Padding(
             padding: EdgeInsets.all(4),
@@ -139,7 +140,7 @@ class _AddWorkerState extends State<AddWorker> {
   Widget inputContainer()=>Container(
     height:400,
     width:400,
-    color: Colors.black12,
+    color: app_colors.boxBackground,
     padding: EdgeInsets.all(8),
     child: Stack(children: [
       Align(alignment: const Alignment(0, -1.1),child:SizedBox(height: 50,)),
@@ -184,13 +185,13 @@ class _AddWorkerState extends State<AddWorker> {
             },),
           ],
           title: Text("הוספת עובד חדש"),
-          backgroundColor: Colors.blue,
+          backgroundColor: app_colors.app_bar_background,
           centerTitle: true,
           elevation: 6,
 
 
         ),
-        backgroundColor: Colors.white,
+        backgroundColor: app_colors.background,
         drawer: MyDrawer(),
         body:mainStack(),
       ),
