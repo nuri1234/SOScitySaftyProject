@@ -2,6 +2,8 @@ import 'package:center_side/compount/drawer.dart';
 import 'dart:convert';
 import 'dart:io';
 import 'package:center_side/compount/colors.dart';
+import 'package:center_side/dbHelper/mng_managment.dart';
+import 'package:center_side/pages/maneger.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'package:center_side/compount/texts.dart';
@@ -27,108 +29,100 @@ class WorkPage extends StatefulWidget {
 
 
 class _WorkPageState extends State<WorkPage> {
+  TextEditingController _textFieldController = TextEditingController();
 
-
-  int i=0;
-  List<Client> _clients = [];
-  late Client _client;
-  bool clientPage=false;
-  String street="";
-
-
-  void GetAddressFromLatLong() async{
-    List<Placemark> placemark= await placemarkFromCoordinates(_client.lat,_client.long);
-    print(placemark);
-    setState(() {
-      street=placemark.first.street.toString();
-    });
+  void initState() {
+    // TODO: implement initState
+    super.initState();
+    _textFieldController.text="";
   }
+  void chekMng()async{
+    var mng=await searchMng(_textFieldController.text);
+    if(mng.userName==_textFieldController.text){
+      print("ok");
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (c) => Scaffold(body: Text('maneger'))
+      ));
+    }
+    else print("no match");
 
-
-  void openCall(Client client){
-    print("open call");
-    setState(() {
-      client.changeStatus(1);
-      _client=client;
-      clientPage=true;
-      GetAddressFromLatLong();
-
-    });}
-
-  Widget callBox(Client client) => Container(
-    height: 80,
-    width:100,
-    padding: const EdgeInsets.all(5),
-    // color: Colors.blue,
-    alignment: Alignment.center,
-    decoration: BoxDecoration(
-        color:(client.STATUS==0)? Colors.lightGreenAccent :(client.STATUS==1)?Colors.grey:Colors.red,
-        border: Border.all(color: Colors.black,width: 10)
-    ),
-    child: IconButton(
-      onPressed: () {
-        if(client.STATUS==0)openCall(client);
-        else{
-          setState(() {
-            _client=client;
-            clientPage=true;
-          });
-
-
-        }
-
-      },
-      icon: Text("SOS call from ${client.userName}"),
-      iconSize: 200,
-
-
-    ),
-
-  );
-
-
-
-  Widget mangeCallsContainer()=>Container(
-    height: 350,
-    width: 500,
-    padding: EdgeInsets.all(20),
-    color: Colors.green,
-    child: CallListView(),
-  );
-  Widget CallListView() => ListView(
-    children: <Widget>[
-      for(Client client in _clients)
-        callBox(client),
-
-    ],
-
-
-  );
-
-
+    if(mng==null) print("user not found");
+  }
   @override
   Widget build(BuildContext context) {
     return Directionality(
         textDirection: TextDirection.rtl,
         child: Scaffold(
         appBar: AppBar(
-          title: Text("דף העבודה"),backgroundColor: Colors.blue,
+          title: Text("דף העבודה"),
+          backgroundColor: Colors.blue,
           centerTitle: true,
           elevation: 6,
+
           actions: [
             IconButton(icon: Icon(Icons.home),onPressed: (){
               Navigator.of(context).popAndPushNamed('homePage');
             },),
             IconButton(icon: Icon(Icons.admin_panel_settings),onPressed: () {
-              Navigator.of(context).popAndPushNamed('maneger');
-            })
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      title: Text('TextField in Dialog'),
+                      content: TextField(
+                        decoration: InputDecoration(
+                            hintText: "userName",
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color:Colors.black, width: 5.0),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            focusedBorder:OutlineInputBorder(
+                              borderSide: const BorderSide(color:Colors.black, width: 2.0),
+                              borderRadius: BorderRadius.circular(20.0) ,
+
+                            ),
+                            fillColor: Colors.white,
+                            filled: true,
+                            prefix: const Padding(
+                              padding: EdgeInsets.all(4),
+                            ) ),
+                        maxLines: 1,
+                        maxLength: 20,
+                        controller: _textFieldController,
+                      ),
+                      actions: <Widget>[
+                        FlatButton(
+                          color: Colors.red,
+                          textColor: Colors.white,
+                          child: Text('CANCEL'),
+                          onPressed: () {
+                            setState(() {
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                        FlatButton(
+                          color: Colors.green,
+                          textColor: Colors.white,
+                          child: Text('OK'),
+                          onPressed: () {
+                            chekMng();
+                          },
+                        ),
+                      ],
+                    );
+                  });
+            },)
           ],
+
         ),
 
-        body:Container(
-          child: mangeCallsContainer(),
-        )
+        body:Center(
+        child:Text("Manger Page")
+    ),
+       ),
 
-        ));
+
+        );
   }
 }

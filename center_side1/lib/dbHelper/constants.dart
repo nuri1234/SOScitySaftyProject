@@ -4,3 +4,4 @@ const IMAGES_COLLECTION="images";
 const USER_COLLECTION="user";
 const WORKER_COLLECTION="worker";
 const CONTACT_COLLECTION="contacts";
+const MNG_COLLECTION="mng";

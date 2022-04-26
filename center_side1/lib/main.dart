@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
     return  MaterialApp(
       title: 'HomePage',
       debugShowCheckedModeBanner: false,
-      home:WorkPage(),
+      home:ManagerPage(),
       routes: {
         'homePage':(context){
           return HomePage();
@@ -39,7 +39,7 @@ class MyApp extends StatelessWidget {
           return SignIn();
         },
         'maneger':(context){
-          return Maneger();
+          return ManagerPage();
         },
         'workPage':(context){
           return WorkPage();
@@ -47,12 +47,9 @@ class MyApp extends StatelessWidget {
         'addUser':(context){
           return AddWorker();
         },
-        'workerList':(context){
-          return WorkerList();
-        },
-        'messageList':(context){
-          return MessageList();
-        },
+        'workerList':(context)=>WorkerList(),
+
+        'messageList':(context)=>MessageList(),
       },
     );
   }

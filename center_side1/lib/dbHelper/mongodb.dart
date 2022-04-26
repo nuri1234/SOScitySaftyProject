@@ -6,8 +6,10 @@ import 'package:center_side/dbHelper/constants.dart';
 import 'package:center_side/dbHelper/user_model.dart';
 import 'package:center_side/dbHelper/worker_model.dart';
 
+import 'mng_model.dart';
+
 class MongoDB{
-  static var db,UserCollection,WorkerCollection,ContactCollection;
+  static var db,UserCollection,WorkerCollection,ContactCollection,mngCollection;
   static connect() async {
     db = await Db.create(MONGO_CONN_URL);
     await db.open();
@@ -15,6 +17,7 @@ class MongoDB{
     UserCollection=db.collection(USER_COLLECTION);
     WorkerCollection=db.collection(WORKER_COLLECTION);
     ContactCollection=db.collection(CONTACT_COLLECTION);
+    mngCollection=db.collection(MNG_COLLECTION);
   }
 
 static  Future<List<Map<String,dynamic>>> getWorker()async{
@@ -62,8 +65,21 @@ static  Future<List<Map<String,dynamic>>> getWorker()async{
       return e.toString();
     }
   }
+  static insertMng(Mng mng) async {
+    await mngCollection.insertAll([mng.toMap()]);
+
+  }
 
 
+  static Future<List<Map<String, dynamic>>> getMng() async {
+    try {
+      final mngs = await mngCollection.find().toList();
+      return mngs;
+    } catch (e) {
+      print(e);
+      throw Future.value(e);
+    }
+  }
 
 
 
