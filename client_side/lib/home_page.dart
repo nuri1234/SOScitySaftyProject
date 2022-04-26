@@ -64,6 +64,9 @@ class _HomeState extends State<Home> {
     await data.getData();
     print("is first time?");
     print(data.first_time);
+    if(data.language==1) my_texts.changeToArabic();
+    if(data.language==2) my_texts.changeToHebrew();
+
   if(data.first_time){
     data.first_time=false;
     data.updateData();
