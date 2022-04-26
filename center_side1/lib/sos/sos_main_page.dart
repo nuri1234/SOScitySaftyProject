@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:center_side/compount/texts.dart';
 import 'dart:io';
 import 'package:center_side/compount/colors.dart';
+import 'package:center_side/dbHelper/contacts_managment.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../compount/colors.dart';
@@ -20,6 +21,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../dbHelper/audio_model.dart';
 import 'package:center_side/uses/share_data.dart';
+import 'package:center_side/dbHelper/contacts_model.dart';
+
 
 import 'dart:async';
 
@@ -214,16 +217,28 @@ class _SOSState extends State<SOS> {
 
 
   }}
-  void closeContact(Client client){
+  void closeContact(Client client)async{
+    await saveContact(client);
 
+    setState(() {
+      my_clients.remove(client);
+      clientMainContainerShow=false;
+      if(clientChosen) chosen_client.boxColor=app_colors.clientNitral;
+    });
 
-    my_clients.remove(client);
-    clientMainContainerShow=false;
-    if(clientChosen) chosen_client.boxColor=app_colors.clientNitral;
+  }
+  Future<void> saveContact(Client client) async {
+   var contact=await newContact(data.userName,
+        DateTime.now().toString(),
+        client.userName, client.phone,
+        client.city,client.street, client.topic,client.description);
+
+    print(contact);
+
+    print("done");
 
 
   }
-  void saveContact(sourceId) {}
   void clientDisconnected(sourceId) async{
     for(Client client in my_clients){
       if(client.socketId==sourceId) {

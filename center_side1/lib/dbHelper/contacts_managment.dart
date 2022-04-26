@@ -4,10 +4,7 @@ import 'package:mongo_dart/mongo_dart.dart';
 import 'package:center_side/dbHelper/contacts_model.dart';
 
 
-
-
-
-Future<Contact> newWorker(String worker_userName,String date, String client_userName,String client_phone, String city, String street,String event_type, String description)async{
+Future<Contact> newContact(String worker_userName,String date, String client_userName,String client_phone, String city, String street,String event_type, String description)async{
   final id =ObjectId();
   final  contact = Contact(
       id: id,

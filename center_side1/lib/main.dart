@@ -33,7 +33,7 @@ class MyApp extends StatelessWidget {
     return  MaterialApp(
       title: 'HomePage',
       debugShowCheckedModeBanner: false,
-      home:ManagerPage(),
+      home:SOS(),
       routes: {
         'homePage':(context){
           return HomePage();
