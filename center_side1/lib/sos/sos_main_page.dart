@@ -200,15 +200,18 @@ class _SOSState extends State<SOS> {
   }
   void cancel(sourceId) async{
     for(Client client in clients){
+      print("canceld");
       if(client.socketId==sourceId) {
         setState(() {
           client.STATUS=2;
+          client.boxColor=Colors.red;
         });
       }
       for(Client client in my_clients){
         if(client.socketId==sourceId) {
           setState(() {
             client.STATUS=2;
+            client.boxColor=Colors.red;
           });
         }
 
@@ -221,10 +224,10 @@ class _SOSState extends State<SOS> {
     await saveContact(client);
 
     setState(() {
-      my_clients.remove(client);
       clientMainContainerShow=false;
       if(clientChosen) chosen_client.boxColor=app_colors.clientNitral;
     });
+    endCall(client);
 
   }
   Future<void> saveContact(Client client) async {
@@ -327,11 +330,16 @@ class _SOSState extends State<SOS> {
   }
   ///////////////%%%%%%%%////////////
 
-
+void initLanguage(){
+    setState(() {
+      my_texts.changeToHebrew();
+    });
+}
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    if(hebrew=true)initLanguage();
 
 
     fillCalls();
@@ -1624,7 +1632,16 @@ class _SOSState extends State<SOS> {
 
 
   /////////////////////
+  Widget rahatLogo()=>Container(
+      padding: const EdgeInsets.all(0),
+      margin: const EdgeInsets.all(0),
+      child: const Image(
+        image: AssetImage('assets/images/rahatLogo2.png'),
+        height: 100,
+        width:100,
+      )
 
+  );
 
 
   @override
@@ -1633,8 +1650,9 @@ class _SOSState extends State<SOS> {
     return Scaffold(
         backgroundColor: app_colors.background,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: app_colors.app_bar_background,
-          title:  const Text("SOS City Safety"),
+          title:  rahatLogo(),
         centerTitle: true,
           actions: [languageButton()],
         ),

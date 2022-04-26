@@ -17,9 +17,10 @@ void main() async{
  WidgetsFlutterBinding.ensureInitialized();
  my_socket.connect();
  await Firebase.initializeApp();
+  await Future.delayed(const Duration(seconds: 2));
 
 
-runApp(const MyApp());}
+  runApp(const MyApp());}
 
 class splashScreen extends StatelessWidget {
   const splashScreen({Key? key}) : super(key: key);
