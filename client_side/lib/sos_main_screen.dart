@@ -95,8 +95,8 @@ class _SOSState extends State<SOS> {
 
 
     my_socket.socket.on("centerDisconnected", (sourceId) async{
-      print("clientDisconnected $sourceId");
-      if(sourceId==targetSocket){
+      print("centerDisconnected $sourceId");
+      if( (requestResponse) && sourceId==targetSocket){
         centerDisconnected();
       }
 
@@ -135,7 +135,6 @@ class _SOSState extends State<SOS> {
 
     my_socket.socket.on("error", (msg){
       print("error: $msg");
-
 
     });
 
@@ -297,7 +296,8 @@ void ButtonRotator(){
     setState(() {
       _record=true;
     });
-    await recorder.startRecorder(toFile:'audio$audioRecordIndex');
+    await recorder.startRecorder(toFile:'audio$audioRecordIndex'
+    );
     audioRecordIndex++;
 
   }
@@ -403,6 +403,7 @@ void ButtonRotator(){
   @override
   void initState() {
     super.initState();
+
     print("init sos page");
     data.getData();
     socketListner();
@@ -605,6 +606,49 @@ void ButtonRotator(){
     ],),
   );
 ////////////////////////BUTTONSSSS//////////////////////////////////////////
+  Widget languageButton()=> PopupMenuButton(
+      color: Colors.grey,
+      child: Icon(Icons.language,color:app_colors.languageButton,size: 40,) ,
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          child: const Text("عربيه"),
+          value: 1,
+          onTap: (){print("change to arbic");
+          setState(() {
+            my_texts.changeToArabic();
+          });
+          data.language=1;
+          data.updateData();
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("English"),
+          value: 1,
+          onTap: (){
+            print("change to english");
+            setState(() {
+              my_texts.changeEnglish();
+            });
+            data.language=0;
+            data.updateData();
+
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("עברית"),
+          value: 1,
+          onTap: (){
+            print("change to עברית");
+            setState(() {
+              my_texts.changeToHebrew();
+            });
+            data.language=2;
+            data.updateData();
+
+          },
+        ),
+      ]
+  );
   Widget Camera_Button()=>Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(90),
@@ -823,7 +867,10 @@ void ButtonRotator(){
     ),
   );
   Widget CancelButton()=>Container(
+    height: 50,
+    width: 110,
     decoration: BoxDecoration(
+      color: Colors.red,
         borderRadius: BorderRadius.circular(90),
         boxShadow:[
           BoxShadow(
@@ -841,13 +888,11 @@ void ButtonRotator(){
         ]
     ),
 
-    child: SizedBox(height: 50,
-      width: 50 ,
-      child:
-      FloatingActionButton(
+    child:IconButton(
+
         //child: Icon(Icons.ac_unit),
-        child: const Icon(Icons.clear,size:40,),
-        backgroundColor: app_colors.cancel_button,
+        icon: Text(my_texts.endContact,style: const TextStyle(color: Colors.white,fontSize:15),),
+      //  backgroundColor: app_colors.cancel_button,
         onPressed: () {
           player.play('cancel.wav');
           my_socket.socket.emit("cancel");
@@ -857,7 +902,7 @@ void ButtonRotator(){
 
         },
       ),
-    ),
+
   );
   Widget CancelPhoto()=>Container(
     decoration: BoxDecoration(
@@ -1024,7 +1069,7 @@ void ButtonRotator(){
   Widget optionsButtons()=>Container(
     height:70,
     width: 230,
-    //color:Colors.lightGreenAccent,
+   // color:Colors.lightGreenAccent,
 
     child: Stack(
         children: [
@@ -1172,7 +1217,6 @@ void ButtonRotator(){
       if(msg.senderType==1)const Text("Service representative",style:TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
       const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),
     ]);
-
   Widget messageBox(MessageModel msg) => Container(
     width: 350,
     //color: Colors.pink,
@@ -1272,7 +1316,6 @@ void ButtonRotator(){
       ),
     ),
   );
-
   Widget inputdescriptionTextField()=>Container(
     height:80,
     width:300,
@@ -1324,27 +1367,7 @@ void ButtonRotator(){
 
   ///////////////////////END Containers//////////////////////////////////////
 ////////######################TEXT############/////////////////////////////
-  Widget connectedToServer()=> Text(
-    my_texts.connectedToServer,
-    style:const TextStyle(
-      fontSize:20,
-      color:Colors.greenAccent,
-      fontWeight: FontWeight.w800,
-      shadows: <Shadow>[
-        Shadow(
-          offset: Offset(0, 0),
-          blurRadius: 3.0,
-          color: Color.fromARGB(500, 7, 0, 0),
-        ),
-        Shadow(
-          offset: Offset(0.0, 10.0),
-          blurRadius: 8.0,
-          color: Color.fromARGB(125, 0, 0, 255),
-        ),
-      ],
-    ),
 
-  );
   Widget centerDisconnectedText()=> Text(
     my_texts.centerDissconected,
     style:const TextStyle(
@@ -1371,6 +1394,27 @@ void ButtonRotator(){
     style:const TextStyle(
       fontSize:15,
       color:Colors.red,
+      fontWeight: FontWeight.w800,
+      shadows: <Shadow>[
+        Shadow(
+          offset: Offset(0, 0),
+          blurRadius: 3.0,
+          color: Color.fromARGB(500, 7, 0, 0),
+        ),
+        Shadow(
+          offset: Offset(0.0, 10.0),
+          blurRadius: 8.0,
+          color: Color.fromARGB(125, 0, 0, 255),
+        ),
+      ],
+    ),
+
+  );
+  Widget connectedToServer()=> Text(
+    my_texts.connectedToServer,
+    style:const TextStyle(
+      fontSize:20,
+      color:Colors.greenAccent,
       fontWeight: FontWeight.w800,
       shadows: <Shadow>[
         Shadow(
@@ -1560,26 +1604,11 @@ void ButtonRotator(){
         elevation: 10,
         leading:  Icon(Icons.online_prediction,size: 40,color:requestResponse? Colors.lightGreenAccent:Colors.grey,),
         actions: [
-          PopupMenuButton(
-              color: Colors.grey,
-              child:const Icon(Icons.language,color:Colors.orangeAccent,size: 40,) ,
-              itemBuilder: (context) => [
-                PopupMenuItem(
-                  child: const Text("عربيه"),
-                  value: 1,
-                  onTap: (){print("change to arbic");},
-                ),
-                const PopupMenuItem(
-                  child: Text("English"),
-                  value: 2,
-
-                ),
-              ]
-          ),
+          languageButton(),
           IconButton(
             onPressed:() {
               Navigator.push(context, MaterialPageRoute(builder: (context)=> (const Registor())));},
-            icon: const Icon( Icons.perm_identity_rounded,color:Colors.purple,size: 40,),
+            icon: const Icon( Icons.perm_identity_rounded,color:Colors.pink,size: 40,),
           ),
 
 

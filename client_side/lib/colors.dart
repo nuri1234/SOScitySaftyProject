@@ -2,11 +2,12 @@ import 'dart:ui';
 import 'package:flutter/material.dart';
 
 class app_colors{
-  static Color cmera_button = const Color(0xff24F1E8);
-  static Color galarry_button = const Color(0xffF124DF);
+
+  static Color cmera_button = const Color(0xff1025F1);
+  static Color galarry_button = const Color(0xff4B0082);
   static Color sos_background = const Color(0xffcfe2f3);
   static Color city_safty = const Color(0xffffffff);
-  static Color app_bar_background = Colors.blueGrey;
+  static Color app_bar_background =  const Color(0xffFF8C00);
   static Color buttom_shadow = const Color(0xff2E4053);
   static Color camera_page_App_bar = const Color(0xff2E4053);
   static Color camera_page_background = Colors.black;
@@ -29,12 +30,9 @@ class app_colors{
   static Color sos_button=const Color(0xffff0000);
   static Color cancel_button=const Color(0xffFF4C4C);
   static Color sos_disablbutton=const Color(0xffffb3b3);
-
-
-
   static Color cameraPageInputimage= const Color(0xff303030);
-  static Color record_audio_button=Colors.yellow;
-
+  static Color record_audio_button=const Color(0xffFF1493);
+  static Color languageButton= const Color(0xff24EEF1);
   static Color chatmessages=const Color(0xffFFD68A);
   static Color chatbackground=const Color(0xffFFD68A);
   static Color recorderTimeShow=const Color(0xffFFD68A);

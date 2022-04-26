@@ -269,7 +269,6 @@ class _examplePage2State extends State<examplePage2> {
     my_socket.socket.emit("message",{'msg':newMsg.toMap(),'targetId':client.socketId});
 
   }
-
   @override
   void initState() {
     // TODO: implement initState
@@ -345,6 +344,166 @@ class _examplePage2State extends State<examplePage2> {
   );
   //////////////////////////////////////////////////////////////
 //////********chat widgets**************/////
+
+
+  ///////*******************///
+  Widget audioPlaySlider(MessageModel msg)=>SizedBox(
+    height: 50,
+    width: 300,
+    child: Slider(
+        min: 0,
+        max: msg.audio!.duration.inSeconds.toDouble(),
+        value: msg.audio!.position.inSeconds.toDouble(),
+        activeColor: Colors.green,
+        inactiveColor: Colors.grey,
+        onChanged: (value)async{
+          final position=Duration(seconds: value.toInt());
+          await msg.audio!.audioPlayer.seek(position);
+          await msg.audio!.audioPlayer.resume();
+
+        }),
+  );
+  String formatTime(Duration duration){
+    String toDigits(int n)=>n.toString().padLeft(2,'0');
+    final Seconds=toDigits(duration.inSeconds.remainder(60));
+    final minutes=toDigits(duration.inMinutes.remainder(60));
+    final hours=toDigits(duration.inHours);
+    return [
+      if(duration.inHours>0) hours,
+      minutes,
+      Seconds,
+    ].join(':');
+
+  }
+  Widget recordPlayStateShowContainer(Duration dr , Duration ps)=>Container(
+
+    height: 50,
+    width: 250,
+    child: Stack(children: [
+      Align(alignment: Alignment.centerLeft,child:Text(formatTime(ps)) ,),
+      Align(alignment: Alignment.centerRight,child:  Text(formatTime(dr-ps)),),
+
+    ],),
+  );
+  Widget playRecordButton(MessageModel msg)=>Container(
+    decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(100),
+        boxShadow:[
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 100,
+              offset: const Offset(8,5)
+
+          ),
+          BoxShadow(
+              color: app_colors.buttom_shadow,
+              blurRadius: 100,
+              offset: const Offset(-8,-5)
+          ),
+        ]
+    ),
+    child: ElevatedButton(
+      onPressed: () async{
+
+        if(msg.audio!.isPlaying){
+          await msg.audio!.audioPlayer.pause();
+        }
+        else{
+          //  String url='https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3';
+          msg.audio!.audioPlayer.resume();
+
+        }
+
+
+      },
+      child: Icon(msg.audio!.isPlaying? Icons.pause :Icons.play_arrow,size: 8,),
+      style: ElevatedButton.styleFrom(
+        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
+        primary: Colors.green,
+        minimumSize:const Size(30, 30),
+
+      ),
+    ),
+  );
+  Widget audioBox(MessageModel message) => SizedBox(
+    height: 80,
+    // color: Colors.black38,
+    child: Stack(children: [
+      Align(alignment: const Alignment(0,-1) ,child: audioPlaySlider(message),),
+      Align(alignment: const Alignment(-1,-1) ,child: playRecordButton(message),),
+      Align(alignment:const Alignment(0,0)  ,child:recordPlayStateShowContainer(message.audio!.duration,message.audio!.position)),
+
+
+    ],),
+  );
+  Widget imageBox(MessageModel message) => Container(
+    child: Column(children: [
+      Row(children: [Text(message.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
+        if(message.senderType==0)Text(_client.userName,style:const TextStyle(color: Colors.blue,fontSize: 10,fontWeight: FontWeight.bold),),
+        if(message.senderType==1)const Text("Service representative",style:TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
+        const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),],),
+      Container(
+        width: 100,
+        height: 100,
+        color: Colors.green,
+        alignment: Alignment.center,
+        child: IconButton(
+          onPressed: (){
+            setState(() {
+              imageFile=File(message.get_path());
+              imageShow=true;
+            });
+
+
+
+          },
+          icon:Image(image:FileImage(File(message.get_path()),) ,) ,
+
+
+        ),),
+      Text(message.describe),
+
+
+
+    ],),
+
+  );
+  Widget bigImageContainr()=>Container(
+      height: 650,
+      width: 650,
+      // color: Colors.green,
+      child: Stack(children: [
+        Align(alignment: Alignment.center,child: Image.file(imageFile!) ,),
+        Align(alignment: const Alignment(0.7,-1),child:
+        Container(
+          height: 80,
+          width: 80,
+          // color: Colors.yellow,
+          alignment: Alignment(-1,-1),
+          child: IconButton(
+            highlightColor: Colors.pink,
+            onPressed:() {
+              print("pressed");
+              setState(() {imageShow=false;});
+            },
+
+
+
+
+
+
+            icon: const Center(child: Icon(Icons.clear,color: Colors.red,size: 80,)),
+
+          ),
+        ),),
+
+
+      ],)
+
+
+
+  );
+  //////////
   Widget chatSendContainer()=>Container(
     height:70,
     width: 500,
@@ -433,71 +592,6 @@ class _examplePage2State extends State<examplePage2> {
       if(message.senderType==1) Text(message.message,style:const TextStyle(color: Colors.orangeAccent,fontSize: 20,fontWeight: FontWeight.bold),),
     ],
   );
-  Widget imageBox(MessageModel message) => Container(
-    child: Column(children: [
-      Row(children: [Text(message.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
-        if(message.senderType==0)Text(_client.userName,style:const TextStyle(color: Colors.blue,fontSize: 10,fontWeight: FontWeight.bold),),
-        if(message.senderType==1)const Text("Service representative",style:TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
-        const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),],),
-      Container(
-        width: 300,
-        height: 300,
-        alignment: Alignment.center,
-       child: IconButton(
-         onPressed: (){
-           setState(() {
-             imageFile=File(message.get_path());
-             imageShow=true;
-           });
-
-
-
-         },
-         icon:Image(image:FileImage(File(message.get_path())) ,) ,
-
-      ),),
-      Text(message.describe),
-
-
-
-    ],),
-
-  );
-  Widget bigImageContainr()=>Container(
-      height: 650,
-      width: 650,
-      // color: Colors.green,
-      child: Stack(children: [
-        Align(alignment: Alignment.center,child: Image.file(imageFile!) ,),
-        Align(alignment: const Alignment(0.7,-1),child:
-        Container(
-          height: 80,
-          width: 80,
-          // color: Colors.yellow,
-          alignment: Alignment(-1,-1),
-          child: IconButton(
-            highlightColor: Colors.pink,
-            onPressed:() {
-              print("pressed");
-              setState(() {imageShow=false;});
-            },
-
-
-
-
-
-
-            icon: const Center(child: Icon(Icons.clear,color: Colors.red,size: 80,)),
-
-          ),
-        ),),
-
-
-      ],)
-
-
-
-  );
   Widget messageDetails(MessageModel msg)=>Row(
       children: [
         Text(msg.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
@@ -505,95 +599,6 @@ class _examplePage2State extends State<examplePage2> {
         if(msg.senderType==1)const Text("Service representative",style:TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
         const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),
       ]);
-  Widget audioPlaySlider(MessageModel msg)=>SizedBox(
-    height: 50,
-    width: 300,
-    child: Slider(
-        min: 0,
-        max: msg.audio!.duration.inSeconds.toDouble(),
-        value: msg.audio!.position.inSeconds.toDouble(),
-        activeColor: Colors.green,
-        inactiveColor: Colors.grey,
-        onChanged: (value)async{
-          final position=Duration(seconds: value.toInt());
-          await msg.audio!.audioPlayer.seek(position);
-          await msg.audio!.audioPlayer.resume();
-
-        }),
-  );
-  String formatTime(Duration duration){
-    String toDigits(int n)=>n.toString().padLeft(2,'0');
-    final Seconds=toDigits(duration.inSeconds.remainder(60));
-    final minutes=toDigits(duration.inMinutes.remainder(60));
-    final hours=toDigits(duration.inHours);
-    return [
-      if(duration.inHours>0) hours,
-      minutes,
-      Seconds,
-    ].join(':');
-
-  }
-  Widget recordPlayStateShowContainer(Duration dr , Duration ps)=>Container(
-
-    height: 50,
-    width: 250,
-    child: Stack(children: [
-      Align(alignment: Alignment.centerLeft,child:Text(formatTime(ps)) ,),
-      Align(alignment: Alignment.centerRight,child:  Text(formatTime(dr-ps)),),
-
-    ],),
-  );
-  Widget playRecordButton(MessageModel msg)=>Container(
-    decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(100),
-        boxShadow:[
-          BoxShadow(
-              color: app_colors.buttom_shadow,
-              blurRadius: 100,
-              offset: const Offset(8,5)
-
-          ),
-          BoxShadow(
-              color: app_colors.buttom_shadow,
-              blurRadius: 100,
-              offset: const Offset(-8,-5)
-          ),
-        ]
-    ),
-    child: ElevatedButton(
-      onPressed: () async{
-
-        if(msg.audio!.isPlaying){
-          await msg.audio!.audioPlayer.pause();
-        }
-        else{
-          //  String url='https://www.soundhelix.com/examples/mp3/SoundHelix-Song-13.mp3';
-          msg.audio!.audioPlayer.resume();
-
-        }
-
-
-      },
-      child: Icon(msg.audio!.isPlaying? Icons.pause :Icons.play_arrow,size: 8,),
-      style: ElevatedButton.styleFrom(
-        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
-        primary: Colors.green,
-        minimumSize:const Size(30, 30),
-
-      ),
-    ),
-  );
-  Widget audioBox(MessageModel message) => Container(
-    height: 80,
-    // color: Colors.black38,
-    child: Stack(children: [
-      Align(alignment: const Alignment(0,-1) ,child: audioPlaySlider(message),),
-      Align(alignment: const Alignment(-1,-1) ,child: playRecordButton(message),),
-      Align(alignment:const Alignment(0,0)  ,child:recordPlayStateShowContainer(message.audio!.duration,message.audio!.position)),
-
-
-    ],),
-  );
   Widget messageListView(List<MessageModel> msgs) => ListView(
     children: <Widget>[
       for(MessageModel msg in msgs)  Column(children: [
@@ -604,13 +609,6 @@ class _examplePage2State extends State<examplePage2> {
 
       ],)
 
-
-    ],
-  );
-  Widget messageListView2(List<MessageModel> msgs) => ListView(
-    children: <Widget>[
-      for(MessageModel msg in msgs) if(msg.messageType==0)messageBox(msg)
-      else imageBox(msg),
 
     ],
   );
@@ -657,6 +655,59 @@ class _examplePage2State extends State<examplePage2> {
       ),
     ),
   );
+  Widget chatContainer()=>SingleChildScrollView(
+    reverse: true,
+    child: Container(
+      height:500,
+      width: 400,
+      decoration: BoxDecoration(
+          color: Colors.lightGreenAccent,
+          borderRadius: BorderRadius.circular(10),
+          boxShadow:[
+            BoxShadow(
+                color: app_colors.buttom_shadow,
+                blurRadius: 20,
+                offset: Offset(8,5)
+
+            ),
+            BoxShadow(
+                color: app_colors.buttom_shadow,
+                blurRadius: 20,
+                offset: Offset(-8,-5)
+            ),
+          ]
+      ),
+      padding: const EdgeInsets.all(10),
+      child: Stack(
+        children: [
+          Center(
+            child: Column(children: [
+              messagesContainer(),
+              chatSendContainer(),
+            ],
+
+            ),
+          ),
+
+        ],
+      ),
+
+
+    ),
+  );
+  /////*********************///////
+
+
+  /////////////
+
+  Widget messageListView2(List<MessageModel> msgs) => ListView(
+    children: <Widget>[
+      for(MessageModel msg in msgs) if(msg.messageType==0)messageBox(msg)
+      else imageBox(msg),
+
+    ],
+  );
+
   Widget TestsendMessageButton()=>Container(
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(100),
@@ -754,46 +805,7 @@ class _examplePage2State extends State<examplePage2> {
     ),
 
   );
-  Widget chatContainer()=>SingleChildScrollView(
-    reverse: true,
-    child: Container(
-      height:500,
-      width: 400,
-      decoration: BoxDecoration(
-          color: Colors.lightGreenAccent,
-          borderRadius: BorderRadius.circular(10),
-          boxShadow:[
-            BoxShadow(
-                color: app_colors.buttom_shadow,
-                blurRadius: 20,
-                offset: Offset(8,5)
 
-            ),
-            BoxShadow(
-                color: app_colors.buttom_shadow,
-                blurRadius: 20,
-                offset: Offset(-8,-5)
-            ),
-          ]
-      ),
-      padding: const EdgeInsets.all(10),
-      child: Stack(
-        children: [
-          Center(
-            child: Column(children: [
-              messagesContainer(),
-             chatSendContainer(),
-            ],
-
-            ),
-          ),
-
-        ],
-      ),
-
-
-    ),
-  );
   Widget clientContainer()=>Container(
     height: 700,
     width: 700,

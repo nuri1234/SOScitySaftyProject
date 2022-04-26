@@ -1,4 +1,3 @@
-import 'package:audioplayers/audioplayers.dart';
 import 'package:client_side/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
@@ -87,6 +86,49 @@ class _RegistorState extends State<Registor> {
   //////////////////////////end verefing phonefunctions/////////
 
   /////////////////////////////////////////////////////////////////
+  Widget languageButton()=> PopupMenuButton(
+  color: Colors.grey,
+  child: Icon(Icons.language,color:app_colors.languageButton,size: 40,) ,
+  itemBuilder: (context) => [
+  PopupMenuItem(
+  child: const Text("عربيه"),
+  value: 1,
+  onTap: (){print("change to arbic");
+    setState(() {
+      my_texts.changeToArabic();
+    });
+    data.language=1;
+    data.updateData();
+    },
+  ),
+    PopupMenuItem(
+      child: const Text("English"),
+      value: 1,
+      onTap: (){
+        print("change to english");
+        setState(() {
+          my_texts.changeEnglish();
+        });
+        data.language=0;
+  data.updateData();
+
+  },
+    ),
+    PopupMenuItem(
+      child: const Text("עברית"),
+      value: 1,
+      onTap: (){
+        print("change to עברית");
+        setState(() {
+          my_texts.changeToHebrew();
+        });
+        data.language=2;
+        data.updateData();
+
+      },
+    ),
+  ]
+  );
   Widget nextButton()=>ElevatedButton(
     onPressed:(){
       debugPrint(_phone.text);
@@ -458,9 +500,6 @@ class _RegistorState extends State<Registor> {
     ),
   );
 
-
-
-
   Widget mainColumn()=>SingleChildScrollView(
     reverse: true,
     child: Column(
@@ -507,6 +546,7 @@ class _RegistorState extends State<Registor> {
       Align(alignment: const Alignment(0,0.2),child:mainColumn(),),
    //   Align(alignment: const Alignment(0,-0.7),child:welcomeContainer()),
       Align(alignment: const Alignment(1,-0.9),child:continueButton() ),
+      Align(alignment: const Alignment(-1,-0.9),child:languageButton()),
 
     ],
 
