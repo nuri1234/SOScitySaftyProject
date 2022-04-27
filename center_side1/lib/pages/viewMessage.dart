@@ -145,10 +145,10 @@ showDialogFunc(context,Contact message){
             type: MaterialType.transparency,
             child:Container(
               padding: EdgeInsets.symmetric(vertical: 15.0,horizontal: 15.0),
-              height: 350,
-              width: 500,
+              height: 400,
+              width: 600,
               decoration: BoxDecoration(
-                color: Colors.greenAccent,
+                color: app_colors.background,
                 border: Border.all(color: Colors.black,width: 7),
                 borderRadius: BorderRadius.circular(20)
               ),
