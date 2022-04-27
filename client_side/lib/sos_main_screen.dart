@@ -89,7 +89,10 @@ class _SOSState extends State<SOS> {
 
     my_socket.socket.on("end_call",(_){
       print("end_call");
-      endCall();
+      if(requestResponse) {
+        endCall();
+      }
+
 
     });
 
@@ -161,6 +164,7 @@ class _SOSState extends State<SOS> {
   void endCall()async{
     setState(() {
       _endCall=true;
+      requestResponse=false;
     });
     await Future.delayed(const Duration(seconds: 3));
 
@@ -1371,7 +1375,7 @@ void ButtonRotator(){
   Widget centerDisconnectedText()=> Text(
     my_texts.centerDissconected,
     style:const TextStyle(
-      fontSize:15,
+      fontSize:25,
       color:Colors.red,
       fontWeight: FontWeight.w800,
       shadows: <Shadow>[
@@ -1580,7 +1584,7 @@ void ButtonRotator(){
           ),
           Align(alignment: Alignment.topRight,child: CancelButton(),),
           if(imageShow)Align(alignment: Alignment.topCenter,child: photoContainer(),),
-          if(_centeDissconected) Align(alignment: Alignment.center,child: centerDisconnectedText()),
+          if(_centeDissconected) Align(alignment: const Alignment(0,-0.4),child: centerDisconnectedText()),
           if(_endCall) Align(alignment: Alignment.center,child: endCallText()),
           if(_record)Align(alignment: const Alignment(0,0),child: mainRecordAudioContainer()),
 
@@ -1592,6 +1596,16 @@ void ButtonRotator(){
 
     ),
   );
+  Widget rahatLogo()=>Container(
+      padding: const EdgeInsets.all(0),
+      margin: const EdgeInsets.all(0),
+      child: const Image(
+        image: AssetImage('assets/images/rahatLogo2.png'),
+        height: 70,
+        width:70,
+      )
+
+  );
   ///////////////////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
@@ -1599,10 +1613,16 @@ void ButtonRotator(){
       (
       appBar: AppBar(
         centerTitle: true,
-        title: Text(my_texts.CitySafty, style: TextStyle(color: app_colors.city_safty),),
+        title:
+            rahatLogo(),
+
+
         backgroundColor: app_colors.app_bar_background,
         elevation: 10,
-        leading:  Icon(Icons.online_prediction,size: 40,color:requestResponse? Colors.lightGreenAccent:Colors.grey,),
+        automaticallyImplyLeading: false,
+
+        leading: Icon(Icons.online_prediction,size: 40,color:requestResponse? Colors.lightGreenAccent:Colors.grey,),
+
         actions: [
           languageButton(),
           IconButton(

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:center_side/compount/texts.dart';
 import 'dart:io';
 import 'package:center_side/compount/colors.dart';
+import 'package:center_side/dbHelper/contacts_managment.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../compount/colors.dart';
@@ -20,6 +21,8 @@ import 'package:flutter_map/flutter_map.dart';
 import 'package:audioplayers/audioplayers.dart';
 import '../dbHelper/audio_model.dart';
 import 'package:center_side/uses/share_data.dart';
+import 'package:center_side/dbHelper/contacts_model.dart';
+
 
 import 'dart:async';
 
@@ -197,15 +200,18 @@ class _SOSState extends State<SOS> {
   }
   void cancel(sourceId) async{
     for(Client client in clients){
+      print("canceld");
       if(client.socketId==sourceId) {
         setState(() {
           client.STATUS=2;
+          client.boxColor=Colors.red;
         });
       }
       for(Client client in my_clients){
         if(client.socketId==sourceId) {
           setState(() {
             client.STATUS=2;
+            client.boxColor=Colors.red;
           });
         }
 
@@ -214,16 +220,28 @@ class _SOSState extends State<SOS> {
 
 
   }}
-  void closeContact(Client client){
+  void closeContact(Client client)async{
+    await saveContact(client);
 
+    setState(() {
+      clientMainContainerShow=false;
+      if(clientChosen) chosen_client.boxColor=app_colors.clientNitral;
+    });
+    endCall(client);
 
-    my_clients.remove(client);
-    clientMainContainerShow=false;
-    if(clientChosen) chosen_client.boxColor=app_colors.clientNitral;
+  }
+  Future<void> saveContact(Client client) async {
+   var contact=await newContact(data.userName,
+        DateTime.now().toString(),
+        client.userName, client.phone,
+        client.city,client.street, client.topic,client.description);
+
+    print(contact);
+
+    print("done");
 
 
   }
-  void saveContact(sourceId) {}
   void clientDisconnected(sourceId) async{
     for(Client client in my_clients){
       if(client.socketId==sourceId) {
@@ -312,11 +330,16 @@ class _SOSState extends State<SOS> {
   }
   ///////////////%%%%%%%%////////////
 
-
+void initLanguage(){
+    setState(() {
+      my_texts.changeToHebrew();
+    });
+}
   @override
   void initState() {
     // TODO: implement initState
     super.initState();
+    if(hebrew=true)initLanguage();
 
 
     fillCalls();
@@ -1609,7 +1632,16 @@ class _SOSState extends State<SOS> {
 
 
   /////////////////////
+  Widget rahatLogo()=>Container(
+      padding: const EdgeInsets.all(0),
+      margin: const EdgeInsets.all(0),
+      child: const Image(
+        image: AssetImage('assets/images/rahatLogo2.png'),
+        height: 100,
+        width:100,
+      )
 
+  );
 
 
   @override
@@ -1618,8 +1650,9 @@ class _SOSState extends State<SOS> {
     return Scaffold(
         backgroundColor: app_colors.background,
         appBar: AppBar(
+          automaticallyImplyLeading: false,
           backgroundColor: app_colors.app_bar_background,
-          title:  const Text("SOS City Safety"),
+          title:  rahatLogo(),
         centerTitle: true,
           actions: [languageButton()],
         ),
