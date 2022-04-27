@@ -70,6 +70,10 @@ class _MessageListState extends State<MessageList> {
                     onPressed: (){
                       showDialog(context: context, builder: (context){
                         return AlertDialog(
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(20.0),
+                          ),
+                          backgroundColor: Colors.orange[200],
                           actions: [
                             FlatButton(onPressed: ()async{
                               await MongoDB.deleteContact(_messages[index]);
@@ -117,14 +121,14 @@ class _MessageListState extends State<MessageList> {
         elevation: 6,
         actions: [
           IconButton(icon: Icon(Icons.home),onPressed: (){
-            Navigator.of(context).popAndPushNamed('homePage');
+            Navigator.of(context).popAndPushNamed('maneger');
           },),
           IconButton(icon: Icon(Icons.refresh),onPressed: (){
             Navigator.of(context).popAndPushNamed('messageList');
           },),
           IconButton(icon: Icon(Icons.exit_to_app),onPressed: (){
-            examplePage2();
-          },),
+            Navigator.of(context).popAndPushNamed('homePage');
+            },),
         ],
       ),
       body:workerListView(),

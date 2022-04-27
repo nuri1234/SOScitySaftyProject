@@ -16,7 +16,7 @@ class ManagerPage extends StatefulWidget {
 
 class _ManagerPageState extends State<ManagerPage> {
   TextEditingController _textFieldController = TextEditingController();
-  late String _phoneNum;
+  late String _phoneNum="106";
 
 
 
@@ -184,6 +184,7 @@ class _ManagerPageState extends State<ManagerPage> {
                       image: AssetImage('assets/images/newLogo.png'),
                     ),
                   ),
+
                 ]),
               ),
 

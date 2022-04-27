@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:core';
 import 'package:center_side/compount/texts.dart';
 import 'dart:io';
 import 'package:center_side/compount/colors.dart';
@@ -9,6 +10,8 @@ import '../compount/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../compount/texts.dart';
+import '../dbHelper/mng_managment.dart';
+import '../pages/maneger.dart';
 import '../socket_class.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../dbHelper/message_model.dart';
@@ -22,9 +25,8 @@ import 'package:audioplayers/audioplayers.dart';
 import '../dbHelper/audio_model.dart';
 import 'package:center_side/uses/share_data.dart';
 import 'package:center_side/dbHelper/contacts_model.dart';
-
-
 import 'dart:async';
+
 
 class SOS extends StatefulWidget {
   const SOS({Key? key}) : super(key: key);
@@ -55,7 +57,23 @@ class _SOSState extends State<SOS> {
   int photoIndex=0;
   int audioIndex=0;
   bool hebrew=true;
+  TextEditingController _textFieldController = TextEditingController();
 
+
+
+
+  void chekMng()async{
+    var mng=await searchMng(_textFieldController.text);
+    if(mng.userName==_textFieldController.text){
+      print("ok");
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (c) => Scaffold(body: ManagerPage())
+      ));
+    }
+    else print("no match");
+
+    if(mng==null) print("user not found");
+  }
 
   /////////functions//////////////
   void fillCalls() async{
@@ -338,9 +356,10 @@ void initLanguage(){
   @override
   void initState() {
     // TODO: implement initState
+
     super.initState();
     if(hebrew=true)initLanguage();
-
+    _textFieldController.text="";
 
     fillCalls();
     socketListner();
@@ -1654,7 +1673,68 @@ void initLanguage(){
           backgroundColor: app_colors.app_bar_background,
           title:  rahatLogo(),
         centerTitle: true,
-          actions: [languageButton()],
+          actions: [
+            languageButton(),
+            IconButton(icon: Icon(Icons.home,color:app_colors.languageButton,size: 40,),onPressed: (){
+              Navigator.of(context).popAndPushNamed('homePage');
+            },),
+            IconButton(icon: Icon(Icons.admin_panel_settings,color:app_colors.languageButton,size: 40,),onPressed: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return AlertDialog(
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(20.0),
+                      ),
+                      backgroundColor: Colors.orange[200],
+                      title: Text('בדיקת כניסת מנהל'),
+                      content: TextField(
+                        decoration: InputDecoration(
+                            hintText: "userName",
+                            enabledBorder: OutlineInputBorder(
+                              borderSide: const BorderSide(color:Colors.black, width: 5.0),
+                              borderRadius: BorderRadius.circular(20.0),
+                            ),
+                            focusedBorder:OutlineInputBorder(
+                              borderSide: const BorderSide(color:Colors.black, width: 2.0),
+                              borderRadius: BorderRadius.circular(20.0) ,
+
+                            ),
+                            fillColor: app_colors.background,
+                            filled: true,
+                            prefix: const Padding(
+                              padding: EdgeInsets.all(4),
+                            ) ),
+                        maxLines: 1,
+                        maxLength: 20,
+                        controller: _textFieldController,
+                      ),
+                      actions: <Widget>[
+                        FlatButton(
+                          color: Colors.red,
+                          textColor: Colors.white,
+                          child: Text('CANCEL'),
+                          onPressed: () {
+                            setState(() {
+                              Navigator.pop(context);
+                            });
+                          },
+                        ),
+                        FlatButton(
+                          color: Colors.green,
+                          textColor: Colors.white,
+                          child: Text('OK'),
+                          onPressed: () {
+                            chekMng();
+                          },
+                        ),
+                      ],
+                    );
+                  });
+            },)
+
+
+          ],
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),

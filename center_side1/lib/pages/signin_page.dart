@@ -1,6 +1,7 @@
 import 'package:center_side/compount/colors.dart';
 import 'package:center_side/compount/drawer.dart';
 import 'package:center_side/pages/workPage.dart';
+import 'package:center_side/sos/sos_main_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../dbHelper/worker_managment.dart';
@@ -32,7 +33,7 @@ class _SignInState extends State<SignIn> {
     if(user.password==_password.text){
       print("ok");
       data.userName=_userName.text;
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>(const WorkPage())),);
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
     }
     else print("no match");
 
@@ -86,6 +87,7 @@ class _SignInState extends State<SignIn> {
     height:100,
     width:200,
     child: TextField(
+        obscureText: true,
       decoration: InputDecoration(
           hintText: "password",
           enabledBorder: OutlineInputBorder(
