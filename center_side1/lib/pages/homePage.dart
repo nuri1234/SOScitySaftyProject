@@ -23,7 +23,7 @@ class HomeState extends State<HomePage> {
             backgroundColor: app_colors.app_bar_background,
             centerTitle: true,
             elevation: 6,
-
+            automaticallyImplyLeading: false,
           ),
 
           body: Container(

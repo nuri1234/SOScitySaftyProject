@@ -4,6 +4,7 @@ import 'package:center_side/pages/viewMessage.dart';
 import 'package:center_side/pages/workerList.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:center_side/pages/homePage.dart';
 
 import 'homePage.dart';
 
@@ -146,7 +147,7 @@ class _ManagerPageState extends State<ManagerPage> {
                         ),
                         child: FlatButton(
                             onPressed: (){
-                              Navigator.pushNamed(context, 'homePage');
+                              Navigator.pushReplacement(context,MaterialPageRoute(builder:(context){return HomePage();}));
                             }
                             , child: Row(children: [
                           Icon(Icons.logout),
