@@ -1675,65 +1675,6 @@ void initLanguage(){
         centerTitle: true,
           actions: [
             languageButton(),
-            IconButton(icon: Icon(Icons.home,color:app_colors.languageButton,size: 40,),onPressed: (){
-              Navigator.of(context).popAndPushNamed('homePage');
-            },),
-            IconButton(icon: Icon(Icons.admin_panel_settings,color:app_colors.languageButton,size: 40,),onPressed: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return AlertDialog(
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(20.0),
-                      ),
-                      backgroundColor: Colors.orange[200],
-                      title: Text('בדיקת כניסת מנהל'),
-                      content: TextField(
-                        decoration: InputDecoration(
-                            hintText: "userName",
-                            enabledBorder: OutlineInputBorder(
-                              borderSide: const BorderSide(color:Colors.black, width: 5.0),
-                              borderRadius: BorderRadius.circular(20.0),
-                            ),
-                            focusedBorder:OutlineInputBorder(
-                              borderSide: const BorderSide(color:Colors.black, width: 2.0),
-                              borderRadius: BorderRadius.circular(20.0) ,
-
-                            ),
-                            fillColor: app_colors.background,
-                            filled: true,
-                            prefix: const Padding(
-                              padding: EdgeInsets.all(4),
-                            ) ),
-                        maxLines: 1,
-                        maxLength: 20,
-                        controller: _textFieldController,
-                      ),
-                      actions: <Widget>[
-                        FlatButton(
-                          color: Colors.red,
-                          textColor: Colors.white,
-                          child: Text('CANCEL'),
-                          onPressed: () {
-                            setState(() {
-                              Navigator.pop(context);
-                            });
-                          },
-                        ),
-                        FlatButton(
-                          color: Colors.green,
-                          textColor: Colors.white,
-                          child: Text('OK'),
-                          onPressed: () {
-                            chekMng();
-                          },
-                        ),
-                      ],
-                    );
-                  });
-            },)
-
-
           ],
         ),
         body: Padding(

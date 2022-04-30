@@ -5,12 +5,13 @@ import 'package:center_side/dbHelper/mng_model.dart';
 
 
 
-Future<Mng> newUser(String userName)async{
+Future<Mng> newUser(String userName,String password)async{
   final id = ObjectId();
   print("ff");
   final  mng = Mng(
     id:id,
     userName: userName,
+    password: password,
   );
   await MongoDB.insertMng(mng);
   return mng;
@@ -27,6 +28,7 @@ dynamic searchMng(String userName)async{
       final mng=Mng(
         id: l[i]['_id'],
         userName:l[i]['userName'],
+        password:l[i]['password']
       );
       return mng;
     }

@@ -1,5 +1,6 @@
 import 'package:center_side/compount/colors.dart';
 import 'package:center_side/compount/drawer.dart';
+import 'package:center_side/pages/maneger.dart';
 import 'package:center_side/pages/workPage.dart';
 import 'package:center_side/sos/sos_main_page.dart';
 import 'package:flutter/cupertino.dart';
@@ -8,6 +9,7 @@ import '../dbHelper/worker_managment.dart';
 import '../dbHelper/worker_model.dart';
 import '../example2.dart';
 import 'package:center_side/uses/share_data.dart';
+import 'package:center_side/dbHelper/mng_managment.dart';
 
 
 class SignIn extends StatefulWidget {
@@ -30,12 +32,17 @@ class _SignInState extends State<SignIn> {
   }
   void chekUser()async{
     var user=await searchWorker(_userName.text);
-    if(user.password==_password.text){
+    var mng=await searchMng(_userName.text);
+    if(user.password==_password.text || mng.password==_password.text){
       print("ok");
       data.userName=_userName.text;
       Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
     }
-    else print("no match");
+    else{if(_userName.text=='mng1'&&_password.text=='an123'){
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>(const ManagerPage())),);
+
+    }
+    } print("no match");
 
     if(user==null) print("user not found");
   }
