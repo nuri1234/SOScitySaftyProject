@@ -28,143 +28,165 @@ class _SignInState extends State<SignIn> {
   void initState() {
     // TODO: implement initState
     super.initState();
+    _userName.text="";
     _password.text="";
   }
-  void chekUser()async{
-    var user=await searchWorker(_userName.text);
+  void checkMng()async{
     var mng=await searchMng(_userName.text);
-    if(user.password==_password.text || mng.password==_password.text){
+    if(mng.userName==_userName.text){
       print("ok");
-      data.userName=_userName.text;
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (c) => Scaffold(body: ManagerPage())
+      ));
     }
-    else{if(_userName.text=='mng1'&&_password.text=='an123'){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>(const ManagerPage())),);
+    else print("no match");
 
-    }
-    } print("no match");
-
-    if(user==null) print("user not found");
+    if(mng==null) print("user not found");
   }
 
+  void chekUser()async {
+    var user = await searchWorker(_userName.text);
+    if (user.password == _password.text) {
+      print("ok");
+      data.userName = _userName.text;
+      Navigator.push(
+        context, MaterialPageRoute(builder: (context) => (const SOS())),);
+    }
 
-  Widget NextButton()=>Container(
-    height: 100.0,
-    width: 200.0,
-    child:
-    FloatingActionButton(
-      //child: Icon(Icons.ac_unit),
-      child: Text("כניסה",style: TextStyle(fontSize: 20,color: Colors.black),),
+    else {
+      checkMng();
+      //print("no match");}
+    }
+    if (user == null) print("user not found");
+    }
 
-      backgroundColor: Colors.orange,
-      onPressed: () {
-        print("Next");
-        chekUser();
 
-      },
-    ),
-  );
+    Widget NextButton() =>
+        Container(
+          height: 100.0,
+          width: 200.0,
+          child:
+          FloatingActionButton(
+            //child: Icon(Icons.ac_unit),
+            child: Text(
+              "כניסה", style: TextStyle(fontSize: 20, color: Colors.black),),
 
-  Widget userNameTextField()=>Container(
-    height:100,
-    width:200,
-    child: TextField(
-      decoration: InputDecoration(
-          hintText: "userName",
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color:Colors.black, width: 5.0),
-            borderRadius: BorderRadius.circular(20.0),
+            backgroundColor: Colors.orange,
+            onPressed: () {
+              print("Next");
+              chekUser();
+            },
           ),
-          focusedBorder:OutlineInputBorder(
-            borderSide: const BorderSide(color:Colors.black, width: 2.0),
-            borderRadius: BorderRadius.circular(20.0) ,
+        );
 
+    Widget userNameTextField() =>
+        Container(
+          height: 100,
+          width: 200,
+          child: TextField(
+            decoration: InputDecoration(
+                hintText: "userName",
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.black, width: 5.0),
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.black, width: 2.0),
+                  borderRadius: BorderRadius.circular(20.0),
+
+                ),
+                fillColor: app_colors.background,
+                filled: true,
+                prefix: const Padding(
+                  padding: EdgeInsets.all(4),
+                )),
+            maxLines: 1,
+            maxLength: 20,
+            controller: _userName,
           ),
-          fillColor: app_colors.background,
-          filled: true,
-          prefix: const Padding(
-            padding: EdgeInsets.all(4),
-          ) ),
-      maxLines: 1,
-      maxLength: 20,
-      controller: _userName,
-    ),
-  );
-  Widget passwordTextField()=>Container(
-    height:100,
-    width:200,
-    child: TextField(
-        obscureText: true,
-      decoration: InputDecoration(
-          hintText: "password",
-          enabledBorder: OutlineInputBorder(
-            borderSide: const BorderSide(color:Colors.black, width: 5.0),
-            borderRadius: BorderRadius.circular(20.0),
+        );
+    Widget passwordTextField() =>
+        Container(
+          height: 100,
+          width: 200,
+          child: TextField(
+            obscureText: true,
+            decoration: InputDecoration(
+                hintText: "password",
+                enabledBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.black, width: 5.0),
+                  borderRadius: BorderRadius.circular(20.0),
+                ),
+                focusedBorder: OutlineInputBorder(
+                  borderSide: const BorderSide(color: Colors.black, width: 2.0),
+                  borderRadius: BorderRadius.circular(20.0),
+
+                ),
+                fillColor: app_colors.background,
+                filled: true,
+                prefix: const Padding(
+                  padding: EdgeInsets.all(4),
+                )),
+            maxLines: 1,
+            maxLength: 20,
+            controller: _password,
           ),
-          focusedBorder:OutlineInputBorder(
-            borderSide: const BorderSide(color:Colors.black, width: 2.0),
-            borderRadius: BorderRadius.circular(20.0) ,
+        );
 
-          ),
-          fillColor: app_colors.background,
-          filled: true,
-          prefix: const Padding(
-            padding: EdgeInsets.all(4),
-          ) ),
-      maxLines: 1,
-      maxLength: 20,
-      controller: _password,
-    ),
-  );
+    Widget inputContainer() =>
+        Container(
+          height: 300,
+          width: 300,
+          color: app_colors.background,
+          padding: EdgeInsets.all(8),
+          child: Stack(children: [
+            Align(
+              alignment: const Alignment(0, -1), child: userNameTextField(),),
+            Align(
+              alignment: const Alignment(0, 0), child: passwordTextField(),),
 
-  Widget inputContainer()=>Container(
-    height: 300,
-    width: 300,
-    color: app_colors.background,
-    padding: EdgeInsets.all(8),
-    child: Stack(children: [
-      Align(alignment: const Alignment(0, -1),child: userNameTextField(),),
-      Align(alignment: const Alignment(0, 0),child: passwordTextField(),),
+          ],),
 
-    ],),
+        );
 
-  );
+    Widget mainStak() =>
+        Stack(children: [
+          ListView(children: [
+            Container(
+                height: 180,
+                width: double.infinity,
+                child: Image.asset(
+                  'assets/images/logo.png', fit: BoxFit.contain,)
 
-  Widget mainStak()=>Stack(children: [
-    ListView(children: [
-      Container(
-          height: 180,
-          width: double.infinity,
-          child:Image.asset('assets/images/logo.png',fit: BoxFit.contain,)
+            ),
+            Container(
+              child: Align(
+                alignment: const Alignment(0, 0), child: inputContainer(),),
+            ),
+            Container(
+              child: Align(
+                alignment: const Alignment(0, 0.8), child: NextButton(),),
+            )
 
-      ),
-      Container(
-        child:Align(alignment: const Alignment(0, 0),child: inputContainer(),),
-      ),
-      Container(
-        child:Align(alignment: const Alignment(0, 0.8),child: NextButton(),),
-      )
-
-    ],)
+          ],)
 
 
-  ],);
+        ],);
 
 
+    @override
+    Widget build(BuildContext context) {
+      return Directionality(
+          textDirection: TextDirection.rtl,
+          child: Scaffold(
+            appBar: AppBar(
+              backgroundColor: app_colors.app_bar_background,
+              title: Text('כניסה למערכת'),
+              centerTitle: true,
+            ),
+            backgroundColor: app_colors.background,
+            body: mainStak(),
 
-  @override
-  Widget build(BuildContext context) {
-    return Directionality(
-        textDirection: TextDirection.rtl,
-        child:Scaffold(
-          appBar: AppBar(
-            backgroundColor: app_colors.app_bar_background,
-            title: Text('כניסה למערכת'),
-            centerTitle: true,
-          ),
-          backgroundColor: app_colors.background,
-          body: mainStak(),
-
-        ));
+          ));
+    }
   }
-}

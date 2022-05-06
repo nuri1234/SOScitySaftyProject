@@ -5,7 +5,7 @@ import 'package:center_side/dbHelper/mng_model.dart';
 
 
 
-Future<Mng> newUser(String userName,String password)async{
+Future<Mng> newMng(String userName,String password)async{
   final id = ObjectId();
   print("ff");
   final  mng = Mng(
