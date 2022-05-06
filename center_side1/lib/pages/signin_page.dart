@@ -1,5 +1,4 @@
 import 'package:center_side/compount/colors.dart';
-import 'package:center_side/compount/drawer.dart';
 import 'package:center_side/pages/maneger.dart';
 import 'package:center_side/pages/workPage.dart';
 import 'package:center_side/sos/sos_main_page.dart';
@@ -7,7 +6,6 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../dbHelper/worker_managment.dart';
 import '../dbHelper/worker_model.dart';
-import '../example2.dart';
 import 'package:center_side/uses/share_data.dart';
 import 'package:center_side/dbHelper/mng_managment.dart';
 
@@ -30,6 +28,22 @@ class _SignInState extends State<SignIn> {
     super.initState();
     _password.text="";
   }
+  void checkMng()async{
+    var mng=await searchMng(_userName.text);
+    if(mng.userName==_userName.text){
+      print("ok");
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (c) => Scaffold(body: ManagerPage())
+      ));
+    }
+    else print("no match");
+
+    if(mng==null) print("user not found");
+  }
+
+
+
+
   void chekUser()async{
     var user=await searchWorker(_userName.text);
     var mng=await searchMng(_userName.text);
@@ -38,11 +52,10 @@ class _SignInState extends State<SignIn> {
       data.userName=_userName.text;
       Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
     }
-    else{if(_userName.text=='mng1'&&_password.text=='an123'){
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>(const ManagerPage())),);
+    else{checkMng();}
 
-    }
-    } print("no match");
+
+     print("no match");
 
     if(user==null) print("user not found");
   }

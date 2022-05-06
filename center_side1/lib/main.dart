@@ -3,11 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:center_side/pages/maneger.dart';
 import 'dbHelper/mongodb.dart';
 import 'socket_class.dart';
-import 'example2.dart';
+
 import 'pages/signin_page.dart';
 import 'pages/homePage.dart';
-import 'compount/drawer.dart';
-import 'package:center_side/pages/login.dart';
 import 'package:center_side/pages/workPage.dart';
 import 'package:center_side/pages/addWorker.dart';
 import 'package:center_side/pages/workerList.dart';

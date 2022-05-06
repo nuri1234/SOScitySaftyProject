@@ -23,6 +23,8 @@ dynamic searchMng(String userName)async{
   List l=await MongoDB.getMng();
   int i;
   for(i=0;i<l.length;i++){
+    print(l[i]['userName']);
+    print("yes");
     if(l[i]['userName']==userName){
       print("found");
       final mng=Mng(

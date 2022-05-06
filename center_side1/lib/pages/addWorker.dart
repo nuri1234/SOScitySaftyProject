@@ -1,12 +1,9 @@
 import 'package:center_side/compount/colors.dart';
-import 'package:center_side/compount/drawer.dart';
 import 'package:flutter/material.dart';
-import 'package:center_side/compount/drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:center_side/dbHelper/mongodb.dart';
 import '../dbHelper/worker_managment.dart';
 import '../dbHelper/worker_model.dart';
-import '../example2.dart';
 import 'package:center_side/dbHelper/worker_model.dart';
 import 'package:mongo_dart/mongo_dart.dart'as M;
 
@@ -192,7 +189,6 @@ class _AddWorkerState extends State<AddWorker> {
 
         ),
         backgroundColor: app_colors.background,
-        drawer: MyDrawer(),
         body:mainStack(),
       ),
     );
