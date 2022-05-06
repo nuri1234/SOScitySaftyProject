@@ -3,8 +3,8 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../dbHelper/worker_managment.dart';
 import '../dbHelper/worker_model.dart';
-import '../example2.dart';
 import 'package:center_side/uses/share_data.dart';
+import 'package:center_side/sos/sos_main_page.dart';
 
 
 class SignIn extends StatefulWidget {
@@ -30,7 +30,7 @@ class _SignInState extends State<SignIn> {
     if(user.password==_password.text){
       print("ok");
       data.userName=_userName.text;
-      Navigator.push(context, MaterialPageRoute(builder: (context)=>(const examplePage2())),);
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
     }
     else print("no match");
 

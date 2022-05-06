@@ -4,13 +4,13 @@ import 'package:google_fonts/google_fonts.dart';
 import 'texts.dart';
 import 'colors.dart';
 import 'local_data.dart';
-import 'package:mask_text_input_formatter/mask_text_input_formatter.dart';
-import 'package:pin_code_fields/pin_code_fields.dart';
-import 'package:firebase_auth/firebase_auth.dart';
 import 'sos_main_screen.dart';
+import 'verify_phone_number_page.dart';
 
 
 class Registor extends StatefulWidget {
+
+
   const Registor({Key? key}) : super(key: key);
 
   @override
@@ -18,297 +18,11 @@ class Registor extends StatefulWidget {
 }
 
 
-/////////////////////////////////////////////////////
-
-
-//////////////////////////////////////////////////////////////////////
 
 class _RegistorState extends State<Registor> {
   final TextEditingController _user_name= TextEditingController();
   bool _save=false;
-  bool _phoneInput=false;
   bool isLoading=true;
-  final maskFormatter = MaskTextInputFormatter(mask: 'XX#-#######', filter: { "#": RegExp(r'[0-9]') ,"X": RegExp(r'[0,5]') });
-  final TextEditingController _phone= TextEditingController();
-  String codeDigits="+972";
-  int state=0;
-  String? varificationCode;
-  TextEditingController otpCode = TextEditingController();
-  final FirebaseAuth _auth = FirebaseAuth.instance;
-
-  //////////////////////////////////////////////////verefing phonefunctions/////////
-  _onVerificationCompleted(PhoneAuthCredential authCredential) async {
-    print("verification completed ${authCredential.smsCode}");
-    User? user = FirebaseAuth.instance.currentUser;
-    setState(() {
-      this.otpCode.text = authCredential.smsCode!;
-    });
-    if (authCredential.smsCode != null) {
-      try{
-        UserCredential credential =
-        await user!.linkWithCredential(authCredential);
-      }on FirebaseAuthException catch(e){
-        if(e.code == 'provider-already-linked'){
-          await _auth.signInWithCredential(authCredential);
-        }
-      }
-
-
-    }
-  }
-  _onVerificationFailed(FirebaseAuthException exception) {
-    if (exception.code == 'invalid-phone-number') {
-      print("The phone number entered is invalid!");
-    }
-  }
-  _onCodeSent(String verificationId, int? forceResendingToken) {
-    this.varificationCode = verificationId;
-    print(varificationCode);
-    print(forceResendingToken);
-    print("code sent");
-  }
-  _onCodeTimeout(String timeout) {
-    return null;
-  }
-  verifyPhoneNumber() async{
-
-    String phone= codeDigits+maskFormatter.getUnmaskedText();
-    print(phone);
-
-    await _auth.verifyPhoneNumber(
-        phoneNumber:phone,
-        verificationCompleted: _onVerificationCompleted,
-        verificationFailed: _onVerificationFailed,
-        codeSent: _onCodeSent,
-        codeAutoRetrievalTimeout: _onCodeTimeout);
-
-  }
-  //////////////////////////end verefing phonefunctions/////////
-
-  /////////////////////////////////////////////////////////////////
-  Widget languageButton()=> PopupMenuButton(
-  color: Colors.grey,
-  child: Icon(Icons.language,color:app_colors.languageButton,size: 40,) ,
-  itemBuilder: (context) => [
-  PopupMenuItem(
-  child: const Text("عربيه"),
-  value: 1,
-  onTap: (){print("change to arbic");
-    setState(() {
-      my_texts.changeToArabic();
-    });
-    data.language=1;
-    data.updateData();
-    },
-  ),
-    PopupMenuItem(
-      child: const Text("English"),
-      value: 1,
-      onTap: (){
-        print("change to english");
-        setState(() {
-          my_texts.changeEnglish();
-        });
-        data.language=0;
-  data.updateData();
-
-  },
-    ),
-    PopupMenuItem(
-      child: const Text("עברית"),
-      value: 1,
-      onTap: (){
-        print("change to עברית");
-        setState(() {
-          my_texts.changeToHebrew();
-        });
-        data.language=2;
-        data.updateData();
-
-      },
-    ),
-  ]
-  );
-  Widget nextButton()=>ElevatedButton(
-    onPressed:(){
-      debugPrint(_phone.text);
-      debugPrint(maskFormatter.getUnmaskedText());
-      verifyPhoneNumber();
-      setState(() {
-        state=1;
-      });
-
-    } ,
-
-    style: ElevatedButton.styleFrom(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(90.0)
-      ),
-      primary:  app_colors.button,
-      minimumSize: Size(50.0, 50.0),
-    ),
-    child: Text(my_texts.Next, style: TextStyle(color: app_colors.text_button,fontWeight:FontWeight.bold ,fontSize: 18),),
-  );
-  Widget nextButton2()=>ElevatedButton(
-    onPressed:(){
-      updateData();
-    } ,
-
-    style: ElevatedButton.styleFrom(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(90.0)
-      ),
-      primary:  app_colors.button,
-      minimumSize: Size(50.0, 50.0),
-    ),
-    child: Text(my_texts.Next, style: TextStyle(color: app_colors.text_button,fontWeight:FontWeight.bold ,fontSize: 18),),
-  );
-  Widget tryAgainButton()=>ElevatedButton(
-
-    onPressed:(){
-      debugPrint(_phone.text);
-      debugPrint(maskFormatter.getUnmaskedText());
-      // verifyPhoneNumber();
-      setState(() {
-        state=0;
-      });
-
-    } ,
-
-    style: ElevatedButton.styleFrom(
-      shape: RoundedRectangleBorder(
-          borderRadius: BorderRadius.circular(90.0)
-      ),
-      primary:  app_colors.button,
-      minimumSize: const Size(50.0, 50.0),
-    ),
-    child: Text(my_texts.try_again, style: TextStyle(color: app_colors.text_button,fontWeight:FontWeight.bold ,fontSize: 18),),
-  );
-  Widget pinPut()=>PinCodeTextField(
-      appContext: context,
-      length: 6,
-      onChanged: (value){print(value);},
-      pinTheme: PinTheme(
-        shape: PinCodeFieldShape.box,
-        borderRadius: BorderRadius.circular(0),
-        fieldHeight: 50,
-        fieldWidth: 50,
-        inactiveColor: Colors.black,
-        activeColor: Colors.blue,
-        selectedColor: Colors.white,
-
-      ),
-      onCompleted: (value)async{
-        try{
-          await FirebaseAuth.instance.signInWithCredential(
-              PhoneAuthProvider.credential(
-                  verificationId: varificationCode!, smsCode: value)).then((value) {
-            if(value.user!=null){
-              print("worked");
-              updateData();
-              _phoneInput=false;
-
-
-            }
-          });
-
-        }
-        catch(e){
-          FocusScope.of(context).unfocus();
-          ScaffoldMessenger.of(context).showSnackBar(
-              const SnackBar(
-                content: Text("invaild OTP"),
-                duration: Duration(seconds: 5),
-                backgroundColor: Colors.red,
-
-              )
-          );
-          setState(() {
-            state=3;
-          });
-        }
-      }
-
-
-
-  );
-  Widget verifyingTextContainer()=>Container(
-    height: 50,
-    width: 400,
-    //color: Colors.yellow,
-    child: Text("verifying: ${codeDigits}--${ maskFormatter.getUnmaskedText()}",
-      style:GoogleFonts.abel(fontSize: 25,fontWeight: FontWeight.bold,color: Colors.black),
-
-    ),
-  );
-  Widget phoneVerificationContainer()=>Container(
-    padding: EdgeInsets.all(20),
-    //  color: Colors.blue,
-    height: 250,
-    width:400,
-    child: Center(
-      child: Column(
-        children: [
-          Text(my_texts.EnterPhon,
-            style: GoogleFonts.abel(fontSize: 16,fontWeight: FontWeight.w800,color: Colors.black),),
-          SizedBox(height: 10,),
-          TextField(
-            decoration: InputDecoration(
-                enabledBorder: OutlineInputBorder(
-                  borderSide: BorderSide(color:app_colors.BorderSide, width: 2.0),
-                  borderRadius: BorderRadius.circular(20.0),
-                ),
-                focusedBorder:OutlineInputBorder(
-                  borderSide: BorderSide(color:app_colors.BorderSide, width: 2.0),
-                  borderRadius: BorderRadius.circular(20.0) ,
-
-                ),
-                prefixIcon: Icon(Icons.add_ic_call_outlined,color:app_colors.BorderSide,size: 20.0,),
-                hintText:my_texts.phoneNumber,
-                fillColor: app_colors.textInputFill,
-                filled: true,
-                prefix: Padding(
-                  padding: EdgeInsets.all(4),
-                  child: Text("+972"),
-                ) ),
-            maxLength: 11,
-
-            keyboardType: TextInputType.number,
-            controller: _phone,
-            inputFormatters: [maskFormatter],
-          ),
-          nextButton(),
-        ],
-      ),
-    ),
-
-
-  );
-  Widget phoneVerificationContainer2()=>Container(
-    padding: EdgeInsets.all(20),
-    //    color: Colors.pinkAccent,
-    height: 250,
-    width:400,
-    child: Center(
-      child: Column(
-        children: [
-          GestureDetector(
-            onTap: (){},
-            child:verifyingTextContainer(),
-
-          ),
-
-          const SizedBox(height: 20,),
-          Center(child: pinPut()),
-          const SizedBox(height: 20,),
-          tryAgainButton(),
-
-        ],
-      ),
-    ),
-  );
-
-  ////////////////////////////////////////
 
 
   @override
@@ -331,17 +45,50 @@ class _RegistorState extends State<Registor> {
     data.updateData();
 
   }
-  void updateData() {
 
-    setState(() {
-      data.phone=maskFormatter.getUnmaskedText();
-      data.phone_verified=true;
-      state=3;
-    });
-    data.updateData();
+  Widget languageButton()=> PopupMenuButton(
+      color: Colors.grey,
+      child: Icon(Icons.language,color:app_colors.languageButton,size: 40,) ,
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          child: const Text("عربيه"),
+          value: 1,
+          onTap: (){print("change to arbic");
+          setState(() {
+            my_texts.changeToArabic();
+          });
+          data.language=1;
+          data.updateData();
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("English"),
+          value: 1,
+          onTap: (){
+            print("change to english");
+            setState(() {
+              my_texts.changeEnglish();
+            });
+            data.language=0;
+            data.updateData();
 
-  }
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("עברית"),
+          value: 1,
+          onTap: (){
+            print("change to עברית");
+            setState(() {
+              my_texts.changeToHebrew();
+            });
+            data.language=2;
+            data.updateData();
 
+          },
+        ),
+      ]
+  );
 ///////////////////////////////
   Widget logo()=>Container(
       padding: const EdgeInsets.all(0),
@@ -370,11 +117,14 @@ class _RegistorState extends State<Registor> {
 
   );
   Widget saveButton()=>IconButton(
-    onPressed: save,
+    key:Key('saveButton'),
+    onPressed: _save? save: (){},
     icon:Icon(Icons.save,size: 50,color: _save? Colors.green: Colors.grey,) ,
 
   );
- Widget continueButton()=>Container(
+  Widget continueButton()=>Container(
+    height: 70,
+    width: 150,
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(90),
         boxShadow:[
@@ -395,10 +145,10 @@ class _RegistorState extends State<Registor> {
       onPressed: (){
         Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
       },
-      child: const Icon(Icons.next_plan_rounded,size: 20.0,),
+      child:  Text(my_texts.continue_bot,style: TextStyle(color: app_colors.text_button,fontWeight:FontWeight.bold ,fontSize: 18),),
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
-        primary: app_colors.cmera_button,
+        primary: app_colors.button,
         minimumSize:const Size(50.0, 50.0),
 
       ),
@@ -417,6 +167,8 @@ class _RegistorState extends State<Registor> {
 
   );
   Widget inputPhone_Button()=>Container(
+    height: 70,
+    width: 150,
     decoration: BoxDecoration(
         borderRadius: BorderRadius.circular(90),
         boxShadow:[
@@ -436,9 +188,7 @@ class _RegistorState extends State<Registor> {
     child: ElevatedButton(
       onPressed: (){
 
-        setState(() {
-          _phoneInput=true;
-        });
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>(const verifyPhone())),).then((_) =>setState(() {}) );
       },
       child:Text(my_texts.inputPhone,style:TextStyle(color: app_colors.text_button,fontWeight:FontWeight.bold ,fontSize: 18)),
       style: ElevatedButton.styleFrom(
@@ -455,6 +205,7 @@ class _RegistorState extends State<Registor> {
     width:300,
     padding: EdgeInsets.all(20),
     child: TextField(
+      key:Key('userNameTextField'),
       decoration: InputDecoration(
         enabledBorder: OutlineInputBorder(
           borderSide: BorderSide(color:app_colors.BorderSide, width: 0.0),
@@ -465,14 +216,14 @@ class _RegistorState extends State<Registor> {
           borderRadius: BorderRadius.circular(20.0) ,
 
         ),
-          prefixIcon:Padding(
-            padding: const EdgeInsets.all(8.0),
-            child: Text("${my_texts.username} : ",style: GoogleFonts.aBeeZee(fontSize:20,fontWeight: FontWeight.bold,color: Colors.black),),
-          ),
-          fillColor: app_colors.textInputFill,
+        prefixIcon:Padding(
+          padding: const EdgeInsets.all(8.0),
+          child: Text("${my_texts.username} : ",style: GoogleFonts.aBeeZee(fontSize:20,fontWeight: FontWeight.bold,color: Colors.black),),
+        ),
+        fillColor: app_colors.textInputFill,
 
-          filled: true,
-          ),
+        filled: true,
+      ),
       maxLines: 15,
       controller: _user_name,
       style:  GoogleFonts.aBeeZee(fontSize:20,fontWeight: FontWeight.bold,color: Colors.green,),
@@ -482,70 +233,55 @@ class _RegistorState extends State<Registor> {
       });},
     ),
   );
-
-
   Widget deatailsContainer()=>Container(
     // color: Colors.red,
     height: 110,
     width:350,
-   // color: Colors.pink,
+    // color: Colors.pink,
     child: Stack(
-        children: [
-          Align(alignment: const Alignment(-1,-1),child:inputuserNameTextField(),),
-          Align(alignment: const Alignment(0.9,-0.4),child:saveButton(),),
+      children: [
+        Align(alignment: const Alignment(-1,-1),child:inputuserNameTextField(),),
+        Align(alignment: const Alignment(0.9,-0.4),child:saveButton(),),
 
 
-        ],
+      ],
 
     ),
   );
-
   Widget mainColumn()=>SingleChildScrollView(
-    reverse: true,
-    child: Column(
-        children: [
-          Container(
-            height: 230,
-            width: 350,
-            //color: Colors.black12,
-            child: Stack(children: [
-              Align(alignment: Alignment.bottomCenter,child:Container(
-                  height: 100,
-                  width: 300,
-                //  color: Colors.grey,
-                  child: Center(child: my_texts.explaneText)) ,),
-              Align(alignment: Alignment.topCenter,child:logo() ,),
-            ],),
-
-          ),
-
-          deatailsContainer(),
-         if(data.phone_verified) Center(
-           child: Container(
-             height: 50,
-             width: 310,
-             //color: Colors.white,
-             child: Row(
-               children: [
-                 Text(" ${my_texts.phoneNumber}: ${data.phone}",style: TextStyle(fontSize: 20),),
-                 clear_phone()
-               ],
-             ),
-           ),
-         ),
-         if(!_phoneInput && !data.phone_verified) inputPhone_Button(),
-          if(_phoneInput) if(state==0)
-            phoneVerificationContainer(),
-          if(state==1)
-            phoneVerificationContainer2(),
-
-        ]),
-  );
+      reverse: true,
+      child: Column(
+          children: [
+            Center(child: logo(),),
+            Container(
+                height: 150,
+                width: 300,
+                // color: Colors.black12,
+                child: my_texts.explaneText),
+            deatailsContainer(),
+            if(data.phone_verified) Center(
+              child: Container(
+                height: 80,
+                width: 310,
+                //color: Colors.white,
+                child: Row(
+                  children: [
+                    Text(" ${my_texts.phoneNumber}: ${data.phone}",style: TextStyle(fontSize: 20),),
+                    clear_phone()
+                  ],
+                ),
+              ),
+            ),
+            if(!data.phone_verified) inputPhone_Button(),
+            const SizedBox(height: 10,),
+            continueButton() ,
+          ]
+      ));
   Widget mainStack()=>Stack(
     children: [
-      Align(alignment: const Alignment(0,0.2),child:mainColumn(),),
-   //   Align(alignment: const Alignment(0,-0.7),child:welcomeContainer()),
-      Align(alignment: const Alignment(1,-0.9),child:continueButton() ),
+      Align(alignment: const Alignment(0,-0.5),child:mainColumn(),),
+      //   Align(alignment: const Alignment(0,-0.7),child:welcomeContainer()),
+      // Align(alignment: const Alignment(1,-0.9),child:continueButton() ),
       Align(alignment: const Alignment(-1,-0.9),child:languageButton()),
 
     ],

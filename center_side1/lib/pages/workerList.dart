@@ -1,6 +1,6 @@
 import 'package:center_side/dbHelper/mongodb.dart';
 import 'package:center_side/dbHelper/worker_model.dart';
-import 'package:center_side/example2.dart';
+
 import 'package:flutter/material.dart';
 
 
@@ -123,7 +123,7 @@ class _WorkerListState extends State<WorkerList> {
                   Navigator.of(context).popAndPushNamed('workerList');
                 },),
                 IconButton(icon: Icon(Icons.exit_to_app),onPressed: (){
-                  examplePage2();
+
                 },),
               ],
               ),

@@ -1,6 +1,6 @@
 import 'package:center_side/dbHelper/mongodb.dart';
 import 'package:center_side/dbHelper/contacts_model.dart';
-import 'package:center_side/example2.dart';
+
 import 'package:flutter/material.dart';
 
 
@@ -121,7 +121,7 @@ class _MessageListState extends State<MessageList> {
             Navigator.of(context).popAndPushNamed('messageList');
           },),
           IconButton(icon: Icon(Icons.exit_to_app),onPressed: (){
-            examplePage2();
+
           },),
         ],
       ),

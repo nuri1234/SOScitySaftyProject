@@ -1,3 +1,4 @@
+import 'package:client_side/registration_page.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:client_side/colors.dart';
@@ -6,9 +7,11 @@ import 'texts.dart';
 import 'colors.dart';
 import 'socket_class.dart';
 import 'home_page.dart';
-import 'registration_page.dart';
+
 import 'Record.dart';
 import 'sos_main_screen.dart';
+
+import 'verify_phone_number_page.dart';
 
 
 
@@ -66,8 +69,6 @@ class splashScreen extends StatelessWidget {
       )
 
   );
-
-
   @override
   Widget build(BuildContext context) {
     return  MaterialApp(
@@ -102,6 +103,8 @@ class _MyAppState extends State<MyApp> {
         debugShowCheckedModeBanner: false,
         home: Home(),
       //  home: splashScreen(),
+       // home: verifyPhone(),
+       // home:Registor(),
 
 
       );

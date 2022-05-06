@@ -2,11 +2,9 @@ import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import 'colors.dart';
 class my_texts {
-
-
   static String username="username";
-  static String CitySafty = "SOS City Safety";
 
+  static String CitySafty = "SOS City Safety";
   static String select_image = "select image";
   static String delet_image = "delete image";
   static String cancel = "cancel";
@@ -34,9 +32,13 @@ class my_texts {
   static String centerDissconected="center Dissconected";
   static String endCall="this contact is ended";
   static String endContact="end Contact";
+  static String  centerInactive="center inactive";
   static Text explaneText= Text("The details you enter now are saved only locally .Only when an SOS call is made the application will use the data. The data can be changed in any time",
   style: GoogleFonts.abel(fontSize: 16,fontWeight: FontWeight.w800,color: Colors.black),);
   static const TextStyle buttonTextStyle=TextStyle(fontSize: 18,color:Colors.white);
+
+  static String phone_verification_complete= "phone verification complete";
+  static String phone_verification_not_complete ="phone verification not Succeed";
 
   static changeToArabic(){
     username="اسم المستخدم";
@@ -47,6 +49,9 @@ class my_texts {
     Next= "التالي";
     phoneNumber= "رقم الهاتف";
     phone_verification= " تأكيد رقم الهاتف";
+    phone_verification_complete= "اكتمل التحقق من رقم الهاتف";
+    phone_verification_not_complete ="التحقق من الهاتف لا ينجح";
+    centerInactive="مركز غير نشط";
 
 
     try_again= "حاول مجددا";
@@ -58,7 +63,7 @@ class my_texts {
     inputDescription="شرح  الحالة";
 
     enterYourMessage="رسالتك";
-    centerDissconected="المركز متصل " ;
+    centerDissconected="المركز متصل" ;
     endCall="تم قطع الاتصال";
     endContact="تطبيق وثيقة";
 
@@ -66,6 +71,9 @@ class my_texts {
   }
 
   static changeEnglish(){
+
+    phone_verification_not_complete ="phone verification not Succeed";
+    phone_verification_complete= "phone verification complete";
     username="username";
     cancel = "cancel";
     continue_bot = "Continue";
@@ -86,6 +94,7 @@ class my_texts {
     inputDescription="description";
     enterYourMessage="your message";
     centerDissconected="center Dissconected";
+    centerInactive="center inactive";
     endCall="this contact is ended";
   endContact="end Contact";
 
@@ -96,6 +105,8 @@ class my_texts {
 
 
   static changeToHebrew(){
+    phone_verification_not_complete ="אימות הטלפון לא הצליח";;
+    phone_verification_complete= "אימות הטלפון הושלם";
     username="שם משתמש";
     cancel = "ביטול";
     continue_bot = "המשך";
@@ -116,6 +127,7 @@ class my_texts {
     centerDissconected="המוקדן התנתק";
     endCall="הפנייה נסגרה";
     endContact="סגור פנייה";
+    centerInactive="המוקד לא פעיל";
 
     explaneText= Text("הפרטים שאתה מכניס נשמרים באופן מקומי בלבד. רק לאחר קריאת החירום הפרטים נשלחים.ניתן לשנות את הפרטים בכל זמן",
       style: GoogleFonts.abel(fontSize: 16,fontWeight: FontWeight.w800,color: Colors.black),);
