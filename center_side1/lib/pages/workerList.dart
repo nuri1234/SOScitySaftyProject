@@ -1,6 +1,6 @@
 import 'package:center_side/dbHelper/mongodb.dart';
 import 'package:center_side/dbHelper/worker_model.dart';
-import 'package:center_side/example2.dart';
+
 import 'package:center_side/pages/homePage.dart';
 import 'package:center_side/pages/maneger.dart';
 import 'package:flutter/material.dart';

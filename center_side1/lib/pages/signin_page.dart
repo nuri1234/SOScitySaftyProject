@@ -7,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../dbHelper/worker_managment.dart';
 import '../dbHelper/worker_model.dart';
-import '../example2.dart';
+
 import 'package:center_side/uses/share_data.dart';
 import 'package:center_side/dbHelper/mng_managment.dart';
 
@@ -45,15 +45,29 @@ class _SignInState extends State<SignIn> {
   }
 
   void chekUser()async {
+    print("chekUser1");
+    print(_userName.text);
+    print(_password.text);
     var user = await searchWorker(_userName.text);
-    if (user.password == _password.text) {
-      print("ok");
-      data.userName = _userName.text;
-      Navigator.push(
-        context, MaterialPageRoute(builder: (context) => (const SOS())),);
+    print("chekUser2");
+    if(user!=null){
+      if (user.password == _password.text) {
+        print("ok");
+        data.userName = _userName.text;
+        Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),).then((_) =>
+            setState(() {
+              _userName.text="";
+              _password.text="";
+
+            }) );
+      }
+
+
     }
 
+
     else {
+      print("chekUser1");
       checkMng();
       //print("no match");}
     }

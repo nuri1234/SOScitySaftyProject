@@ -22,7 +22,11 @@ Future<Mng> newMng(String userName,String password)async{
 dynamic searchMng(String userName)async{
   List l=await MongoDB.getMng();
   int i;
+  print("searchMng() username: $userName");
+
   for(i=0;i<l.length;i++){
+    print(l[i]['userName']);
+    print(l[i]['password']);
     if(l[i]['userName']==userName){
       print("found");
       final mng=Mng(
