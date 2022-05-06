@@ -4,10 +4,11 @@ import 'package:center_side/compount/texts.dart';
 import 'package:center_side/dbHelper/contacts_model.dart';
 import 'package:center_side/pages/viewMessage.dart';
 import 'package:center_side/pages/workerList.dart';
+import 'package:center_side/sos/sos_main_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:center_side/pages/homePage.dart';
-
+import 'package:center_side/uses/share_data.dart';
 import 'homePage.dart';
 
 class ManagerPage extends StatefulWidget {
@@ -21,23 +22,70 @@ class _ManagerPageState extends State<ManagerPage> {
   TextEditingController _textFieldController = TextEditingController();
   late String _phoneNum="106";
 
+  Widget languageButton()=> PopupMenuButton(
+      color: Colors.grey,
+      child: Icon(Icons.language,size: 40,),
+      //color:app_colors.languageButton,size: 40,) ,
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          child: const Text("עברית"),
+          value: 1,
+          onTap: (){print("change to hebrow");
+          setState(() {
+            my_texts.changeToHebrew();
+            data.language=1;
+          });
 
+
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("English"),
+          value: 1,
+          onTap: (){
+            print("change to english");
+            setState(() {
+              my_texts.changeToEnglish();
+              data.language=0;
+            });
+
+
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("عربيه"),
+          value: 1,
+          onTap: (){
+            print("change to english");
+            setState(() {
+              my_texts.changeToArabic();
+              data.language=2;
+            });
+
+
+          },
+        ),
+      ]
+  );
 
   @override
   Widget build(BuildContext context) {
-    return Directionality(
-        textDirection: TextDirection.rtl,
-        child:Row(
+    return Scaffold(
+        body:Row(
             children: <Widget>[
               Container(
                 child: Container(
                   decoration: BoxDecoration(
                       color: app_colors.app_bar_background,
-                      borderRadius: BorderRadius.only(topLeft: Radius.circular(50),bottomLeft: Radius.circular(50))
+                      borderRadius: BorderRadius.only(topRight: Radius.circular(50),bottomRight: Radius.circular(50))
                   ),
                   child: ListView(
                     children: [
-                      Container(height: 100,),
+                      Container(
+                        alignment: Alignment.topLeft,
+                        margin: EdgeInsets.only(left: 20,right: 20,top: 20),
+                        child:languageButton(),),
+                      Container(height:20,),
                       Container(
                         margin: EdgeInsets.all(20),
                         decoration: BoxDecoration(
@@ -50,7 +98,7 @@ class _ManagerPageState extends State<ManagerPage> {
                             , child: Row(children: [
                           Icon(Icons.person),
                           Container(width:10,),
-                          Text(my_texts2.WorkersList,style: TextStyle(fontSize: 20),),
+                          Text(my_texts.WorkersList,style: TextStyle(fontSize: 20),),
                         ],)
                         ),),
                       Container(
@@ -65,81 +113,28 @@ class _ManagerPageState extends State<ManagerPage> {
                             , child: Row(children: [
                           Icon(Icons.drafts),
                           Container(width:10,),
-                          Text(my_texts2.Drafts,style: TextStyle(fontSize: 20),),
+                          Text(my_texts.Drafts,style: TextStyle(fontSize: 20),),
                         ],)
                         ),
                       ),
-                      Container(
-                        margin: EdgeInsets.all(20),
+                      Container( margin: EdgeInsets.all(20),
                         decoration: BoxDecoration(
                             border: Border.all(color: Colors.black,width:3),
                             borderRadius: BorderRadius.circular(15)
                         ),
                         child: FlatButton(
                             onPressed: (){
-                              showDialog(
-                                context: context,
-                                builder: (context){
-                                  return AlertDialog(
-                                    title: Text(my_texts2.AddphoneNumber),
-                                    content: TextField(
-                                      decoration: InputDecoration(
-                                          hintText: "phone",
-                                          enabledBorder: OutlineInputBorder(
-                                            borderSide: const BorderSide(color:Colors.black, width: 5.0),
-                                            borderRadius: BorderRadius.circular(20.0),
-                                          ),
-                                          focusedBorder:OutlineInputBorder(
-                                            borderSide: const BorderSide(color:Colors.black, width: 2.0),
-                                            borderRadius: BorderRadius.circular(20.0) ,
-
-                                          ),
-                                          fillColor: Colors.white,
-                                          filled: true,
-                                          prefix: const Padding(
-                                            padding: EdgeInsets.all(4),
-                                          ) ),
-                                      maxLines: 1,
-                                      maxLength: 20,
-                                      controller: _textFieldController,
-                                    ),
-                                    actions: <Widget>[
-                                      FlatButton(
-                                        color: Colors.red,
-                                        textColor: Colors.white,
-                                        child: Text(my_texts2.Cancel),
-                                        onPressed: () {
-                                            Navigator.pop(context);
-                                        },
-                                      ),
-                                      FlatButton(
-                                        color: Colors.green,
-                                        textColor: Colors.white,
-                                        child: Text(my_texts2.OK),
-                                        onPressed: () {
-                                          _phoneNum=_textFieldController.text;
-                                          setState(() {
-                                            if(_textFieldController.text!="")
-                                              Navigator.pop(context);
-                                          });
-                                        },
-                                      ),
-                                    ],
-                                  );
-                                }
-                              );
-                              print(_phoneNum);
+                              Navigator.pushReplacement(context,MaterialPageRoute(builder:(context){return SOS();}));
                             }
                             , child: Row(children: [
-                          Icon(Icons.phone),
+                          Icon(Icons.message),
                           Container(width:10,),
-                          Text(my_texts.phone,style: TextStyle(fontSize: 20),),
+                          Text(my_texts.SOS,style: TextStyle(fontSize: 20),),
                         ],)
-                        ),
-                      ),
+                        ),),
 
                       Container(
-                        height:200,
+                        height:220,
                       ),
                       Container(
                         margin: EdgeInsets.all(20),
@@ -154,7 +149,7 @@ class _ManagerPageState extends State<ManagerPage> {
                             , child: Row(children: [
                           Icon(Icons.logout),
                           Container(width:10,),
-                          Text(my_texts2.Logout,style: TextStyle(fontSize: 20),),
+                          Text(my_texts.Logout,style: TextStyle(fontSize: 20),),
                         ],)
                         ),),
                     ],

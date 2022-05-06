@@ -2,12 +2,12 @@ import 'package:center_side/compount/center_text.dart';
 import 'package:center_side/compount/colors.dart';
 import 'package:center_side/compount/drawer.dart';
 import 'package:flutter/material.dart';
-
+import 'package:center_side/uses/share_data.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:center_side/dbHelper/mongodb.dart';
 import '../dbHelper/worker_managment.dart';
 import '../dbHelper/worker_model.dart';
-
+import 'package:center_side/compount/texts.dart';
 import 'package:center_side/dbHelper/worker_model.dart';
 import 'package:mongo_dart/mongo_dart.dart'as M;
 
@@ -22,6 +22,53 @@ class _AddWorkerState extends State<AddWorker> {
   final TextEditingController _fullName= TextEditingController();
   final TextEditingController _userName= TextEditingController();
   final TextEditingController _password= TextEditingController();
+
+  Widget languageButton()=> PopupMenuButton(
+      color: Colors.grey,
+      child: Icon(Icons.language,) ,
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          child: const Text("עברית"),
+          value: 1,
+          onTap: (){print("change to hebrow");
+          setState(() {
+            my_texts.changeToHebrew();
+            data.language=1;
+          });
+
+
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("English"),
+          value: 1,
+          onTap: (){
+            print("change to english");
+            setState(() {
+              my_texts.changeToEnglish();
+              data.language=0;
+            });
+
+
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("عربيه"),
+          value: 1,
+          onTap: (){
+            print("change to english");
+            setState(() {
+              my_texts.changeToArabic();
+              data.language=2;
+            });
+
+
+          },
+        ),
+      ]
+  );
+
+
 
   Future<void> addWorker(String fullName,String userName,String password)async{
     var _id=M.ObjectId();
@@ -47,7 +94,7 @@ class _AddWorkerState extends State<AddWorker> {
     child:
     FloatingActionButton(
       //child: Icon(Icons.ac_unit),
-      child: Text(my_texts2.Add,style: TextStyle(fontSize: 20,color: Colors.black),),
+      child: Text(my_texts.Add,style: TextStyle(fontSize: 20,color: Colors.black),),
 
       backgroundColor: app_colors.app_bar_background,
       onPressed: () {
@@ -63,7 +110,7 @@ class _AddWorkerState extends State<AddWorker> {
     width:250,
     child: TextField(
       decoration: InputDecoration(
-          hintText:my_texts2.FullName,
+          hintText:my_texts.FullName,
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color:Colors.black, width: 5.0),
             borderRadius: BorderRadius.circular(20.0),
@@ -89,7 +136,7 @@ class _AddWorkerState extends State<AddWorker> {
     width:250,
     child: TextField(
       decoration: InputDecoration(
-          hintText: my_texts2.UserName,
+          hintText: my_texts.UserName,
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color:Colors.black, width: 5.0),
             borderRadius: BorderRadius.circular(20.0),
@@ -116,7 +163,7 @@ class _AddWorkerState extends State<AddWorker> {
     width:250,
     child: TextField(
       decoration: InputDecoration(
-          hintText:my_texts2.password,
+          hintText:my_texts.password,
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color:Colors.black, width: 5.0),
             borderRadius: BorderRadius.circular(20.0),
@@ -181,11 +228,12 @@ class _AddWorkerState extends State<AddWorker> {
 
             ),
           actions: [
+            languageButton(),
             IconButton(icon: Icon(Icons.arrow_back),onPressed: (){
               Navigator.of(context).popAndPushNamed('workerList');
             },),
           ],
-          title: Text(my_texts2.AddNewWorker),
+          title: Text(my_texts.AddNewWorker),
           backgroundColor: app_colors.app_bar_background,
           centerTitle: true,
           elevation: 6,

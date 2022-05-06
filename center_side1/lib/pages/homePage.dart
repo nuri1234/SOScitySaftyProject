@@ -4,7 +4,7 @@ import 'package:center_side/compount/drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/material/app.dart';
-import '../compount/drawer.dart';
+import '../compount/texts.dart';
 import 'package:center_side/pages/signin_page.dart';
 import 'package:center_side/uses/share_data.dart';
 
@@ -18,14 +18,14 @@ class HomeState extends State<HomePage> {
 
   Widget languageButton()=> PopupMenuButton(
       color: Colors.grey,
-      child: Icon(Icons.language,color:app_colors.languageButton,size: 40,) ,
+      child: Icon(Icons.language,color:Colors.black,size: 40,) ,
       itemBuilder: (context) => [
         PopupMenuItem(
           child: const Text("עברית"),
           value: 1,
           onTap: (){print("change to hebrow");
           setState(() {
-            my_texts2.changeToHebrew();
+            my_texts.changeToHebrew();
             data.language=1;
           });
 
@@ -38,7 +38,7 @@ class HomeState extends State<HomePage> {
           onTap: (){
             print("change to english");
             setState(() {
-              my_texts2.changeToEnglish();
+              my_texts.changeToEnglish();
               data.language=0;
             });
 
@@ -51,7 +51,7 @@ class HomeState extends State<HomePage> {
           onTap: (){
             print("change to english");
             setState(() {
-              my_texts2.changeToArabic();
+              my_texts.changeToArabic();
               data.language=2;
             });
 
@@ -68,7 +68,7 @@ class HomeState extends State<HomePage> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
           appBar: AppBar(
-            title: Text(my_texts2.Welcome),
+            title: Text(my_texts.Welcome),
             actions: [
               languageButton()
 
@@ -102,7 +102,7 @@ class HomeState extends State<HomePage> {
                   child:
                   FloatingActionButton(
                     //child: Icon(Icons.ac_unit),
-                    child: Text(my_texts2.SignIn,style: TextStyle(fontSize: 20,color: Colors.black),),
+                    child: Text(my_texts.SignIn,style: TextStyle(fontSize: 20,color: Colors.black),),
 
                     backgroundColor: app_colors.app_bar_background,
                     onPressed: () {

@@ -3,7 +3,7 @@ import 'package:center_side/compount/colors.dart';
 import 'package:center_side/compount/texts.dart';
 import 'package:center_side/dbHelper/mongodb.dart';
 import 'package:center_side/dbHelper/contacts_model.dart';
-
+import 'package:center_side/uses/share_data.dart';
 import 'package:flutter/material.dart';
 
 
@@ -18,6 +18,52 @@ class MessageList extends StatefulWidget {
 class _MessageListState extends State<MessageList> {
 
   List<Contact> _messages= [];
+
+  Widget languageButton()=> PopupMenuButton(
+      color: Colors.grey,
+      child: Icon(Icons.language,size: 30,) ,
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          child: const Text("עברית"),
+          value: 1,
+          onTap: (){print("change to hebrow");
+          setState(() {
+            my_texts.changeToHebrew();
+            data.language=1;
+          });
+
+
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("English"),
+          value: 1,
+          onTap: (){
+            print("change to english");
+            setState(() {
+              my_texts.changeToEnglish();
+              data.language=0;
+            });
+
+
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("عربيه"),
+          value: 1,
+          onTap: (){
+            print("change to english");
+            setState(() {
+              my_texts.changeToArabic();
+              data.language=2;
+            });
+
+
+          },
+        ),
+      ]
+  );
+
 
   void  loadMessages()async{
     var messages=await MongoDB.getContacts();
@@ -59,9 +105,9 @@ class _MessageListState extends State<MessageList> {
                   showDialogFunc(context,_messages[index]);
                 },
                 subtitle: Text(_messages[index].description),
-                title: Text(my_texts2.ThisMessage+_messages[index].date),
+                title: Text(my_texts.ThisMessage+_messages[index].date),
                 leading: CircleAvatar(
-                  backgroundImage:AssetImage('assets/images/green.png') ,
+                  backgroundImage:AssetImage('assets/images/green.jpg') ,
                 ),
                 trailing: Container(
                   width: 100,
@@ -82,14 +128,14 @@ class _MessageListState extends State<MessageList> {
                               setState(() {
                                 Navigator.of(context).pop();
                               });
-                            }, child: Text(my_texts2.OK)),
+                            }, child: Text(my_texts.OK)),
                             FlatButton(onPressed: (){
                               Navigator.of(context).pop();
-                            }, child: Text(my_texts2.Cancel)),
+                            }, child: Text(my_texts.Cancel)),
                           ],
-                          title: Text(my_texts2.ConfiemDelete),
+                          title: Text(my_texts.ConfiemDelete),
                           contentPadding: EdgeInsets.all(20),
-                          content: Text(my_texts2.DeleteMessage+_messages[index].description),
+                          content: Text(my_texts.DeleteMessage+_messages[index].description),
                           titleTextStyle: TextStyle(color: Colors.blue,fontSize: 25),
                           contentTextStyle: TextStyle(color: Colors.red,fontSize:15),
                         );
@@ -99,7 +145,7 @@ class _MessageListState extends State<MessageList> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    child: Text(my_texts2.Delete,style: TextStyle(color:Colors.white),),
+                    child: Text(my_texts.Delete,style: TextStyle(color:Colors.white),),
                   ),
                 ),
               )
@@ -117,11 +163,12 @@ class _MessageListState extends State<MessageList> {
     return Scaffold(
       backgroundColor: app_colors.background,
       appBar: AppBar(
-        title:Text(my_texts2.MessageList),
+        title:Text(my_texts.MessageList),
         backgroundColor: app_colors.app_bar_background,
         centerTitle: true,
         elevation: 6,
         actions: [
+          languageButton(),
           IconButton(icon: Icon(Icons.home),onPressed: (){
             Navigator.of(context).popAndPushNamed('maneger');
           },),
@@ -159,35 +206,35 @@ showDialogFunc(context,Contact message){
                 children: [
                   DefaultTextStyle(  child:Row(
                     children: [
-                      Text(my_texts2.WorkerName+":",style: TextStyle(color:Colors.black,fontWeight: FontWeight.bold,fontSize:20,decoration: TextDecoration.underline),),
+                      Text(my_texts.WorkerName+":",style: TextStyle(color:Colors.black,fontWeight: FontWeight.bold,fontSize:20,decoration: TextDecoration.underline),),
                       Text(message.worker_userName),
                     ],
                   ) ,style: TextStyle(fontSize:20,color:Colors.black)),
                   SizedBox(height: 15,),
                   DefaultTextStyle(  child:Row(
                     children: [
-                      Text(my_texts2.CitizenName+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                      Text(my_texts.CitizenName+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
                       Text(message.client_userName),
                     ])
                     ,style: TextStyle(fontSize: 20,color:Colors.black),),
                   SizedBox(height: 15,),
                   DefaultTextStyle(  child:Row(
                       children: [
-                        Text(my_texts2.Citizenphone+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                        Text(my_texts.Citizenphone+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
                         Text(message.client_phone),
                       ])
                   ,style: TextStyle(fontSize: 20,color:Colors.black),),
                   SizedBox(height: 15,),
                   DefaultTextStyle(  child:Row(
                       children: [
-                        Text(my_texts2.CitizenAddress+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                        Text(my_texts.CitizenAddress+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
                         Text(message.street),
                       ])
                   ,style: TextStyle(fontSize: 20,color:Colors.black),),
                   SizedBox(height: 15,),
                   DefaultTextStyle(  child:Row(
                       children: [
-                        Text(my_texts2.ThisMessage+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                        Text(my_texts.ThisMessage,style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
                         Text(message.date),
                       ])
                   ,style: TextStyle(fontSize: 20,color:Colors.black),),
@@ -201,7 +248,7 @@ showDialogFunc(context,Contact message){
                   SizedBox(height: 15,),
                   DefaultTextStyle(  child:Row(
                       children: [
-                        Text(my_texts2.EventType+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                        Text(my_texts.EventType+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
                         Text(message.event_type),
                       ])
                   ,style: TextStyle(fontSize: 20,color:Colors.black),),

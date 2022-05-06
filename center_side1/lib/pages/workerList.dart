@@ -1,11 +1,12 @@
 import 'package:center_side/compount/center_text.dart';
+import 'package:center_side/compount/texts.dart';
 import 'package:center_side/dbHelper/mongodb.dart';
 import 'package:center_side/dbHelper/worker_model.dart';
-
+import 'package:center_side/uses/share_data.dart';
 import 'package:center_side/pages/homePage.dart';
 import 'package:center_side/pages/maneger.dart';
 import 'package:flutter/material.dart';
-
+import 'package:center_side/compount/colors.dart';
 
 class WorkerList extends StatefulWidget {
   const WorkerList({Key? key}) : super(key: key);
@@ -18,6 +19,54 @@ class WorkerList extends StatefulWidget {
 class _WorkerListState extends State<WorkerList> {
 
   List<WorkerModel> _workers= [];
+
+  Widget languageButton()=> PopupMenuButton(
+      color: Colors.grey,
+      child: Icon(Icons.language,),
+        //color:app_colors.languageButton,size: 40,) ,
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          child: const Text("עברית"),
+          value: 1,
+          onTap: (){print("change to hebrow");
+          setState(() {
+            my_texts.changeToHebrew();
+            data.language=1;
+          });
+
+
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("English"),
+          value: 1,
+          onTap: (){
+            print("change to english");
+            setState(() {
+              my_texts.changeToEnglish();
+              data.language=0;
+            });
+
+
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("عربيه"),
+          value: 1,
+          onTap: (){
+            print("change to english");
+            setState(() {
+              my_texts.changeToArabic();
+              data.language=2;
+            });
+
+
+          },
+        ),
+      ]
+  );
+
+
 
   void  loadWorkers()async{
     var workers=await MongoDB.getWorkers();
@@ -51,7 +100,7 @@ class _WorkerListState extends State<WorkerList> {
               padding: const EdgeInsets.symmetric(vertical: 10.0,horizontal: 10.0),
               child: Card(child:ListTile(
                 onTap: (){},
-                title: Text("שם העובד : "+_workers[index].fullName),
+                title: Text(my_texts.WorkerName+":"+_workers[index].fullName),
                 leading: CircleAvatar(
                   backgroundImage:AssetImage('assets/images/username2.png') ,
                 ),
@@ -74,14 +123,14 @@ class _WorkerListState extends State<WorkerList> {
                               setState(() {
                                 Navigator.of(context).pop();
                               });
-                            }, child: Text(my_texts2.OK,style: TextStyle(fontWeight:FontWeight.bold),)),
+                            }, child: Text(my_texts.OK,style: TextStyle(fontWeight:FontWeight.bold),)),
                             FlatButton(onPressed: (){
                               Navigator.of(context).pop();
-                            }, child: Text(my_texts2.Cancel,style: TextStyle(fontWeight:FontWeight.bold),)),
+                            }, child: Text(my_texts.Cancel,style: TextStyle(fontWeight:FontWeight.bold),)),
                           ],
-                          title: Text(my_texts2.ConfiemDelete,style: TextStyle(fontWeight:FontWeight.bold),),
+                          title: Text(my_texts.ConfiemDelete,style: TextStyle(fontWeight:FontWeight.bold),),
                           contentPadding: EdgeInsets.all(20),
-                          content: Text(my_texts2.DeleteMessage+_workers[index].fullName),
+                          content: Text(my_texts.DeleteMessage+_workers[index].fullName),
                           titleTextStyle: TextStyle(color: Colors.black,fontSize: 25),
                           contentTextStyle: TextStyle(color: Colors.black,fontSize:15),
                         );
@@ -91,7 +140,7 @@ class _WorkerListState extends State<WorkerList> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    child: Text(my_texts2.Delete,style: TextStyle(color:Colors.white),),
+                    child: Text(my_texts.Delete,style: TextStyle(color:Colors.white),),
                   ),
                 ),
               )
@@ -117,7 +166,7 @@ class _WorkerListState extends State<WorkerList> {
         child: Scaffold(
           backgroundColor: Colors.orange[100],
           appBar: AppBar(
-            title:Text(my_texts2.WorkersList),
+            title:Text(my_texts.WorkersList),
             backgroundColor: Colors.orange,
             centerTitle: true,
             elevation: 6,
@@ -125,6 +174,7 @@ class _WorkerListState extends State<WorkerList> {
               Navigator.of(context).popAndPushNamed('addUser');
             },),
             actions: [
+              languageButton(),
               IconButton(icon: Icon(Icons.home),onPressed: (){
                 Navigator.of(context).popAndPushNamed('maneger');
               },),

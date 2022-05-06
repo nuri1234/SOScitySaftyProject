@@ -1,6 +1,5 @@
 import 'package:center_side/compount/center_text.dart';
 import 'package:center_side/compount/colors.dart';
-import 'package:center_side/compount/drawer.dart';
 import 'package:center_side/pages/maneger.dart';
 import 'package:center_side/pages/workPage.dart';
 import 'package:center_side/sos/sos_main_page.dart';
@@ -8,7 +7,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import '../dbHelper/worker_managment.dart';
 import '../dbHelper/worker_model.dart';
-
+import 'package:center_side/compount/texts.dart';
 import 'package:center_side/uses/share_data.dart';
 import 'package:center_side/dbHelper/mng_managment.dart';
 
@@ -25,6 +24,52 @@ class _SignInState extends State<SignIn> {
   var islogin;
   final TextEditingController _userName= TextEditingController();
   final TextEditingController _password= TextEditingController();
+
+  Widget languageButton()=> PopupMenuButton(
+      color: Colors.grey,
+      child: Icon(Icons.language,color:Colors.black,size: 40,) ,
+      itemBuilder: (context) => [
+        PopupMenuItem(
+          child: const Text("עברית"),
+          value: 1,
+          onTap: (){print("change to hebrow");
+          setState(() {
+            my_texts.changeToHebrew();
+            data.language=1;
+          });
+
+
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("English"),
+          value: 1,
+          onTap: (){
+            print("change to english");
+            setState(() {
+              my_texts.changeToEnglish();
+              data.language=0;
+            });
+
+
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("عربيه"),
+          value: 1,
+          onTap: (){
+            print("change to english");
+            setState(() {
+              my_texts.changeToArabic();
+              data.language=2;
+            });
+
+
+          },
+        ),
+      ]
+  );
+
   @override
   void initState() {
     // TODO: implement initState
@@ -84,7 +129,7 @@ class _SignInState extends State<SignIn> {
           FloatingActionButton(
             //child: Icon(Icons.ac_unit),
             child: Text(
-              my_texts2.Enter, style: TextStyle(fontSize: 20, color: Colors.black),),
+              my_texts.Enter, style: TextStyle(fontSize: 20, color: Colors.black),),
 
             backgroundColor: Colors.orange,
             onPressed: () {
@@ -100,7 +145,7 @@ class _SignInState extends State<SignIn> {
           width: 200,
           child: TextField(
             decoration: InputDecoration(
-                hintText: my_texts2.UserName,
+                hintText: my_texts.UserName,
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.black, width: 5.0),
                   borderRadius: BorderRadius.circular(20.0),
@@ -127,7 +172,7 @@ class _SignInState extends State<SignIn> {
           child: TextField(
             obscureText: true,
             decoration: InputDecoration(
-                hintText: my_texts2.password,
+                hintText: my_texts.password,
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.black, width: 5.0),
                   borderRadius: BorderRadius.circular(20.0),
@@ -195,9 +240,13 @@ class _SignInState extends State<SignIn> {
           textDirection: TextDirection.rtl,
           child: Scaffold(
             appBar: AppBar(
+              actions: [
+                languageButton()
+              ],
               backgroundColor: app_colors.app_bar_background,
-              title: Text(my_texts2.EnterToSystem),
+              title: Text(my_texts.EnterToSystem),
               centerTitle: true,
+              automaticallyImplyLeading: false,
             ),
             backgroundColor: app_colors.background,
             body: mainStak(),

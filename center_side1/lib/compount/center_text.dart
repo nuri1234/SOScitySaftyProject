@@ -30,7 +30,7 @@ class my_texts2{
 
 
   static changeToEnglish(){
-    SignIn= "Signin";
+    SignIn= "Login";
     Welcome="Welcome";
     Add = "Add";
     FullName = "fullName";
@@ -60,7 +60,7 @@ class my_texts2{
   }
 
   static changeToHebrew(){
-    SignIn= "כניסה למערכת";
+    SignIn= "כניסה";
     Welcome= "ברוכים הבאים";
     Add = "הוספה";
     FullName = "שם מלא";

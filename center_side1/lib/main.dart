@@ -34,7 +34,7 @@ class MyApp extends StatelessWidget {
     return  MaterialApp(
       title: 'HomePage',
       debugShowCheckedModeBanner: false,
-      home:HomePage(),
+      home:ManagerPage(),
       // home:SOS(),
       routes: {
         'homePage':(context){
