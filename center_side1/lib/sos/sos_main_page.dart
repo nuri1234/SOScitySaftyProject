@@ -811,7 +811,7 @@ void initLanguage(){
     ),
   );
   Widget backButton()=>IconButton(
-    icon: const Icon(Icons.logout,color: Colors.green,size: 40),
+    icon: const Icon(Icons.logout,color: Colors.black,size: 40),
     onPressed:(){
       Navigator.pop(context);
 
@@ -1715,8 +1715,8 @@ void initLanguage(){
           backgroundColor: app_colors.app_bar_background,
           title:  rahatLogo(),
         centerTitle: true,
-          actions: [statisticButton(),const SizedBox(width: 10,),languageButton(),
-          backButton(),
+          actions: [ backButton(),statisticButton(),const SizedBox(width: 10,),languageButton(),
+
           ],
         ),
         body: Padding(

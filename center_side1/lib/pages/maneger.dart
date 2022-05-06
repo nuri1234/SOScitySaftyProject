@@ -124,7 +124,10 @@ class _ManagerPageState extends State<ManagerPage> {
                         ),
                         child: FlatButton(
                             onPressed: (){
-                              Navigator.pushReplacement(context,MaterialPageRoute(builder:(context){return SOS();}));
+                              print("df");
+
+                              Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
+
                             }
                             , child: Row(children: [
                           Icon(Icons.message),
