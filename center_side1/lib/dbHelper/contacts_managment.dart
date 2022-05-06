@@ -20,3 +20,38 @@ Future<Contact> newContact(String worker_userName,String date, String client_use
   await MongoDB.insertContact(contact);
   return contact;
 }
+
+
+Contact creatContact(var c){
+
+  print("creatContact");
+  print(c);
+  Contact contact=Contact(
+      id: c['_id'],
+      worker_userName: c['worker_userName'],
+      date: c['date'],
+      client_userName:c['client_userName'],
+      client_phone:c['client_phone'],
+      city: c['city'],
+      street: c['street'],
+      event_type:c['event_type'],
+      description: c['description']);
+
+  return contact;
+}
+
+
+//Future<List<Map<String, dynamic>>> getContacts()async{
+Future<List<Contact>> getContacts()async{
+  List<Contact> contacts = [];
+  var DBcontacts=await MongoDB.getContacts();
+  for(var c in DBcontacts){
+    print(c);
+    Contact contact=creatContact(c);
+    contact.loadDateTimeData();
+    contacts.add(contact);
+
+  }
+
+  return contacts;
+}

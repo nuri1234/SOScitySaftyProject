@@ -14,7 +14,7 @@ class Client{
  String city="";
   final DateTime dateTime;
   int STATUS=0; //0-new 1-opened/received 2-canceled 3-disconnected 4-call end
-  final String socketId;
+   String socketId;
   Color boxColor=app_colors.clientStart;
  List<MessageModel>  messages=[];
 

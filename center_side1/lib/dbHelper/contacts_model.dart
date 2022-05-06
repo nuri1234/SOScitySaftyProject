@@ -13,9 +13,28 @@ class Contact{
   final String event_type;
   final String description;
 
+   String hour="";
+   String month="";
+   String day="";
+  String year="";
+
 
   Contact({required this.id,required this.worker_userName,required this.date,required this.client_userName,required this.client_phone,required this.city,required this.street,required this.event_type,required this.description});
 
+  loadDateTimeData(){
+    hour=date.substring(11, 16);
+    day=date.substring(8,10);
+    year=date.substring(0,4);
+    month=date.substring(5,7);
+
+    printTimeAndPlace();
+
+  }
+
+
+  printTimeAndPlace(){
+    print("city:$city, street:$street ###year:$year, month:$month, day:$day, hour:$hour ");
+  }
 
   Map<String, dynamic> toMap() {
     return {

@@ -31,7 +31,7 @@ class SOS extends StatefulWidget {
 }
 
 class _SOSState extends State<SOS> {
-  final MapController _mapController=MapController();
+   final MapController _mapController=MapController();
   int img_size=0;
   final TextEditingController _describe= TextEditingController();
   final TextEditingController _message= TextEditingController();
@@ -52,129 +52,129 @@ class _SOSState extends State<SOS> {
   double cancelButtonWidth=90;
   late String targetSocket;
   bool buttonsCollection=false;
-  bool onProgress=false;
+   bool onProgress=false;
   bool _sendingMessage=false;
   bool _sendingPhotoMessage=false;
   bool _centeDissconected=false;
   bool _endCall=false;
-  bool _record=false;
+   bool _record=false;
   File? imageFile;
   bool imageShow=false;
   final ScrollController _controller = ScrollController();
   int photoIndex=0;
-  int audioIndex=0;
-  int audioRecordIndex=0;
+   int audioIndex=0;
+   int audioRecordIndex=0;
   static AudioCache player = AudioCache(prefix:'assets/sounds/');
-  final recorder =FS.FlutterSoundRecorder() ;
-  late File audioRecordFile;
-  static late AudioPlayer audioPlayer;
-  bool isRecorderReady=false;
-  bool isAudioReady=false;
-  bool isPlaying=false;
-  Duration duration=Duration.zero;
-  Duration position=Duration.zero;
+   final recorder =FS.FlutterSoundRecorder() ;
+   late File audioRecordFile;
+   static late AudioPlayer audioPlayer;
+   bool isRecorderReady=false;
+   bool isAudioReady=false;
+   bool isPlaying=false;
+   Duration duration=Duration.zero;
+   Duration position=Duration.zero;
 
 
   ////////////////////////Functions/////////////////////////////////////////////
-  void socketListner() {
-    my_socket.socket.on("sos_call_request_send", (client){
-      print("sos_call_request_send");
-      print(client);
-      setState(() {
-        sendrequest=true;
-      });
+   void socketListner() {
+     my_socket.socket.on("sos_call_request_send", (client){
+       print("sos_call_request_send");
+       print(client);
+       setState(() {
+         sendrequest=true;
+       });
 
-    });
-
-
-    my_socket.socket.on("end_call",(_){
-      print("end_call");
-      if(requestResponse) {
-        endCall();
-      }
+     });
 
 
-    });
+     my_socket.socket.on("end_call",(_){
+       print("end_call");
+       if(requestResponse) {
+         endCall();
+       }
 
 
-    my_socket.socket.on("centerDisconnected", (sourceId) async{
-      print("centerDisconnected $sourceId");
-      if( (requestResponse) && sourceId==targetSocket){
-        centerDisconnected();
-      }
-
-    });
-
-    my_socket.socket.on("SOS_Call_Respone", (id){
-      print("SOS_Call_Respone");
-      print(id);
-      setState(() {
-        targetSocket=id;
-      });
-      SOScallRespon();
-
-    });
-
-    my_socket.socket.on("get_message",(msg) {
+     });
 
 
-      print("get msg");
-      MessageModel getNewMsg=MessageModel(senderType:msg['senderType'] ,
-          messageType: msg['messageType'],
-          message: msg['message'],
-          describe:msg['describe'],
-          time: msg['time']);
-      setState(() {
-        messages.add(getNewMsg);
-      });
-      player.play('message.wav');
-    });
+     my_socket.socket.on("centerDisconnected", (sourceId) async{
+       print("centerDisconnected $sourceId");
+       if( (requestResponse) && sourceId==targetSocket){
+         centerDisconnected();
+       }
 
-    my_socket.socket.on("message_send", (data) async{
-      print("message_send");
-      addNewMsg();
+     });
 
-    });
+     my_socket.socket.on("SOS_Call_Respone", (id){
+       print("SOS_Call_Respone");
+       print(id);
+       setState(() {
+         targetSocket=id;
+       });
+       SOScallRespon();
 
-    my_socket.socket.on("error", (msg){
-      print("error: $msg");
+     });
 
-    });
-
-    my_socket.socket.onDisconnect((_){
-      print("Disconnect from server");
-      setState(() {
-        my_socket.isconnect=false;
-      });
-    });
+     my_socket.socket.on("get_message",(msg) {
 
 
-    my_socket.socket.onConnect((data) {
-      print("Connected to server2");
-      // my_socket.socket.emit("clientSignin", my_socket.socket.id);
-      setState(() {
-        my_socket.isconnect=true;
-      });
-    });
+       print("get msg");
+       MessageModel getNewMsg=MessageModel(senderType:msg['senderType'] ,
+           messageType: msg['messageType'],
+           message: msg['message'],
+           describe:msg['describe'],
+           time: msg['time']);
+       setState(() {
+         messages.add(getNewMsg);
+       });
+       player.play('message.wav');
+     });
 
-    my_socket.socket.on("center_inactive", (_){
-      print("center_inactive2");
-      setState(() {
-        my_socket.centerActive=false;
-      });
-    });
+     my_socket.socket.on("message_send", (data) async{
+       print("message_send");
+       addNewMsg();
 
-    my_socket.socket.on("center_active", (_)async{
-      print("center_active");
-      await Future.delayed(const Duration(seconds: 3));
-      setState(() {
-        my_socket.centerActive=true;
-      });
-    });
+     });
+
+     my_socket.socket.on("error", (msg){
+       print("error: $msg");
+
+     });
+
+     my_socket.socket.onDisconnect((_){
+       print("Disconnect from server");
+       setState(() {
+         my_socket.isconnect=false;
+       });
+     });
+
+
+     my_socket.socket.onConnect((data) {
+       print("Connected to server2");
+       // my_socket.socket.emit("clientSignin", my_socket.socket.id);
+       setState(() {
+         my_socket.isconnect=true;
+       });
+     });
+
+     my_socket.socket.on("center_inactive", (_){
+       print("center_inactive2");
+       setState(() {
+         my_socket.centerActive=false;
+       });
+     });
+
+     my_socket.socket.on("center_active", (_)async{
+       print("center_active");
+       await Future.delayed(const Duration(seconds: 3));
+       setState(() {
+         my_socket.centerActive=true;
+       });
+     });
 
 
 
-  }
+   }
   void endCall()async{
     setState(() {
       _endCall=true;
@@ -198,14 +198,14 @@ class _SOSState extends State<SOS> {
   }
   void SOScallRespon(){
     player.play('sosResponse.wav');
-    print("SOScallRespon()");
+print("SOScallRespon()");
     setState(() {
       requestResponse=true;
       calling=false;
     });
 
   }
-  void ButtonRotator(){
+void ButtonRotator(){
     setState(() {
       if(sosButtonRotation) {
         sosButtonHigh=110;
@@ -221,7 +221,7 @@ class _SOSState extends State<SOS> {
     });
 
 
-  }
+}
   void SOS_Call()async{
     print("SOS_Call()");
     setState(() {
@@ -319,89 +319,89 @@ class _SOSState extends State<SOS> {
     audioRecordIndex++;
 
   }
-  Future stopRecord() async {
-    if (!isRecorderReady) return;
+   Future stopRecord() async {
+     if (!isRecorderReady) return;
     final path= await recorder.stopRecorder();
-    audioRecordFile=File(path!);
-    print('Recorder audio: $audioRecordFile');
-    position=Duration.zero;
-    audioPlayer=AudioPlayer();
-    audioListner();
-    audioPlayer.setUrl(path,isLocal: true);
-    await audioPlayer.seek(position);
-    setState(() {
-      isAudioReady=true;
-      position=Duration.zero;
-    });
+     audioRecordFile=File(path!);
+     print('Recorder audio: $audioRecordFile');
+     position=Duration.zero;
+     audioPlayer=AudioPlayer();
+     audioListner();
+     audioPlayer.setUrl(path,isLocal: true);
+     await audioPlayer.seek(position);
+     setState(() {
+       isAudioReady=true;
+       position=Duration.zero;
+     });
 
-    print("yoyo");
+     print("yoyo");
 
-  }
-  Future initRecorder()async{
-    print("record init");
-    final status=await Permission.microphone.request();
-    print("record init1");
-    if(status!=PermissionStatus.granted){
-      throw 'microphone permission not granted';
-    }
-    print("record init2");
-    await recorder.openRecorder();
-    isRecorderReady=true;
-    print("record init3");
-    recorder.setSubscriptionDuration(
-      const Duration(milliseconds:500),
-    );
-  }
-  Future audioListner()async{
-    audioPlayer.onPlayerStateChanged.listen((state) {
-      setState(() {
-        isPlaying=state==PlayerState.PLAYING;});
-    });
+   }
+   Future initRecorder()async{
+     print("record init");
+     final status=await Permission.microphone.request();
+     print("record init1");
+     if(status!=PermissionStatus.granted){
+       throw 'microphone permission not granted';
+     }
+     print("record init2");
+     await recorder.openRecorder();
+     isRecorderReady=true;
+     print("record init3");
+     recorder.setSubscriptionDuration(
+       const Duration(milliseconds:500),
+     );
+   }
+   Future audioListner()async{
+     audioPlayer.onPlayerStateChanged.listen((state) {
+       setState(() {
+         isPlaying=state==PlayerState.PLAYING;});
+     });
 
-    audioPlayer.onDurationChanged.listen((newDuration) {
-      print("newDuration");
-      setState(() {duration=newDuration;});
+     audioPlayer.onDurationChanged.listen((newDuration) {
+       print("newDuration");
+       setState(() {duration=newDuration;});
 
-    });
+     });
 
-    audioPlayer.onAudioPositionChanged.listen((newPosition) {
-      setState(() {position=newPosition;});
+     audioPlayer.onAudioPositionChanged.listen((newPosition) {
+       setState(() {position=newPosition;});
 
-    });
+     });
 
-  }
-  Future audioListner2(MessageModel msg)async{
+   }
+   Future audioListner2(MessageModel msg)async{
 
-    msg.audio!.audioPlayer.onPlayerStateChanged.listen((state) {
-      setState(() {
-        msg.audio!.isPlaying=state==PlayerState.PLAYING;});
-    });
+     msg.audio!.audioPlayer.onPlayerStateChanged.listen((state) {
+       setState(() {
+         msg.audio!.isPlaying=state==PlayerState.PLAYING;});
+     });
 
-    msg.audio?.audioPlayer.onDurationChanged.listen((newDuration) {
-      print("newDuration");
-      setState(() {msg.audio!.duration=newDuration;});
+     msg.audio?.audioPlayer.onDurationChanged.listen((newDuration) {
+       print("newDuration");
+       setState(() {msg.audio!.duration=newDuration;});
 
-    });
+     });
 
-    msg.audio?.audioPlayer.onAudioPositionChanged.listen((newPosition) {
-      setState(() {msg.audio!.position=newPosition;});
+     msg.audio?.audioPlayer.onAudioPositionChanged.listen((newPosition) {
+       setState(() {msg.audio!.position=newPosition;});
 
-    });
+     });
 
-  }
-  String formatTime(Duration duration){
-    String toDigits(int n)=>n.toString().padLeft(2,'0');
-    final Seconds=toDigits(duration.inSeconds.remainder(60));
-    final minutes=toDigits(duration.inMinutes.remainder(60));
-    final hours=toDigits(duration.inHours);
-    return [
-      if(duration.inHours>0) hours,
-      minutes,
-      Seconds,
-    ].join(':');
+   }
+   String formatTime(Duration duration){
+     String toDigits(int n)=>n.toString().padLeft(2,'0');
+     final Seconds=toDigits(duration.inSeconds.remainder(60));
+     final minutes=toDigits(duration.inMinutes.remainder(60));
+     final hours=toDigits(duration.inHours);
+     return [
+       if(duration.inHours>0) hours,
+       minutes,
+       Seconds,
+     ].join(':');
 
-  }
-  void sendAudio(){
+   }
+   void sendAudio(){
     print('$audioRecordFile');
     List<int> audioBytes = audioRecordFile.readAsBytesSync();
     String base64Image = base64Encode(audioBytes);
@@ -414,9 +414,9 @@ class _SOSState extends State<SOS> {
 
     sendMessage();
 
-  }
+   }
 
-  ////////////////////////////////////
+   ////////////////////////////////////
 
   @override
   void initState() {
@@ -507,7 +507,7 @@ class _SOSState extends State<SOS> {
   Widget mainRecordAudioContainer()=>Container(
     height:200,
     width: 350,
-    // color: Colors.green,
+   // color: Colors.green,
     child: Stack(children: [
       if(isAudioReady) Align(alignment:Alignment.center,child: playRecordPartContainer(),)
       else Align(alignment:Alignment.center ,child: recordPartContainer(),),
@@ -841,7 +841,7 @@ class _SOSState extends State<SOS> {
       style: ElevatedButton.styleFrom(
         shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(200.0)),
         primary: app_colors.record_audio_button,
-        minimumSize:const Size(30, 30),
+     minimumSize:const Size(30, 30),
 
       ),
     ),
@@ -877,7 +877,7 @@ class _SOSState extends State<SOS> {
 
         backgroundColor: (my_socket.isconnect && my_socket.centerActive)? app_colors.sos_button: app_colors.sos_disablbutton,
         onPressed: () {
-          //  player.play('SOScall.wav');
+        //  player.play('SOScall.wav');
           print("SOS button pressed");
           if(my_socket.isconnect )SOS_Call();
 
@@ -889,7 +889,7 @@ class _SOSState extends State<SOS> {
     height: 50,
     width: 110,
     decoration: BoxDecoration(
-        color: Colors.red,
+      color: Colors.red,
         borderRadius: BorderRadius.circular(90),
         boxShadow:[
           BoxShadow(
@@ -909,18 +909,18 @@ class _SOSState extends State<SOS> {
 
     child:IconButton(
 
-      //child: Icon(Icons.ac_unit),
-      icon: Text(my_texts.endContact,style: const TextStyle(color: Colors.white,fontSize:15),),
+        //child: Icon(Icons.ac_unit),
+        icon: Text(my_texts.endContact,style: const TextStyle(color: Colors.white,fontSize:15),),
       //  backgroundColor: app_colors.cancel_button,
-      onPressed: () {
-        player.play('cancel.wav');
-        my_socket.socket.emit("cancel");
+        onPressed: () {
+          player.play('cancel.wav');
+          my_socket.socket.emit("cancel");
 
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
-        print("Cancel button pressed");
+          Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
+          print("Cancel button pressed");
 
-      },
-    ),
+        },
+      ),
 
   );
   Widget CancelPhoto()=>Container(
@@ -991,17 +991,17 @@ class _SOSState extends State<SOS> {
           List<int> imageBytes = imageFile!.readAsBytesSync();
           String base64Image = base64Encode(imageBytes);
           String discription;
-          if(_describe.text.isNotEmpty){ discription=_describe.text;}
-          else {discription="non";}
-          newMsg=MessageModel(senderType: 0,
-              messageType: 1,
-              message: base64Image,
-              describe: discription,
-              time: DateTime.now().toString().substring(10, 16));
+        if(_describe.text.isNotEmpty){ discription=_describe.text;}
+        else {discription="non";}
+        newMsg=MessageModel(senderType: 0,
+            messageType: 1,
+            message: base64Image,
+            describe: discription,
+            time: DateTime.now().toString().substring(10, 16));
 
-          setState(() {
-            _sendingPhotoMessage=true;
-          });
+        setState(() {
+          _sendingPhotoMessage=true;
+        });
           sendMessage();
         },
 
@@ -1088,7 +1088,7 @@ class _SOSState extends State<SOS> {
   Widget optionsButtons()=>Container(
     height:70,
     width: 230,
-    // color:Colors.lightGreenAccent,
+   // color:Colors.lightGreenAccent,
 
     child: Stack(
         children: [
@@ -1096,7 +1096,7 @@ class _SOSState extends State<SOS> {
           if(!_record) Align(alignment: Alignment.centerRight,child: gallery_Button(),),
           if(!isAudioReady) Align(alignment: Alignment.center,child:recordAudioButton(),),
 
-        ]
+      ]
 
     ),
   );
@@ -1230,46 +1230,46 @@ class _SOSState extends State<SOS> {
 
   );
   Widget messageDetails(MessageModel msg)=>Row(
-      children: [
-        Text(msg.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
-        if(msg.senderType==0)Text(data.user_name,style:const TextStyle(color: Colors.blue,fontSize: 10,fontWeight: FontWeight.bold),),
-        if(msg.senderType==1)const Text("Service representative",style:TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
-        const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),
-      ]);
+    children: [
+      Text(msg.time,style:const TextStyle(color: Colors.white,fontSize: 10,fontWeight: FontWeight.bold),),
+      if(msg.senderType==0)Text(data.user_name,style:const TextStyle(color: Colors.blue,fontSize: 10,fontWeight: FontWeight.bold),),
+      if(msg.senderType==1)const Text("Service representative",style:TextStyle(color: Colors.orangeAccent,fontSize: 10,fontWeight: FontWeight.bold),),
+      const Text(">>",style:TextStyle(color: Colors.black,fontSize: 10,fontWeight: FontWeight.bold),),
+    ]);
   Widget messageBox(MessageModel msg) => Container(
     width: 350,
     //color: Colors.pink,
     alignment: Alignment.topLeft,
     child: Text(
       msg.message,
-      style: TextStyle(
-        color: (msg.senderType==0)?Colors.blue:Colors.black,
-        fontSize: 25,
-        fontWeight: FontWeight.bold,
-      ),
+        style: TextStyle(
+          color: (msg.senderType==0)?Colors.blue:Colors.black,
+          fontSize: 25,
+          fontWeight: FontWeight.bold,
+        ),
 
     ),
   );
   Widget imageBox(MessageModel message) =>  Column(children: [
-    Container(
-      width: 300,
-      height: 300,
-      alignment: Alignment.center,
-      decoration: BoxDecoration(
-        color:app_colors.cameraPageInputimage,
-        border: Border.all(width: 8, color: Colors.black12),
-        borderRadius: BorderRadius.circular(12.0),
-        image: DecorationImage(image: FileImage(File(message.get_path())), fit: BoxFit.cover),
-      ),),
-    Text(message.describe),
+      Container(
+        width: 300,
+        height: 300,
+        alignment: Alignment.center,
+        decoration: BoxDecoration(
+          color:app_colors.cameraPageInputimage,
+          border: Border.all(width: 8, color: Colors.black12),
+          borderRadius: BorderRadius.circular(12.0),
+          image: DecorationImage(image: FileImage(File(message.get_path())), fit: BoxFit.cover),
+        ),),
+      Text(message.describe),
 
-  ],
+    ],
 
 
   );
   Widget audioBox(MessageModel message) => Container(
     height: 80,
-    // color: Colors.black38,
+   // color: Colors.black38,
     child: Stack(children: [
       Align(alignment: const Alignment(0,-1) ,child: audioPlaySlider2(message),),
       Align(alignment: const Alignment(-1,-1) ,child: playRecordButton2(message),),
@@ -1279,7 +1279,7 @@ class _SOSState extends State<SOS> {
     ],),
   );
   Widget messageListView() => ListView(
-    controller:_controller,
+     controller:_controller,
     children: <Widget>[
       for(MessageModel msg in messages)
         Column(children: [
@@ -1570,20 +1570,20 @@ class _SOSState extends State<SOS> {
 
   );
   Widget mainStack()=>Stack(
-    children: [
-      if(chatOpen) Align(alignment: const Alignment(0.0,-0.5),child: mainChatContainer(),),
-      if(!chatOpen) Align(alignment: const Alignment(0.0,-0.5),child: mapContainer(),),
-      if(!chatOpen) Align(alignment: const Alignment(0.0,0.9),child: SOS_Button(),),
-      if(!my_socket.isconnect) Align(alignment: const Alignment(0.0,-1),child:notConnectedToServer()),
-      if(my_socket.isconnect && my_socket.centerActive) Align(alignment: const Alignment(0.0,-1),child:connectedToServer()),
-      if(my_socket.isconnect && !my_socket.centerActive) Align(alignment: const Alignment(0.0,-1),child:centerInactive()),
-      //if(calling) Align(alignment: const Alignment(0.0,-1),child:loading(),),
+  children: [
+   if(chatOpen) Align(alignment: const Alignment(0.0,-0.5),child: mainChatContainer(),),
+    if(!chatOpen) Align(alignment: const Alignment(0.0,-0.5),child: mapContainer(),),
+    if(!chatOpen) Align(alignment: const Alignment(0.0,0.9),child: SOS_Button(),),
+    if(!my_socket.isconnect) Align(alignment: const Alignment(0.0,-1),child:notConnectedToServer()),
+    if(my_socket.isconnect && my_socket.centerActive) Align(alignment: const Alignment(0.0,-1),child:connectedToServer()),
+    if(my_socket.isconnect && !my_socket.centerActive) Align(alignment: const Alignment(0.0,-1),child:centerInactive()),
+    //if(calling) Align(alignment: const Alignment(0.0,-1),child:loading(),),
 
 
 
 
 
-    ],
+  ],
   );
   Widget mainChatContainer()=>SingleChildScrollView(
     reverse: true,
@@ -1646,12 +1646,12 @@ class _SOSState extends State<SOS> {
   ///////////////////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
-    return Scaffold
+   return Scaffold
       (
       appBar: AppBar(
         centerTitle: true,
         title:
-        rahatLogo(),
+            rahatLogo(),
 
 
         backgroundColor: app_colors.app_bar_background,

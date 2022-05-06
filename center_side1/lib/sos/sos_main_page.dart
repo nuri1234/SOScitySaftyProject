@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:core';
 import 'package:center_side/compount/texts.dart';
 import 'dart:io';
 import 'package:center_side/compount/colors.dart';
@@ -10,8 +9,6 @@ import '../compount/colors.dart';
 import 'package:flutter/material.dart';
 import 'package:google_fonts/google_fonts.dart';
 import '../compount/texts.dart';
-import '../dbHelper/mng_managment.dart';
-import '../pages/maneger.dart';
 import '../socket_class.dart';
 import 'package:socket_io_client/socket_io_client.dart' as IO;
 import '../dbHelper/message_model.dart';
@@ -25,8 +22,10 @@ import 'package:audioplayers/audioplayers.dart';
 import '../dbHelper/audio_model.dart';
 import 'package:center_side/uses/share_data.dart';
 import 'package:center_side/dbHelper/contacts_model.dart';
-import 'dart:async';
+import 'package:center_side/statistic/statistic_page.dart';
 
+
+import 'dart:async';
 
 class SOS extends StatefulWidget {
   const SOS({Key? key}) : super(key: key);
@@ -57,23 +56,9 @@ class _SOSState extends State<SOS> {
   int photoIndex=0;
   int audioIndex=0;
   bool hebrew=true;
-  TextEditingController _textFieldController = TextEditingController();
+  int indexForClientCancel=0;
+  static AudioCache player = AudioCache(prefix:'assets/sounds/');
 
-
-
-
-  void chekMng()async{
-    var mng=await searchMng(_textFieldController.text);
-    if(mng.userName==_textFieldController.text){
-      print("ok");
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (c) => Scaffold(body: ManagerPage())
-      ));
-    }
-    else print("no match");
-
-    if(mng==null) print("user not found");
-  }
 
   /////////functions//////////////
   void fillCalls() async{
@@ -100,10 +85,19 @@ class _SOSState extends State<SOS> {
         dateTime: DateTime.now());
 
    await GetAddressFromLatLong(c3) ;
+    Client c4=Client(userName: "test4",
+        phone: "0545567788",
+        lat: 31.3925,
+        long: 34.7544444440,
+        socketId:"4",
+        dateTime: DateTime.now());
+
+    await GetAddressFromLatLong(c4) ;
     setState(() {
       clients.add(c1);
       clients.add(c2);
       clients.add(c3);
+      clients.add(c4);
     });
 
   }
@@ -123,6 +117,8 @@ class _SOSState extends State<SOS> {
       setState(() {
         clients.insert(0, newClient);
       });
+      player.play('sosCall.wav',mode: PlayerMode.LOW_LATENCY,
+          stayAwake: false);
 
     });
 
@@ -160,6 +156,8 @@ class _SOSState extends State<SOS> {
     my_socket.socket.on("cancel", (sourceId) async{
       print("cancel $sourceId");
       cancel(sourceId);
+      print("after cancel");
+
 
 
     });
@@ -192,16 +190,22 @@ class _SOSState extends State<SOS> {
   void openCall(Client client){
     print("open call");
     setState(() {
-      my_clients.add(client);
+      my_clients.insert(0, client);
+
       clients.remove(client);
 
     });
+    if(client.STATUS!=2 && client.STATUS!=3){
+      my_socket.socket.emit("SOS_Call_Respone",client.socketId);
+      print("SOS_Call_Respone");
 
-    my_socket.socket.emit("SOS_Call_Respone",client.socketId);
-    setState(() {
-      client.STATUS=1;
+      setState(() {
+        client.STATUS=1;
 
-    });
+      });
+
+    }
+
 
 
 
@@ -217,27 +221,27 @@ class _SOSState extends State<SOS> {
 
   }
   void cancel(sourceId) async{
-    for(Client client in clients){
-      print("canceld");
-      if(client.socketId==sourceId) {
+    print("canceld");
+    for(Client client in my_clients) {
+      if (client.socketId == sourceId) {
         setState(() {
-          client.STATUS=2;
-          client.boxColor=Colors.red;
+          client.STATUS = 2;
+          client.boxColor = Colors.red;
+          client.socketId=client.socketId+indexForClientCancel.toString();
         });
       }
-      for(Client client in my_clients){
-        if(client.socketId==sourceId) {
-          setState(() {
-            client.STATUS=2;
-            client.boxColor=Colors.red;
-          });
-        }
-
     }
+      for (Client client in clients) {
+        if (client.socketId == sourceId) {
+          setState(() {
+            client.socketId = client.socketId + indexForClientCancel.toString();
+            client.STATUS = 2;
+            client.boxColor = Colors.red;});
+          indexForClientCancel++; }
+      }
 
 
-
-  }}
+  }
   void closeContact(Client client)async{
     await saveContact(client);
 
@@ -261,16 +265,21 @@ class _SOSState extends State<SOS> {
 
   }
   void clientDisconnected(sourceId) async{
-    for(Client client in my_clients){
-      if(client.socketId==sourceId) {
+    for(Client client in my_clients) {
+      if (client.socketId == sourceId) {
         setState(() {
-          client.STATUS=3;
+          client.STATUS = 3;
         });
       }
 
+      for (Client client in clients) {
+        if (client.socketId == sourceId) {
+          setState(() {
+            client.STATUS = 3;
+          });
+        }
+      }
     }
-
-
 
   }
   Future audioListner(MessageModel msg)async{
@@ -328,6 +337,7 @@ class _SOSState extends State<SOS> {
       if (client.socketId == sourceId) {
         setState(() {
           client.addMessage(msg);
+          if(!clientMainContainerShow || client!=chosen_client)client.boxColor=app_colors.clientNewMessage;
         });
       }
     }
@@ -347,7 +357,6 @@ class _SOSState extends State<SOS> {
 
   }
   ///////////////%%%%%%%%////////////
-
 void initLanguage(){
     setState(() {
       my_texts.changeToHebrew();
@@ -356,19 +365,23 @@ void initLanguage(){
   @override
   void initState() {
     // TODO: implement initState
-
     super.initState();
+    player.play('signIn.wav',mode: PlayerMode.LOW_LATENCY,
+        stayAwake: false);
     if(hebrew=true)initLanguage();
-    _textFieldController.text="";
+    socketListner();
 
     fillCalls();
-    socketListner();
+
 
   }
 /////////////////////
   Future<void> GetAddressFromLatLong(Client client) async{
     List<Placemark> placemark= await placemarkFromCoordinates(client.lat,client.long,);
+
   if(hebrew){placemark= await placemarkFromCoordinates(client.lat,client.long,localeIdentifier:'he');}
+
+  print(placemark);
 
 
 
@@ -441,8 +454,14 @@ void initLanguage(){
 
     ),
   );
-
   /////////////Buttons//////////////////
+  Widget statisticButton()=>IconButton(
+    icon: const Icon(Icons.bar_chart_outlined,color: Colors.green,size: 40,),
+    onPressed:(){
+      Navigator.push(context, MaterialPageRoute(builder: (context)=>(const Statistic())),).then((_) =>setState(() {}) );
+
+    } ,
+  );
   Widget languageButton()=> PopupMenuButton(
       color: Colors.grey,
       child: Icon(Icons.language,color:app_colors.languageButton,size: 40,) ,
@@ -450,10 +469,10 @@ void initLanguage(){
         PopupMenuItem(
           child: const Text("עברית"),
           value: 1,
-          onTap: (){print("change to hebroe");
+          onTap: (){print("change to hebrew");
           setState(() {
             my_texts.changeToHebrew();
-            hebrew=true;
+            data.language=1;
           });
 
 
@@ -466,7 +485,20 @@ void initLanguage(){
             print("change to english");
             setState(() {
               my_texts.changeToEnglish();
-              hebrew=false;
+              data.language=1;
+            });
+
+
+          },
+        ),
+        PopupMenuItem(
+          child: const Text("عربيه"),
+          value: 1,
+          onTap: (){
+            print("change to english");
+            setState(() {
+              my_texts.changeToArabic();
+              data.language=2;
             });
 
 
@@ -557,7 +589,10 @@ void initLanguage(){
       onPressed: (){
         setState(() {
           clientMainContainerShow=false;
-          if(clientChosen) chosen_client.boxColor=app_colors.clientNitral;
+          if(clientChosen){
+            chosen_client.boxColor=app_colors.clientNitral;
+          if(chosen_client.STATUS==2 || chosen_client.STATUS==3)chosen_client.boxColor=Colors.red;
+          }
 
         });
       },
@@ -672,6 +707,9 @@ void initLanguage(){
         setState(() {
           if(clientChosen){
             chosen_client.boxColor=app_colors.clientNitral;
+            if(chosen_client.STATUS!=2 && chosen_client.STATUS!=3){
+              chosen_client.boxColor=Colors.red;
+            }
           }
           chosen_client=client;
           clientChosen=true;
@@ -775,7 +813,6 @@ void initLanguage(){
 
   /////////////////////////////////////////////
 /////////////////////////////////////////////
-
   /////////////////////////////////////////////////////
   Widget saveContainer(Client client)=>Container(
     height: 600,
@@ -1355,7 +1392,6 @@ void initLanguage(){
     ],),
 
   );
-
   Widget bigImageContainr()=>Container(
       height: 650,
       width: 650,
@@ -1665,7 +1701,6 @@ void initLanguage(){
 
   @override
   Widget build(BuildContext context) {
-
     return Scaffold(
         backgroundColor: app_colors.background,
         appBar: AppBar(
@@ -1673,9 +1708,7 @@ void initLanguage(){
           backgroundColor: app_colors.app_bar_background,
           title:  rahatLogo(),
         centerTitle: true,
-          actions: [
-            languageButton(),
-          ],
+          actions: [statisticButton(),const SizedBox(width: 10,),languageButton()],
         ),
         body: Padding(
           padding: const EdgeInsets.all(8.0),
