@@ -1,3 +1,4 @@
+import 'package:center_side/compount/center_text.dart';
 import 'package:center_side/compount/colors.dart';
 import 'package:center_side/compount/drawer.dart';
 import 'package:center_side/pages/maneger.dart';
@@ -83,7 +84,7 @@ class _SignInState extends State<SignIn> {
           FloatingActionButton(
             //child: Icon(Icons.ac_unit),
             child: Text(
-              "כניסה", style: TextStyle(fontSize: 20, color: Colors.black),),
+              my_texts2.Enter, style: TextStyle(fontSize: 20, color: Colors.black),),
 
             backgroundColor: Colors.orange,
             onPressed: () {
@@ -99,7 +100,7 @@ class _SignInState extends State<SignIn> {
           width: 200,
           child: TextField(
             decoration: InputDecoration(
-                hintText: "userName",
+                hintText: my_texts2.UserName,
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.black, width: 5.0),
                   borderRadius: BorderRadius.circular(20.0),
@@ -126,7 +127,7 @@ class _SignInState extends State<SignIn> {
           child: TextField(
             obscureText: true,
             decoration: InputDecoration(
-                hintText: "password",
+                hintText: my_texts2.password,
                 enabledBorder: OutlineInputBorder(
                   borderSide: const BorderSide(color: Colors.black, width: 5.0),
                   borderRadius: BorderRadius.circular(20.0),
@@ -195,7 +196,7 @@ class _SignInState extends State<SignIn> {
           child: Scaffold(
             appBar: AppBar(
               backgroundColor: app_colors.app_bar_background,
-              title: Text('כניסה למערכת'),
+              title: Text(my_texts2.EnterToSystem),
               centerTitle: true,
             ),
             backgroundColor: app_colors.background,

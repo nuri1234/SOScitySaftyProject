@@ -91,33 +91,30 @@ class my_texts {
 
   }
   static changeToArabic(){
-    city="עיר";
-    street="רחוב";
-    workerUserName="מוקדן";
-    allContacts="כל הפניות";
-    contactsByLocation="מספר פניות לפי מיקום";
-    perLocation="לפי מיקום";
-    perYear="לפי שנה";
-    perMonth="לפי חודש";
-    contactsByYear="מספר פניות לפי שנה";
-    month="חודש";
-    count="כמות";
-    contactsByMonth="מספר פניות לפי חודש";
-    connectedToServer="מחובר לשרת";
-    NotconnectedToServer="מנותק מהשרת";
-    userName="שם משתמש";
-    phone="טלפון";
-    date="תאריך";
-    time="שעה";
-    location="מיקום";
-    clientConnected="הלקוח מחובר";
-    canceled="הלקוח סגר את הפנייה";
-    clientDisconnected="הלקוח התנתק";
-    topic="סוג פנייה";
-    description="תיאור הפנייה";
-
-
-
+    city="مدينة";
+    street="شارع";
+    workerUserName="اسم الموظف";
+    allContacts="كل التوجهات";
+    contactsByLocation="عدد التوجهات وفقا للموقع";
+    perLocation="وفقا للموقع";
+    perYear="وفقا للسنة ";
+    perMonth="وفقا للشهر";
+    contactsByYear="عدد التوجهات وفقا للسنة";
+    month="شهر";
+    count="كمية";
+    contactsByMonth="عدد التوجهات وفقا للشهر";
+    connectedToServer="متصل بالخادم";
+    NotconnectedToServer="غير متصل بالخادم";
+    userName="اسم المستخدم";
+    phone="رقم الهاتف";
+    date="تاريح";
+    time="ساعة";
+    location="موقع";
+    clientConnected="المواطن متصل";
+    canceled="المواطن اغلق التوجه";
+    clientDisconnected="المواطن قطع الاتصال";
+    topic="نوع التوجه";
+    description="شرح التوجه";
   }
 
 
@@ -193,7 +190,7 @@ class my_texts {
       case 2:
         return "شُبَاط";
       case 3:
-        return "ذَار";
+        return "اذَار";
       case 4:
         return "نَيْسَان";
       case 5:

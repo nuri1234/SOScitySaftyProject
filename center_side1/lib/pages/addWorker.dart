@@ -1,3 +1,4 @@
+import 'package:center_side/compount/center_text.dart';
 import 'package:center_side/compount/colors.dart';
 import 'package:center_side/compount/drawer.dart';
 import 'package:flutter/material.dart';
@@ -46,7 +47,7 @@ class _AddWorkerState extends State<AddWorker> {
     child:
     FloatingActionButton(
       //child: Icon(Icons.ac_unit),
-      child: Text("הוספה",style: TextStyle(fontSize: 20,color: Colors.black),),
+      child: Text(my_texts2.Add,style: TextStyle(fontSize: 20,color: Colors.black),),
 
       backgroundColor: app_colors.app_bar_background,
       onPressed: () {
@@ -62,7 +63,7 @@ class _AddWorkerState extends State<AddWorker> {
     width:250,
     child: TextField(
       decoration: InputDecoration(
-          hintText: "שם מלא",
+          hintText:my_texts2.FullName,
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color:Colors.black, width: 5.0),
             borderRadius: BorderRadius.circular(20.0),
@@ -88,7 +89,7 @@ class _AddWorkerState extends State<AddWorker> {
     width:250,
     child: TextField(
       decoration: InputDecoration(
-          hintText: "שם משתמש",
+          hintText: my_texts2.UserName,
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color:Colors.black, width: 5.0),
             borderRadius: BorderRadius.circular(20.0),
@@ -115,7 +116,7 @@ class _AddWorkerState extends State<AddWorker> {
     width:250,
     child: TextField(
       decoration: InputDecoration(
-          hintText: "סיסמה",
+          hintText:my_texts2.password,
           enabledBorder: OutlineInputBorder(
             borderSide: const BorderSide(color:Colors.black, width: 5.0),
             borderRadius: BorderRadius.circular(20.0),
@@ -184,7 +185,7 @@ class _AddWorkerState extends State<AddWorker> {
               Navigator.of(context).popAndPushNamed('workerList');
             },),
           ],
-          title: Text("הוספת עובד חדש"),
+          title: Text(my_texts2.AddNewWorker),
           backgroundColor: app_colors.app_bar_background,
           centerTitle: true,
           elevation: 6,

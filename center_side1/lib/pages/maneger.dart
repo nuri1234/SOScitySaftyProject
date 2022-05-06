@@ -1,4 +1,6 @@
+import 'package:center_side/compount/center_text.dart';
 import 'package:center_side/compount/colors.dart';
+import 'package:center_side/compount/texts.dart';
 import 'package:center_side/dbHelper/contacts_model.dart';
 import 'package:center_side/pages/viewMessage.dart';
 import 'package:center_side/pages/workerList.dart';
@@ -48,7 +50,7 @@ class _ManagerPageState extends State<ManagerPage> {
                             , child: Row(children: [
                           Icon(Icons.person),
                           Container(width:10,),
-                          Text("רשימת עובדים",style: TextStyle(fontSize: 20),),
+                          Text(my_texts2.WorkersList,style: TextStyle(fontSize: 20),),
                         ],)
                         ),),
                       Container(
@@ -63,7 +65,7 @@ class _ManagerPageState extends State<ManagerPage> {
                             , child: Row(children: [
                           Icon(Icons.drafts),
                           Container(width:10,),
-                          Text("ארכיון",style: TextStyle(fontSize: 20),),
+                          Text(my_texts2.Drafts,style: TextStyle(fontSize: 20),),
                         ],)
                         ),
                       ),
@@ -79,7 +81,7 @@ class _ManagerPageState extends State<ManagerPage> {
                                 context: context,
                                 builder: (context){
                                   return AlertDialog(
-                                    title: Text('הוספת מס טלפון של המוקד'),
+                                    title: Text(my_texts2.AddphoneNumber),
                                     content: TextField(
                                       decoration: InputDecoration(
                                           hintText: "phone",
@@ -105,7 +107,7 @@ class _ManagerPageState extends State<ManagerPage> {
                                       FlatButton(
                                         color: Colors.red,
                                         textColor: Colors.white,
-                                        child: Text('CANCEL'),
+                                        child: Text(my_texts2.Cancel),
                                         onPressed: () {
                                             Navigator.pop(context);
                                         },
@@ -113,7 +115,7 @@ class _ManagerPageState extends State<ManagerPage> {
                                       FlatButton(
                                         color: Colors.green,
                                         textColor: Colors.white,
-                                        child: Text('OK'),
+                                        child: Text(my_texts2.OK),
                                         onPressed: () {
                                           _phoneNum=_textFieldController.text;
                                           setState(() {
@@ -131,7 +133,7 @@ class _ManagerPageState extends State<ManagerPage> {
                             , child: Row(children: [
                           Icon(Icons.phone),
                           Container(width:10,),
-                          Text("טלפון",style: TextStyle(fontSize: 20),),
+                          Text(my_texts.phone,style: TextStyle(fontSize: 20),),
                         ],)
                         ),
                       ),
@@ -152,7 +154,7 @@ class _ManagerPageState extends State<ManagerPage> {
                             , child: Row(children: [
                           Icon(Icons.logout),
                           Container(width:10,),
-                          Text("יציאה",style: TextStyle(fontSize: 20),),
+                          Text(my_texts2.Logout,style: TextStyle(fontSize: 20),),
                         ],)
                         ),),
                     ],

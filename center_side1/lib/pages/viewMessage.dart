@@ -1,4 +1,6 @@
+import 'package:center_side/compount/center_text.dart';
 import 'package:center_side/compount/colors.dart';
+import 'package:center_side/compount/texts.dart';
 import 'package:center_side/dbHelper/mongodb.dart';
 import 'package:center_side/dbHelper/contacts_model.dart';
 
@@ -57,7 +59,7 @@ class _MessageListState extends State<MessageList> {
                   showDialogFunc(context,_messages[index]);
                 },
                 subtitle: Text(_messages[index].description),
-                title: Text("This messege was received on :"+_messages[index].date),
+                title: Text(my_texts2.ThisMessage+_messages[index].date),
                 leading: CircleAvatar(
                   backgroundImage:AssetImage('assets/images/green.png') ,
                 ),
@@ -80,14 +82,14 @@ class _MessageListState extends State<MessageList> {
                               setState(() {
                                 Navigator.of(context).pop();
                               });
-                            }, child: Text("OK")),
+                            }, child: Text(my_texts2.OK)),
                             FlatButton(onPressed: (){
                               Navigator.of(context).pop();
-                            }, child: Text("Cancel")),
+                            }, child: Text(my_texts2.Cancel)),
                           ],
-                          title: Text("Confirm Delete"),
+                          title: Text(my_texts2.ConfiemDelete),
                           contentPadding: EdgeInsets.all(20),
-                          content: Text("Are you sure to delete: "+_messages[index].description),
+                          content: Text(my_texts2.DeleteMessage+_messages[index].description),
                           titleTextStyle: TextStyle(color: Colors.blue,fontSize: 25),
                           contentTextStyle: TextStyle(color: Colors.red,fontSize:15),
                         );
@@ -97,7 +99,7 @@ class _MessageListState extends State<MessageList> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    child: Text("מחיקה",style: TextStyle(color:Colors.white),),
+                    child: Text(my_texts2.Delete,style: TextStyle(color:Colors.white),),
                   ),
                 ),
               )
@@ -115,7 +117,7 @@ class _MessageListState extends State<MessageList> {
     return Scaffold(
       backgroundColor: app_colors.background,
       appBar: AppBar(
-        title:Text("רשימת ההתראות"),
+        title:Text(my_texts2.MessageList),
         backgroundColor: app_colors.app_bar_background,
         centerTitle: true,
         elevation: 6,
@@ -157,49 +159,49 @@ showDialogFunc(context,Contact message){
                 children: [
                   DefaultTextStyle(  child:Row(
                     children: [
-                      Text("Worker's Name :",style: TextStyle(color:Colors.black,fontWeight: FontWeight.bold,fontSize:20,decoration: TextDecoration.underline),),
+                      Text(my_texts2.WorkerName+":",style: TextStyle(color:Colors.black,fontWeight: FontWeight.bold,fontSize:20,decoration: TextDecoration.underline),),
                       Text(message.worker_userName),
                     ],
                   ) ,style: TextStyle(fontSize:20,color:Colors.black)),
                   SizedBox(height: 15,),
                   DefaultTextStyle(  child:Row(
                     children: [
-                      Text("Citizen's Name :",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                      Text(my_texts2.CitizenName+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
                       Text(message.client_userName),
                     ])
                     ,style: TextStyle(fontSize: 20,color:Colors.black),),
                   SizedBox(height: 15,),
                   DefaultTextStyle(  child:Row(
                       children: [
-                        Text("Citizen's Phone Number :",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                        Text(my_texts2.Citizenphone+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
                         Text(message.client_phone),
                       ])
                   ,style: TextStyle(fontSize: 20,color:Colors.black),),
                   SizedBox(height: 15,),
                   DefaultTextStyle(  child:Row(
                       children: [
-                        Text("Citizen's Address :",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                        Text(my_texts2.CitizenAddress+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
                         Text(message.street),
                       ])
                   ,style: TextStyle(fontSize: 20,color:Colors.black),),
                   SizedBox(height: 15,),
                   DefaultTextStyle(  child:Row(
                       children: [
-                        Text("The messege was received on :",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                        Text(my_texts2.ThisMessage+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
                         Text(message.date),
                       ])
                   ,style: TextStyle(fontSize: 20,color:Colors.black),),
                   SizedBox(height: 15,),
                   DefaultTextStyle(  child:Row(
                       children: [
-                        Text("The Description :",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                        Text(my_texts.description+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
                         Text(message.description),
                       ])
                   ,style: TextStyle(fontSize: 20,color:Colors.black),),
                   SizedBox(height: 15,),
                   DefaultTextStyle(  child:Row(
                       children: [
-                        Text("The messege was received on :",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
+                        Text(my_texts2.EventType+":",style: TextStyle(color:Colors.black,fontSize:20,fontWeight: FontWeight.bold,decoration: TextDecoration.underline),),
                         Text(message.event_type),
                       ])
                   ,style: TextStyle(fontSize: 20,color:Colors.black),),

@@ -1,3 +1,4 @@
+import 'package:center_side/compount/center_text.dart';
 import 'package:center_side/dbHelper/mongodb.dart';
 import 'package:center_side/dbHelper/worker_model.dart';
 
@@ -73,14 +74,14 @@ class _WorkerListState extends State<WorkerList> {
                               setState(() {
                                 Navigator.of(context).pop();
                               });
-                            }, child: Text("OK",style: TextStyle(fontWeight:FontWeight.bold),)),
+                            }, child: Text(my_texts2.OK,style: TextStyle(fontWeight:FontWeight.bold),)),
                             FlatButton(onPressed: (){
                               Navigator.of(context).pop();
-                            }, child: Text("Cancel",style: TextStyle(fontWeight:FontWeight.bold),)),
+                            }, child: Text(my_texts2.Cancel,style: TextStyle(fontWeight:FontWeight.bold),)),
                           ],
-                          title: Text("Confirm Delete",style: TextStyle(fontWeight:FontWeight.bold),),
+                          title: Text(my_texts2.ConfiemDelete,style: TextStyle(fontWeight:FontWeight.bold),),
                           contentPadding: EdgeInsets.all(20),
-                          content: Text("Are you sure to delete: "+_workers[index].fullName),
+                          content: Text(my_texts2.DeleteMessage+_workers[index].fullName),
                           titleTextStyle: TextStyle(color: Colors.black,fontSize: 25),
                           contentTextStyle: TextStyle(color: Colors.black,fontSize:15),
                         );
@@ -90,7 +91,7 @@ class _WorkerListState extends State<WorkerList> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0),
                     ),
-                    child: Text("מחיקה",style: TextStyle(color:Colors.white),),
+                    child: Text(my_texts2.Delete,style: TextStyle(color:Colors.white),),
                   ),
                 ),
               )
@@ -116,7 +117,7 @@ class _WorkerListState extends State<WorkerList> {
         child: Scaffold(
           backgroundColor: Colors.orange[100],
           appBar: AppBar(
-            title:Text("רשימת עובדי המוקד"),
+            title:Text(my_texts2.WorkersList),
             backgroundColor: Colors.orange,
             centerTitle: true,
             elevation: 6,
