@@ -127,9 +127,9 @@ class _SignInState extends State<SignIn> {
           FloatingActionButton(
             //child: Icon(Icons.ac_unit),
             child: Text(
-              my_texts.Enter, style: TextStyle(fontSize: 20, color: Colors.black),),
+              my_texts.Enter, style: TextStyle(fontSize: 22,color: Colors.black,fontWeight: FontWeight.bold),),
 
-            backgroundColor: Colors.orange,
+            backgroundColor: app_colors.app_bar_background,
             onPressed: () {
               print("Next");
               chekUser();
@@ -242,7 +242,7 @@ class _SignInState extends State<SignIn> {
                 languageButton()
               ],
               backgroundColor: app_colors.app_bar_background,
-              title: Text(my_texts.EnterToSystem),
+              title: Text(my_texts.EnterToSystem),titleTextStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
               centerTitle: true,
               automaticallyImplyLeading: false,
             ),
