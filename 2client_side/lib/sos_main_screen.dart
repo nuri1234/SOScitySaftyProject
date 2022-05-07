@@ -71,6 +71,7 @@ class _SOSState extends State<SOS> {
   bool isRecorderReady=false;
   bool isAudioReady=false;
   bool isPlaying=false;
+//  bool clientSigninEmit=false;
   Duration duration=Duration.zero;
   Duration position=Duration.zero;
 
@@ -145,14 +146,17 @@ class _SOSState extends State<SOS> {
       print("Disconnect from server");
       setState(() {
         my_socket.isconnect=false;
-        
+        data.clientSigninEmit=false;
       });
     });
 
 
     my_socket.socket.onConnect((data) {
       print("Connected to server2");
-      // my_socket.socket.emit("clientSignin", my_socket.socket.id);
+      if(!data.clientSigninEmit) {
+        my_socket.socket.emit("clientSignin", my_socket.socket.id);
+        data.clientSigninEmit=true;
+      }
       setState(() {
         my_socket.isconnect=true;
       });
@@ -160,6 +164,7 @@ class _SOSState extends State<SOS> {
 
     my_socket.socket.on("center_inactive", (_){
       print("center_inactive2");
+
       setState(() {
         my_socket.centerActive=false;
       });
@@ -422,6 +427,10 @@ class _SOSState extends State<SOS> {
   @override
   void initState() {
     super.initState();
+    if(my_socket.isconnect && !data.clientSigninEmit) {
+      my_socket.socket.emit("clientSignin", my_socket.socket.id);
+      data.clientSigninEmit=true;
+    }
 
     print("init sos page");
     data.getData();
@@ -1665,8 +1674,13 @@ class _SOSState extends State<SOS> {
           languageButton(),
           IconButton(
             onPressed:() {
-              Navigator.push(context, MaterialPageRoute(builder: (context)=> (const Registor())));},
-            icon: const Icon( Icons.perm_identity_rounded,color:Colors.pink,size: 40,),
+              if(!chatOpen){
+               Navigator.push(context, MaterialPageRoute(builder: (context)=> (const Registor())));
+              }
+              }
+              ,
+
+            icon: Icon( Icons.perm_identity_rounded,color: chatOpen? Colors.grey :Colors.pink,size: 40,),
           ),
 
 
