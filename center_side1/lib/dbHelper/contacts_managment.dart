@@ -5,7 +5,9 @@ import 'package:center_side/dbHelper/contacts_model.dart';
 
 
 Future<Contact> newContact(String worker_userName,String date, String client_userName,String client_phone, String city, String street,String event_type, String description)async{
+  print("newContact1");
   final id =ObjectId();
+
   final  contact = Contact(
       id: id,
       worker_userName: worker_userName,
@@ -17,7 +19,9 @@ Future<Contact> newContact(String worker_userName,String date, String client_use
       event_type: event_type,
       description: description
   );
+  print("newContact2");
   await MongoDB.insertContact(contact);
+  print("newContact3");
   return contact;
 }
 

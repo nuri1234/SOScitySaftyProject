@@ -1,4 +1,5 @@
 import 'dart:convert';
+
 import 'package:center_side/compount/texts.dart';
 import 'dart:io';
 import 'package:center_side/compount/colors.dart';
@@ -55,7 +56,7 @@ class _SOSState extends State<SOS> {
   bool imageShow=false;
   int photoIndex=0;
   int audioIndex=0;
-  bool hebrew=true;
+bool signinEmit=false;
   int indexForClientCancel=0;
   static AudioCache player = AudioCache(prefix:'assets/sounds/');
 
@@ -171,6 +172,7 @@ class _SOSState extends State<SOS> {
 
     my_socket.socket.onDisconnect((_){
       print("Disconnect from server");
+      signinEmit=false;
       setState(() {
         my_socket.isconnect=false;
       });
@@ -179,7 +181,11 @@ class _SOSState extends State<SOS> {
     my_socket.socket.onConnect((data) {
 
       print("Connected to server2");
-      my_socket.socket.emit("centerSignin", my_socket.socket.id.toString());
+      if(!signinEmit){
+        my_socket.socket.emit("centerSignin", my_socket.socket.id.toString());
+        signinEmit=true;
+      }
+
       setState(() {
         my_socket.isconnect=true;
       });
@@ -253,10 +259,12 @@ class _SOSState extends State<SOS> {
 
   }
   Future<void> saveContact(Client client) async {
+    print("saveContact1");
    var contact=await newContact(data.userName,
-        DateTime.now().toString(),
+        client.dateTime.toString(),
         client.userName, client.phone,
         client.city,client.street, client.topic,client.description);
+    print("saveContact2");
 
     print(contact);
 
@@ -300,6 +308,22 @@ class _SOSState extends State<SOS> {
 
     });
 
+  }
+
+  Future<void> closeAllContacts() async {
+    print("closeAllContacts() 1");
+    print(my_clients.length);
+   for(Client c in my_clients){
+     print("closeAllContacts() 2");
+     await saveContact(c);
+     print("closeAllContacts() 3");
+
+     print("closeAllContacts() 4");
+     my_socket.socket.emit("end_call",c.socketId);
+   }
+ //   endCall(c);
+
+    print("closeAllContacts() after loop");
   }
 
   /////////////%%%%%%%%%/////////////
@@ -366,21 +390,42 @@ void initLanguage(){
   void initState() {
     // TODO: implement initState
     super.initState();
+    if(my_socket.isconnect){
+      signinEmit=true;
+      my_socket.socket.emit("centerSignin", my_socket.socket.id.toString());
+
+    }
+
     player.play('signIn.wav',mode: PlayerMode.LOW_LATENCY,
         stayAwake: false);
-    if(hebrew=true)initLanguage();
+  //  if(hebrew=true)initLanguage();
     socketListner();
 
     fillCalls();
 
 
   }
+
+
+
+  @override
+  void dispose()async {
+    super.dispose();
+    await closeAllContacts();
+    if(my_socket.isconnect && signinEmit) {
+      my_socket.socket.emit("centerSignout", my_socket.socket.id.toString());
+    }
+
+
+
+  }
+
 /////////////////////
   Future<void> GetAddressFromLatLong(Client client) async{
     List<Placemark> placemark= await placemarkFromCoordinates(client.lat,client.long,);
 
-  if(hebrew){placemark= await placemarkFromCoordinates(client.lat,client.long,localeIdentifier:'he');}
-
+  if(data.language==1){placemark= await placemarkFromCoordinates(client.lat,client.long,localeIdentifier:'he');}
+    if(data.language==2){placemark= await placemarkFromCoordinates(client.lat,client.long,localeIdentifier:'ar');}
   print(placemark);
 
 
@@ -812,7 +857,9 @@ void initLanguage(){
   );
   Widget backButton()=>IconButton(
     icon: const Icon(Icons.logout,color: Colors.black,size: 40),
-    onPressed:(){
+    onPressed:()async{
+
+      print("befor pop");
       Navigator.pop(context);
 
     } ,
@@ -984,9 +1031,9 @@ void initLanguage(){
     width: 200,
     //color: Colors.black12,
     child: Row(children: [
-      if(hebrew)Text(val,style:GoogleFonts.abel(fontSize: 20,fontWeight: FontWeight.w800,color: app_colors.detail),),
+      if(data.language!=0)Text(val,style:GoogleFonts.abel(fontSize: 20,fontWeight: FontWeight.w800,color: app_colors.detail),),
       Text(varibal,style:GoogleFonts.abel(fontSize: 16,fontWeight: FontWeight.w800,color: Colors.black),),
-      if(!hebrew)Text(val,style:GoogleFonts.abel(fontSize: 20,fontWeight: FontWeight.w800,color: app_colors.detail),),
+      if(data.language==0)Text(val,style:GoogleFonts.abel(fontSize: 20,fontWeight: FontWeight.w800,color: app_colors.detail),),
 
     ],),
 
@@ -1030,7 +1077,7 @@ void initLanguage(){
       )
   );
   Widget clientContainer(Client client)=>Stack(children: [
-    if(hebrew)Align(alignment: const Alignment(-1,-1),child: detailsContainer2(client),)
+    if(data.language!=0)Align(alignment: const Alignment(-1,-1),child: detailsContainer2(client),)
     else Align(alignment: const Alignment(-1,-1),child: detailsContainer(client),),
 
     Align(alignment: const Alignment(-1,0.7),child: mapContainer(client.lat,client.long),),

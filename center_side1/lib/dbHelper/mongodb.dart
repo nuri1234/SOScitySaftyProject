@@ -31,8 +31,9 @@ static  Future<List<Map<String,dynamic>>> getWorker()async{
 
   }
   static insertContact(Contact contact) async {
+    print("insertContact1");
     await ContactCollection.insertAll([contact.toMap()]);
-
+    print("insertContact2");
   }
   static Future<List<Map<String, dynamic>>> getContacts() async {
     try {
