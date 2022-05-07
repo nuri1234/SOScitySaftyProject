@@ -116,10 +116,10 @@ class _ManagerPageState extends State<ManagerPage> {
                         ],)
                         ),
                       ),
-                      
+
 
                       Container(
-                        height:220,
+                        height:320,
                       ),
                       Container(
                         margin: EdgeInsets.all(20),
