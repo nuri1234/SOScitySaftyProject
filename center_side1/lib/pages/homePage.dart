@@ -66,7 +66,7 @@ class HomeState extends State<HomePage> {
       textDirection: TextDirection.rtl,
       child: Scaffold(
           appBar: AppBar(
-            title: Text(my_texts.Welcome),
+            title: Text(my_texts.Welcome,),titleTextStyle: TextStyle(color: Colors.black,fontSize: 20,fontWeight: FontWeight.bold),
             actions: [
               languageButton()
 
@@ -100,7 +100,7 @@ class HomeState extends State<HomePage> {
                   child:
                   FloatingActionButton(
                     //child: Icon(Icons.ac_unit),
-                    child: Text(my_texts.SignIn,style: TextStyle(fontSize: 20,color: Colors.black),),
+                    child: Text(my_texts.SignIn,style: TextStyle(fontSize: 22,color: Colors.black,fontWeight: FontWeight.bold),),
 
                     backgroundColor: app_colors.app_bar_background,
                     onPressed: () {
