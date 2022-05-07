@@ -116,24 +116,7 @@ class _ManagerPageState extends State<ManagerPage> {
                         ],)
                         ),
                       ),
-                      Container( margin: EdgeInsets.all(20),
-                        decoration: BoxDecoration(
-                            border: Border.all(color: Colors.black,width:3),
-                            borderRadius: BorderRadius.circular(15)
-                        ),
-                        child: FlatButton(
-                            onPressed: (){
-                              print("df");
-
-                              Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
-
-                            }
-                            , child: Row(children: [
-                          Icon(Icons.message),
-                          Container(width:10,),
-                          Text(my_texts.SOS,style: TextStyle(fontSize: 20),),
-                        ],)
-                        ),),
+                      
 
                       Container(
                         height:220,
