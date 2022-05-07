@@ -190,7 +190,7 @@ class my_texts {
     NotconnectedToServer="غير متصل بالخادم";
     userName="اسم المستخدم";
     phone="رقم الهاتف";
-    date="تاريح";
+    date="التاريخ";
     time="ساعة";
     location="موقع";
     clientConnected="المواطن متصل";

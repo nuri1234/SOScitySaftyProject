@@ -1,4 +1,3 @@
-import 'package:center_side/compount/center_text.dart';
 import 'package:center_side/compount/colors.dart';
 import 'package:center_side/compount/texts.dart';
 import 'package:center_side/dbHelper/contacts_model.dart';
@@ -53,7 +52,7 @@ class _ManagerPageState extends State<ManagerPage> {
           },
         ),
         PopupMenuItem(
-          child: const Text("عربيه"),
+          child: const Text("العربية"),
           value: 1,
           onTap: (){
             print("change to english");

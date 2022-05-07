@@ -1,6 +1,4 @@
-import 'package:center_side/compount/center_text.dart';
 import 'package:center_side/compount/colors.dart';
-import 'package:center_side/compount/drawer.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/src/material/app.dart';
@@ -46,7 +44,7 @@ class HomeState extends State<HomePage> {
           },
         ),
         PopupMenuItem(
-          child: const Text("عربيه"),
+          child: const Text("العربية"),
           value: 1,
           onTap: (){
             print("change to english");

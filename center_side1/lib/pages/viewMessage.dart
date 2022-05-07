@@ -1,4 +1,3 @@
-import 'package:center_side/compount/center_text.dart';
 import 'package:center_side/compount/colors.dart';
 import 'package:center_side/compount/texts.dart';
 import 'package:center_side/dbHelper/mongodb.dart';
@@ -49,7 +48,7 @@ class _MessageListState extends State<MessageList> {
           },
         ),
         PopupMenuItem(
-          child: const Text("عربيه"),
+          child: const Text("العربية"),
           value: 1,
           onTap: (){
             print("change to english");

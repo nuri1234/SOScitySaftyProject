@@ -1,6 +1,4 @@
-import 'package:center_side/compount/center_text.dart';
 import 'package:center_side/compount/colors.dart';
-import 'package:center_side/compount/drawer.dart';
 import 'package:flutter/material.dart';
 import 'package:center_side/uses/share_data.dart';
 import 'package:flutter/cupertino.dart';
@@ -53,7 +51,7 @@ class _AddWorkerState extends State<AddWorker> {
           },
         ),
         PopupMenuItem(
-          child: const Text("عربيه"),
+          child: const Text("العربية"),
           value: 1,
           onTap: (){
             print("change to english");
@@ -241,7 +239,6 @@ class _AddWorkerState extends State<AddWorker> {
 
         ),
         backgroundColor: app_colors.background,
-        drawer: MyDrawer(),
         body:mainStack(),
       ),
     );

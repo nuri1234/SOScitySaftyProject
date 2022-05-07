@@ -1,15 +1,10 @@
-import 'package:center_side/pages/main_page.dart';
 import 'package:center_side/statistic/statistic_page.dart';
 import 'package:flutter/material.dart';
 import 'package:center_side/pages/maneger.dart';
 import 'dbHelper/mongodb.dart';
 import 'socket_class.dart';
-
 import 'pages/signin_page.dart';
 import 'pages/homePage.dart';
-import 'compount/drawer.dart';
-
-import 'package:center_side/pages/workPage.dart';
 import 'package:center_side/pages/addWorker.dart';
 import 'package:center_side/pages/workerList.dart';
 import 'package:center_side/pages/viewMessage.dart';
@@ -45,9 +40,6 @@ class MyApp extends StatelessWidget {
         },
         'maneger':(context){
           return ManagerPage();
-        },
-        'workPage':(context){
-          return WorkPage();
         },
         'addUser':(context){
           return AddWorker();

@@ -1,7 +1,5 @@
-import 'package:center_side/compount/center_text.dart';
 import 'package:center_side/compount/colors.dart';
 import 'package:center_side/pages/maneger.dart';
-import 'package:center_side/pages/workPage.dart';
 import 'package:center_side/sos/sos_main_page.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -55,7 +53,7 @@ class _SignInState extends State<SignIn> {
           },
         ),
         PopupMenuItem(
-          child: const Text("عربيه"),
+          child: const Text("العربية"),
           value: 1,
           onTap: (){
             print("change to english");
