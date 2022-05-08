@@ -58,7 +58,8 @@ class my_texts {
   static String WorkerList = "Workers List";
   static String language = "Language";
   static String SOS = "SOS";
-
+  static String PasswordLoginMessage = "Invaled OR Error Password ";
+  static String UsernameLoginMessage = "Invaled OR Error Username ";
 
   static changeToEnglish(){
     city="city";
@@ -114,6 +115,10 @@ class my_texts {
     WorkerList = "Workers List";
     language = "Language";
     SOS = "SOS";
+    PasswordLoginMessage = "Invaled OR Error Password";
+    UsernameLoginMessage = "Invaled OR Error Username";
+
+
 
   }
 
@@ -171,6 +176,10 @@ class my_texts {
     WorkerList = "רשימת עובדי המוקד";
     language = "שפה";
     SOS = "SOS";
+    PasswordLoginMessage = "סיסמה שגויה או ריקה ";
+    UsernameLoginMessage = "שם משתמש שגוי או ריק";
+
+
 
   }
   static changeToArabic(){
@@ -226,6 +235,8 @@ class my_texts {
     WorkerList = "قائمة الموظفين";
     language = "اللغة";
     SOS = "الاشعارات";
+    PasswordLoginMessage = "الرقم السري خاطئ ";
+    UsernameLoginMessage = "الاسم الشخصي خاطئ";
   }
 
 
