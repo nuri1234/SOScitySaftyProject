@@ -105,7 +105,9 @@ bool signinEmit=false;
   void socketListner() {
     my_socket.socket.on("SOS_Call", (data) async{
       print("SOS Received");
+
       print(data);
+      print("SOS Received2");
       Client newClient= Client(
           userName: data['client']['userName'],
           phone:data['client']['phone'],
@@ -114,12 +116,16 @@ bool signinEmit=false;
           socketId: data['client_socketId'],
           dateTime: DateTime.now()
       );
+      print("SOS Received4");
       await GetAddressFromLatLong(newClient);
+      print("SOS Received5");
       setState(() {
         clients.insert(0, newClient);
       });
+      print("SOS Received3");
       player.play('sosCall.wav',mode: PlayerMode.LOW_LATENCY,
           stayAwake: false);
+      print("SOS Received4");
 
     });
 
@@ -401,7 +407,7 @@ void initLanguage(){
   //  if(hebrew=true)initLanguage();
     socketListner();
 
-    fillCalls();
+  //  fillCalls();
 
 
   }
@@ -422,10 +428,21 @@ void initLanguage(){
 
 /////////////////////
   Future<void> GetAddressFromLatLong(Client client) async{
-    List<Placemark> placemark= await placemarkFromCoordinates(client.lat,client.long,);
+    print(client.userName);
+    List<Placemark> placemark;
+ //   print("GetAddressFromLatLong");
 
-  if(data.language==1){placemark= await placemarkFromCoordinates(client.lat,client.long,localeIdentifier:'he');}
-    if(data.language==2){placemark= await placemarkFromCoordinates(client.lat,client.long,localeIdentifier:'ar');}
+  if(data.language==1){
+  //  print("data.language==1");
+    placemark= await placemarkFromCoordinates(client.lat,client.long,localeIdentifier:'he');}
+    if(data.language==2){
+   //   print("data.language==2");
+      placemark= await placemarkFromCoordinates(client.lat,client.long,localeIdentifier:'ar');}
+    else {
+  //    print("data.language==0");
+      placemark= await placemarkFromCoordinates(client.lat,client.long);
+    }
+   // print("hahahah");
   print(placemark);
 
 
@@ -433,6 +450,7 @@ void initLanguage(){
 
 
     //print(placemark);
+    print("hhhhhhhhhhhhhhhhhhhhhhhhh");
     client.street= placemark.first.street.toString();
     client.city= placemark.first.locality.toString();
 

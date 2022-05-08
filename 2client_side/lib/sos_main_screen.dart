@@ -639,7 +639,7 @@ class _SOSState extends State<SOS> {
       child: Icon(Icons.language,color:app_colors.languageButton,size: 40,) ,
       itemBuilder: (context) => [
         PopupMenuItem(
-          child: const Text("عربيه"),
+          child: const Text("العربية"),
           value: 1,
           onTap: (){print("change to arbic");
           setState(() {

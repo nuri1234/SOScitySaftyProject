@@ -8,8 +8,8 @@ class my_socket {
 
   static connect() {
     socket =
-       // IO.io("https://aqueous-bayou-10643.herokuapp.com/", <String, dynamic>{
-            socket = IO.io("http://192.168.1.233:5000", <String, dynamic>{
+       IO.io("https://aqueous-bayou-10643.herokuapp.com/", <String, dynamic>{
+           // socket = IO.io("http://192.168.1.233:5000", <String, dynamic>{
           "transports": ["websocket"],
           "autoConnect": false,});
 
