@@ -20,7 +20,7 @@ void main() async{
  WidgetsFlutterBinding.ensureInitialized();
  my_socket.connect();
  await Firebase.initializeApp();
-  await Future.delayed(const Duration(seconds: 2));
+//  await Future.delayed(const Duration(seconds: 2));
 
 
   runApp(const MyApp());}
