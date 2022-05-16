@@ -128,7 +128,9 @@ class _RegistorState extends State<Registor> {
 
     child: IconButton(
       onPressed: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
+        Route route = MaterialPageRoute(builder: (context) => SOS());
+        Navigator.pushReplacement(context, route);
+      //  Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
       },
     icon: const Icon(Icons.next_plan_rounded,color: Colors.blue,),
       iconSize: 50,

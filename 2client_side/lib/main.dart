@@ -101,10 +101,11 @@ class _MyAppState extends State<MyApp> {
       return const MaterialApp(
         title: 'home page',
         debugShowCheckedModeBanner: false,
-        home: Home(),
+       home: Home(),
       //  home: splashScreen(),
        // home: verifyPhone(),
        // home:Registor(),
+      //  home: SOS(),
 
 
       );

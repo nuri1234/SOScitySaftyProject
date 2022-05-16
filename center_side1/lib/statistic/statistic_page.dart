@@ -86,8 +86,8 @@ class _StatisticState extends State<Statistic> {
     print("makeSTbyLocatin/////////////////////////()");
     for(Contact c in contacts){
       String street=c.street;
-      if(c.street.contains(new RegExp(r'[A-Z]')) ) {
-        String street=c.street.replaceAll(RegExp('[0-9]'), '');
+      if(c.street.contains(new RegExp(r'[A-Z]')) || c.street.contains(new RegExp(r'[א-ת]'))|| c.street.contains(new RegExp(r'[ا-ي]'))) {
+         street=c.street.replaceAll(RegExp('[0-9]'), '');
       }
       print(street);
 
@@ -366,14 +366,24 @@ class _StatisticState extends State<Statistic> {
 
    Widget mainStack()=>Stack(
      children: [
-       Align(alignment: const Alignment(1,0),child: optionButtonsColumns(),),
+
      if(state==1) Align(alignment: const Alignment(-0.7,0),child: ByMonth(months: _months,),),
        if(state==2) Align(alignment: const Alignment(-0.7,0),child: ByYear(years: _years,),),
        if(state==3) Align(alignment: const Alignment(-0.7,0),child: ByLocation(locations:_locations,),),
        if(state==0) Align(alignment: const Alignment(-1,0),child: allContacts(contacts: contacts,),)
-     ],
+     ,
+     Align(alignment: const Alignment(1,0),child: optionButtonsColumns(),),]
    );
+  Widget SOSLogo()=>Container(
+      padding: const EdgeInsets.all(0),
+      margin: const EdgeInsets.all(0),
+      child: const Image(
+        image: AssetImage('assets/images/logo.png'),
+        height: 100,
+        width:100,
+      )
 
+  );
 
   @override
   Widget build(BuildContext context) {
@@ -381,7 +391,9 @@ class _StatisticState extends State<Statistic> {
       appBar: AppBar(
         automaticallyImplyLeading: false,
         backgroundColor: app_colors.app_bar_background,
-        title:  rahatLogo(),
+        title:  //SOSLogo(),
+       rahatLogo(),
+
         centerTitle: true,
         actions: [backButton(),const SizedBox(width: 10,),languageButton()],
       ),

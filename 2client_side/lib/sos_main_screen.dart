@@ -20,6 +20,7 @@ import 'package:flutter_sound/flutter_sound.dart' as FS;
 import 'package:permission_handler/permission_handler.dart';
 import 'dart:io';
 import 'audio_model.dart';
+import 'package:client_side/local_data.dart';
 
 
 
@@ -42,8 +43,8 @@ class _SOSState extends State<SOS> {
   late MessageModel newMsgTest;
   List<MessageModel> messages = [];
   bool chatOpen=false;
-  double lat = 51.5;
-  double long = -0.5;
+  double lat = 31.25181;
+  double long = 34.7913;
   Timer? timer;
   bool sosButtonRotation=true;
   double sosButtonHigh=100;
@@ -146,16 +147,17 @@ class _SOSState extends State<SOS> {
       print("Disconnect from server");
       setState(() {
         my_socket.isconnect=false;
-        data.clientSigninEmit=false;
+        my_socket.clientSigninEmit=false;
       });
     });
 
 
     my_socket.socket.onConnect((data) {
       print("Connected to server2");
-      if(!data.clientSigninEmit) {
+      print(my_socket.clientSigninEmit);
+      if(my_socket.clientSigninEmit==false) {
         my_socket.socket.emit("clientSignin", my_socket.socket.id);
-        data.clientSigninEmit=true;
+        my_socket.clientSigninEmit=true;
       }
       setState(() {
         my_socket.isconnect=true;
@@ -181,6 +183,7 @@ class _SOSState extends State<SOS> {
 
 
   }
+
   void endCall()async{
     setState(() {
       _endCall=true;
@@ -188,8 +191,9 @@ class _SOSState extends State<SOS> {
     });
     await Future.delayed(const Duration(seconds: 3));
 
-
-    Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
+    Route route = MaterialPageRoute(builder: (context) => SOS());
+    Navigator.pushReplacement(context, route);
+  //  Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
 
   }
   void centerDisconnected()async{
@@ -203,13 +207,14 @@ class _SOSState extends State<SOS> {
 
   }
   void SOScallRespon(){
-    player.play('sosResponse.wav');
+
     print("SOScallRespon()");
+
     setState(() {
       requestResponse=true;
       calling=false;
     });
-
+    player.play('sosResponse.wav');
   }
   void ButtonRotator(){
     setState(() {
@@ -427,9 +432,9 @@ class _SOSState extends State<SOS> {
   @override
   void initState() {
     super.initState();
-    if(my_socket.isconnect && !data.clientSigninEmit) {
+    if(my_socket.isconnect && my_socket.clientSigninEmit==false) {
       my_socket.socket.emit("clientSignin", my_socket.socket.id);
-      data.clientSigninEmit=true;
+      my_socket.clientSigninEmit=true;
     }
 
     print("init sos page");
@@ -1595,6 +1600,7 @@ class _SOSState extends State<SOS> {
 
     ],
   );
+
   Widget mainChatContainer()=>SingleChildScrollView(
     reverse: true,
     child: Container(
@@ -1653,6 +1659,16 @@ class _SOSState extends State<SOS> {
       )
 
   );
+  Widget SOSLogo()=>Container(
+      padding: const EdgeInsets.all(0),
+      margin: const EdgeInsets.all(0),
+      child: const Image(
+        image: AssetImage('assets/images/logo.png'),
+        height: 70,
+        width:70,
+      )
+
+  );
   ///////////////////////////////////////////////////////////////////
   @override
   Widget build(BuildContext context) {
@@ -1662,6 +1678,7 @@ class _SOSState extends State<SOS> {
         centerTitle: true,
         title:
         rahatLogo(),
+        //SOSLogo(),
 
 
         backgroundColor: app_colors.app_bar_background,
@@ -1675,7 +1692,10 @@ class _SOSState extends State<SOS> {
           IconButton(
             onPressed:() {
               if(!chatOpen){
-               Navigator.push(context, MaterialPageRoute(builder: (context)=> (const Registor())));
+
+                Route route = MaterialPageRoute(builder: (context) => Registor());
+                Navigator.pushReplacement(context, route);
+               //Navigator.push(context, MaterialPageRoute(builder: (context)=> (const Registor())));
               }
               }
               ,
