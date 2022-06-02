@@ -6,7 +6,7 @@ class data{
   static bool first_time=true;
   static bool arabic=false;
   static int language=0;
-  static bool clientSigninEmit=false;
+
 
 
   static  getData() async{

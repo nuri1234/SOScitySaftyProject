@@ -3,12 +3,13 @@ class my_socket {
   static late IO.Socket socket;
   static bool isconnect = false;
   static bool centerActive=true;
+  static bool clientSigninEmit=false;
 
 
 
   static connect() {
-     //socket = IO.io("https://aqueous-bayou-10643.herokuapp.com/", <String, dynamic>{
-   socket = IO.io("http://192.168.1.233:5000", <String, dynamic>{
+     socket = IO.io("https://aqueous-bayou-10643.herokuapp.com/", <String, dynamic>{
+  // socket = IO.io("http://192.168.1.233:5000", <String, dynamic>{
       "transports": ["websocket"],
       "autoConnect": false,});
 

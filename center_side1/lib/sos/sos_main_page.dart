@@ -105,7 +105,9 @@ bool signinEmit=false;
   void socketListner() {
     my_socket.socket.on("SOS_Call", (data) async{
       print("SOS Received");
+
       print(data);
+
       Client newClient= Client(
           userName: data['client']['userName'],
           phone:data['client']['phone'],
@@ -114,12 +116,16 @@ bool signinEmit=false;
           socketId: data['client_socketId'],
           dateTime: DateTime.now()
       );
+
       await GetAddressFromLatLong(newClient);
+
       setState(() {
         clients.insert(0, newClient);
       });
+
       player.play('sosCall.wav',mode: PlayerMode.LOW_LATENCY,
           stayAwake: false);
+
 
     });
 
@@ -234,6 +240,7 @@ bool signinEmit=false;
           client.STATUS = 2;
           client.boxColor = Colors.red;
           client.socketId=client.socketId+indexForClientCancel.toString();
+          indexForClientCancel++;
         });
       }
     }
@@ -253,7 +260,14 @@ bool signinEmit=false;
 
     setState(() {
       clientMainContainerShow=false;
-      if(clientChosen) chosen_client.boxColor=app_colors.clientNitral;
+      if(clientChosen) {
+        chosen_client.boxColor=app_colors.clientNitral;
+        if(chosen_client.STATUS!=1){
+          chosen_client.boxColor=Colors.red;
+        }
+
+
+      }
     });
     endCall(client);
 
@@ -275,13 +289,19 @@ bool signinEmit=false;
   void clientDisconnected(sourceId) async{
     for(Client client in my_clients) {
       if (client.socketId == sourceId) {
+
+        client.socketId=client.socketId+indexForClientCancel.toString();
+        indexForClientCancel++;
         setState(() {
+          client.boxColor = Colors.red;
           client.STATUS = 3;
         });
       }
 
       for (Client client in clients) {
         if (client.socketId == sourceId) {
+          client.socketId=client.socketId+indexForClientCancel.toString();
+          indexForClientCancel++;
           setState(() {
             client.STATUS = 3;
           });
@@ -401,7 +421,7 @@ void initLanguage(){
   //  if(hebrew=true)initLanguage();
     socketListner();
 
-    fillCalls();
+  // fillCalls();
 
 
   }
@@ -422,10 +442,21 @@ void initLanguage(){
 
 /////////////////////
   Future<void> GetAddressFromLatLong(Client client) async{
-    List<Placemark> placemark= await placemarkFromCoordinates(client.lat,client.long,);
+    print(client.userName);
+    List<Placemark> placemark;
+ //   print("GetAddressFromLatLong");
 
-  if(data.language==1){placemark= await placemarkFromCoordinates(client.lat,client.long,localeIdentifier:'he');}
-    if(data.language==2){placemark= await placemarkFromCoordinates(client.lat,client.long,localeIdentifier:'ar');}
+  if(data.language==1){
+  //  print("data.language==1");
+    placemark= await placemarkFromCoordinates(client.lat,client.long,localeIdentifier:'he');}
+    if(data.language==2){
+   //   print("data.language==2");
+      placemark= await placemarkFromCoordinates(client.lat,client.long,localeIdentifier:'ar');}
+    else {
+  //    print("data.language==0");
+      placemark= await placemarkFromCoordinates(client.lat,client.long);
+    }
+   // print("hahahah");
   print(placemark);
 
 
@@ -433,6 +464,7 @@ void initLanguage(){
 
 
     //print(placemark);
+    print("hhhhhhhhhhhhhhhhhhhhhhhhh");
     client.street= placemark.first.street.toString();
     client.city= placemark.first.locality.toString();
 
@@ -752,7 +784,7 @@ void initLanguage(){
         setState(() {
           if(clientChosen){
             chosen_client.boxColor=app_colors.clientNitral;
-            if(chosen_client.STATUS!=2 && chosen_client.STATUS!=3){
+            if(chosen_client.STATUS!=1){
               chosen_client.boxColor=Colors.red;
             }
           }
@@ -1182,10 +1214,10 @@ void initLanguage(){
       ]
   ),
   child: Stack(children: [
-    Align(alignment: const Alignment(-1, 0),child: Text('${client.userName} : ${client.city} ${client.street}',style: const TextStyle(
+    Align(alignment: const Alignment(1, 0),child: Text('${client.userName} : ${client.city} ${client.street}',style: const TextStyle(
       color: Colors.black,fontWeight: FontWeight.bold, fontSize: 20
     ),),),
-  Align(alignment: const Alignment(1, 0),child:SizedBox(
+  Align(alignment: const Alignment(-1, 0),child:SizedBox(
     width: 130,
     //color: Colors.white,
     child: Row(
@@ -1724,6 +1756,7 @@ void initLanguage(){
   Widget mainStack()=> Stack(children: [
     Align(alignment: const Alignment(-0.7,0),child: mangeCallsContainer(),),
     Align(alignment: const Alignment(1,0),child: mangeClientsContainer(),),
+
     if(my_socket.isconnect) Align(alignment: const Alignment(0.0,-1),child:connectedToServer())
     else Align(alignment: const Alignment(0.0,-1),child:notConnectedToServer()),
     Align(alignment: const Alignment(-1,0),child:clientMainContainer()),
@@ -1753,6 +1786,18 @@ void initLanguage(){
   );
 
 
+  Widget SOSLogo()=>Container(
+      padding: const EdgeInsets.all(0),
+      margin: const EdgeInsets.all(0),
+      child: const Image(
+        image: AssetImage('assets/images/logo.png'),
+        height: 100,
+        width:100,
+      )
+
+  );
+
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -1760,7 +1805,8 @@ void initLanguage(){
         appBar: AppBar(
           automaticallyImplyLeading: false,
           backgroundColor: app_colors.app_bar_background,
-          title:  rahatLogo(),
+          title://SOSLogo(),
+           rahatLogo(),
         centerTitle: true,
           actions: [ backButton(),statisticButton(),const SizedBox(width: 10,),languageButton(),
 

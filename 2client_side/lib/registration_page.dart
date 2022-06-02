@@ -51,7 +51,7 @@ class _RegistorState extends State<Registor> {
       child: Icon(Icons.language,color:app_colors.languageButton,size: 40,) ,
       itemBuilder: (context) => [
         PopupMenuItem(
-          child: const Text("عربيه"),
+          child: const Text("العربية"),
           value: 1,
           onTap: (){print("change to arbic");
           setState(() {
@@ -128,7 +128,9 @@ class _RegistorState extends State<Registor> {
 
     child: IconButton(
       onPressed: (){
-        Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
+        Route route = MaterialPageRoute(builder: (context) => SOS());
+        Navigator.pushReplacement(context, route);
+      //  Navigator.push(context, MaterialPageRoute(builder: (context)=>(const SOS())),);
       },
     icon: const Icon(Icons.next_plan_rounded,color: Colors.blue,),
       iconSize: 50,

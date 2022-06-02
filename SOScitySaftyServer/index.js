@@ -23,52 +23,100 @@ io.on("connection", (socket) => {
   socket.on("clientSignin",(id)=>{
     console.log("client signin: ",id);
     clients[id]=socket;
+    if( Object.keys(centers).length==0) socket.emit("center_inactive");
+  });
 
+  socket.on("centerSignout",(id)=>{
+    console.log("centerSignout: ",id);
+    delete centers[socket.id];
+    
+    for (const key of Object.keys(clients)) {  
+      console.log("clients to send disconect  call");
+      console.log(key + ":" + clients[key])  ;
+      clients[key].emit("centerDisconnected",socket.id);     
+    }
+
+    if( Object.keys(centers).length==0){
+      console.log("clients to inavtive:");
+      for (const key of Object.keys(clients)) {  
+    
+        console.log(key + ":" + clients[key])  
+        clients[key].emit("center_inactive");   
+      }
+    }
   });
 
   socket.on("centerSignin",(id)=>{
     console.log("center Signin: ",id);
+    console.log("centers size befor chek:", Object.keys(centers).length);
+    if( Object.keys(centers).length==0){
+      console.log("clients to avtive:");
+      for (const key of Object.keys(clients)) {  
+    
+        console.log(key + ":" + clients[key])  
+        clients[key].emit("center_active");   
+      }
+     
+    } 
     centers[id]=socket;
+    console.log("centers size afre: ", Object.keys(centers).length);
+ 
   });
 
   socket.on("disconnect",()=>{
-    console.log(socket.id, "disconected");
-   if(clients.hasOwnProperty(socket.id)) {
-     delete clients[socket.id];
+  console.log(socket.id, "disconected");
 
+   if(clients.hasOwnProperty(socket.id)) {
+    console.log("client disconected");
+     delete clients[socket.id];
      for (const key of Object.keys(centers)) {  
-      console.log("centers to send sos call");
+      console.log("centers to send disconect call");
       console.log(key + ":" + centers[key])  ;
       centers[key].emit("clientDisconnected",socket.id);     
     }
      
    }
       
-   if( centers.hasOwnProperty(socket.id) ){
+   if(centers.hasOwnProperty(socket.id)){
+    console.log("center disconected");
      delete centers[socket.id] ;
      for (const key of Object.keys(clients)) {  
-      console.log("clients to send sos call");
-      console.log(key + ":" + centers[key])  ;
-      centers[key].emit("centerDisconnected",socket.id);     
+      console.log("clients to send disconect  call");
+      console.log(key + ":" + clients[key])  ;
+      clients[key].emit("centerDisconnected",socket.id);     
     }
-   }
+
+    if( Object.keys(centers).length==0){
+      console.log("clients to inavtive:");
+      for (const key of Object.keys(clients)) {  
+    
+        console.log(key + ":" + clients[key])  
+        clients[key].emit("center_inactive");   
+      }
+
+}
+}  
       
 
     
    });
    ///////////////////////////////////////////////
    socket.on("SOS_Call",(client)=>{
-    console.log("SOS CALL");
+    console.log("SOS CALL from soket",socket.id);
     console.log(client);
-    console.log("from soket",socket.id);
-    if(clients[socket.id])clients[socket.id].emit("sos_call_request_send",client);
+
+    console.log("centers size", Object.keys(centers).length);
+    if( Object.keys(centers).length==0) socket.emit("center_inactive");
+    else socket.emit("sos_call_request_send",client);
+
+    
+    
     for (const key of Object.keys(centers)) {  
-      console.log("centers to send sos call");
-      console.log(key + ":" + centers[key]);
+      console.log("center to send sos call");
+      console.log(key + ":" + centers[key])  
       centers[key].emit("SOS_Call",{'client_socketId':socket.id,'client':client});     
     }
    });
-
 
    socket.on("SOS_Call_Test",(data)=>{
     console.log("SOS CALL Test");
@@ -82,18 +130,21 @@ io.on("connection", (socket) => {
 
    socket.on("SOS_Call_Respone",(client_socketId)=>{
     console.log("SOS_Call_Respone");
-    console.log(client_socketId);
+    console.log("sos respone to ",client_socketId);
     console.log("from soket",socket.id);
-    if(clients[client_socketId])clients[client_socketId].emit("SOS_Call_Respone",socket.id);
+    console.log(clients);
+    if(clients[client_socketId]){
+      console.log("SOS_Call_Respone to",client_socketId);
+      clients[client_socketId].emit("SOS_Call_Respone",socket.id);
 
-    for (const key of Object.keys(centers)) {  
-      console.log("centers to send sos call");
-      console.log(key + ":" + centers[key])  
-     if(key.localeCompare(socket.id)) centers[key].emit("SOS_Call_Respone",client_socketId);    
     }
 
-
-  
+    for (const key of Object.keys(centers)) {  
+      console.log("centers to send sos call respone");
+      console.log(key + ":" + centers[key]) ; 
+     if(key.localeCompare(socket.id)) centers[key].emit("SOS_Call_Respone",client_socketId);    
+    }
+    
 
     for (const key of Object.keys(laterMesages)) {  
       console.log(key + ":" + laterMesages[key])
@@ -110,21 +161,36 @@ io.on("connection", (socket) => {
 
    socket.on("message",(data)=>{
     console.log("msg: ",data['msg']);
-    console.log(data);
+    console.log("targitId: ", data['targetId']);
     socket.emit("message_send",data);
-    if(centers[data['targitId']]){
-      centers[data['targitId']].emit("get_message",{'sourceId':socket.id,'msg':data['msg']});
+    if(centers[data['targetId']]){
+      console.log("yes fount center");
+      centers[data['targetId']].emit("get_message",{'sourceId':socket.id,'msg':data['msg']});
     
     }
-    if(clients['targitId']){
-      clients[data['targitId']].emit("get_message",data['msg']);
+    else if(clients[data['targetId']]){
+      console.log("yes fount client");
+      clients[data['targetId']].emit("get_message",data['msg']);
    
-
     }
-    else {socket.emit("errorsend","targit not found");}
+    else {
+      console.log("error on sending no target found");
+      socket.emit("errorsend","targit not found");}
+
+
+      for (const key of Object.keys(clients)) {  
+        console.log("client key: ", key);
+    
+      }
 
     
  
+   });
+
+   socket.on("end_call",(clientId)=>{
+    if(clients[clientId]){
+      clients[clientId].emit("end_call"); }
+
    });
 
 
@@ -147,12 +213,11 @@ io.on("connection", (socket) => {
    });
 
    socket.on("laterMessage",(msg)=>{
-    console.log("laterMessage:",'msg');
+    console.log("laterMessage:",msg);
+    socket.emit("message_send",msg);
 
     laterMesages[i]={'sourceId':socket.id,'msg':msg};
     i++;
-
-
  
    });
 
@@ -168,9 +233,7 @@ io.on("connection", (socket) => {
     }
 });
 
-
  
-  
    
 });
 

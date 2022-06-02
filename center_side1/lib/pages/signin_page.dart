@@ -22,6 +22,8 @@ class _SignInState extends State<SignIn> {
   var islogin;
   final TextEditingController _userName= TextEditingController();
   final TextEditingController _password= TextEditingController();
+  bool notFound=false;
+  bool somthingWrong=false;
 
   Widget languageButton()=> PopupMenuButton(
       color: Colors.grey,
@@ -77,15 +79,26 @@ class _SignInState extends State<SignIn> {
   }
   void checkMng()async{
     var mng=await searchMng(_userName.text);
-    if(mng.userName==_userName.text){
-      print("ok");
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (c) => Scaffold(body: ManagerPage())
-      ));
-    }
-    else print("no match");
+if(mng!=null){
+  if(mng.userName==_userName.text){
+    print("ok");
+    Navigator.of(context).push(MaterialPageRoute(
+        builder: (c) => Scaffold(body: ManagerPage())
+    ));
+  }
+  else {
+    setState(() {
+      somthingWrong=true;
+    });
+  }
 
-    if(mng==null) print("user not found");
+}
+else{
+  setState(() {
+    notFound=true;
+  });
+}
+
   }
 
   void chekUser()async {
@@ -105,6 +118,13 @@ class _SignInState extends State<SignIn> {
 
             }) );
       }
+      else {
+        setState(() {
+          somthingWrong=true;
+
+        });
+
+      }
 
 
     }
@@ -115,7 +135,7 @@ class _SignInState extends State<SignIn> {
       checkMng();
       //print("no match");}
     }
-    if (user == null) print("user not found");
+
     }
 
 
@@ -131,6 +151,10 @@ class _SignInState extends State<SignIn> {
 
             backgroundColor: app_colors.app_bar_background,
             onPressed: () {
+              setState(() {
+                notFound=false;
+                somthingWrong=false;
+              });
               print("Next");
               chekUser();
             },
@@ -193,23 +217,36 @@ class _SignInState extends State<SignIn> {
 
     Widget inputContainer() =>
         Container(
-          height: 300,
+          height: 180,
           width: 300,
           color: app_colors.background,
-          padding: EdgeInsets.all(8),
+          padding: EdgeInsets.all(0),
           child: Stack(children: [
             Align(
               alignment: const Alignment(0, -1), child: userNameTextField(),),
             Align(
-              alignment: const Alignment(0, 0), child: passwordTextField(),),
+              alignment: const Alignment(0, 1), child: passwordTextField(),),
 
           ],),
 
         );
 
+    Widget userNotFound()=>Text(
+      my_texts.userNotFond,
+      style: TextStyle(color: Colors.red,fontSize: 20),
+
+    );
+  Widget  passOrnameWrong()=>Text(
+    my_texts.userNameOrpasswordWrong,
+    style: TextStyle(color: Colors.red,fontSize: 20),
+
+  );
+
     Widget mainStak() =>
         Stack(children: [
+
           ListView(children: [
+            const SizedBox(height:10,),
             Container(
                 height: 180,
                 width: double.infinity,
@@ -221,12 +258,19 @@ class _SignInState extends State<SignIn> {
               child: Align(
                 alignment: const Alignment(0, 0), child: inputContainer(),),
             ),
+
+
+            if(notFound)Align(alignment: const Alignment(0,0),child:userNotFound()),
+            if(somthingWrong) Align(alignment: const Alignment(0,0),child:passOrnameWrong()),
+            const SizedBox(height:10,),
+
             Container(
               child: Align(
-                alignment: const Alignment(0, 0.8), child: NextButton(),),
-            )
+                alignment: const Alignment(0, 0), child: NextButton(),),
+            ),
 
-          ],)
+          ],),
+
 
 
         ],);

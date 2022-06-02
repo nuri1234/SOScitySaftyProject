@@ -9,6 +9,12 @@ class app_colors{
   static Color buttom_shadow = const Color(0xff2E4053);
   static Color Welcome = Colors.white;
 
+  //static Color app_bar_background =  const Color(0xffADD8E6);
+
+
+ // static Color background = const Color(0xffF0FFFF);
+
+
   static Color app_bar_background =const Color(0xffFFC55C);
   static Color background = const Color(0xffFFD68A);
   static Color boxBackground = const Color(0xffFFD68A);

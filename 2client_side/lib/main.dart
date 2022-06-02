@@ -20,7 +20,7 @@ void main() async{
  WidgetsFlutterBinding.ensureInitialized();
  my_socket.connect();
  await Firebase.initializeApp();
-  await Future.delayed(const Duration(seconds: 2));
+//  await Future.delayed(const Duration(seconds: 2));
 
 
   runApp(const MyApp());}
@@ -101,10 +101,11 @@ class _MyAppState extends State<MyApp> {
       return const MaterialApp(
         title: 'home page',
         debugShowCheckedModeBanner: false,
-        home: Home(),
+       home: Home(),
       //  home: splashScreen(),
        // home: verifyPhone(),
        // home:Registor(),
+      //  home: SOS(),
 
 
       );

@@ -42,7 +42,7 @@ class my_texts {
 
   static changeToArabic(){
     username="اسم المستخدم";
-    inputPhone="ادخل رقم الهات";
+    inputPhone="ادخل رقم الهاتف";
     explaneText=Text("المعلومات التي ستقوم بادخالها سيتم حفظها محليا, اي ان لن يتم استخدامها الا في حالة استخدام التطبيق لطلب المساعدة , المعلمومات يتم تغييرها  في اي وقت",
       style: GoogleFonts.abel(fontSize: 16,fontWeight: FontWeight.w800,color: Colors.black),);
     EnterPhon= "الرجاء ادخال رقم الهاتف";

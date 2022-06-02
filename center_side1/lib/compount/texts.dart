@@ -27,7 +27,9 @@ class my_texts {
   static String allContacts="all contacts";
   static String city="city";
   static String street="street";
-  ///////////////////////////////
+  static String userNotFond="user not found";
+  static String userNameOrpasswordWrong="the password or the username is wrong";
+
   static String workerUserName="center";
 ////////////////////////////////////
   static String SignIn= "Login";
@@ -62,6 +64,8 @@ class my_texts {
   static String UsernameLoginMessage = "Invaled OR Error Username ";
 
   static changeToEnglish(){
+    userNameOrpasswordWrong="the password or the username is wrong";
+ userNotFond="user not found";
     city="city";
    street="street";
    workerUserName="center";
@@ -108,7 +112,7 @@ class my_texts {
     Delete= "Delete";
     MessageList = "Messege's List";
     WorkerName = "Worker's Name";
-    CitizenName = "Citizen's Name";
+    CitizenName = "Citizen's userName";
     Citizenphone = "Citizen's Phone";
     CitizenAddress = "Citizen's Address";
     EventType = "Event Type";
@@ -123,6 +127,8 @@ class my_texts {
   }
 
   static changeToHebrew(){
+    userNameOrpasswordWrong="  שם משתמש או הסיסמא שגויים";
+  userNotFond="המשתמש לא נמצא";
     city="עיר";
     street="רחוב";
     workerUserName="מוקדן";
@@ -168,8 +174,8 @@ class my_texts {
     DeleteMessage= "האם אתה בטוח למחוק את:";
     Delete= "מחיקה";
     MessageList = "רשימת ההתראות";
-    WorkerName = "שם העובד";
-    CitizenName = "שם האזרח";
+    WorkerName = "שם משתמש העובד";
+    CitizenName = "שם משתמש האזרח";
     Citizenphone = "טלפון של האזרח";
     CitizenAddress = "כתובת של האזרח";
     EventType = "סוג מקרה";
@@ -183,6 +189,8 @@ class my_texts {
 
   }
   static changeToArabic(){
+    userNotFond="لم يتم العثور على المستخدم";
+    userNameOrpasswordWrong="اسم المستخدم أو كلمة المرور غير صحيحة";
     city="مدينة";
     street="شارع";
     workerUserName="اسم الموظف";
