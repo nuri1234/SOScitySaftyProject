@@ -30,6 +30,7 @@ class _SignInState extends State<SignIn> {
       child: Icon(Icons.language,color:Colors.black,size: 40,) ,
       itemBuilder: (context) => [
         PopupMenuItem(
+          key: Key('hebrew'),
           child: const Text("עברית"),
           value: 1,
           onTap: (){print("change to hebrow");
@@ -146,6 +147,7 @@ else{
           child:
           FloatingActionButton(
             //child: Icon(Icons.ac_unit),
+            key: Key('next'),
             child: Text(
               my_texts.Enter, style: TextStyle(fontSize: 22,color: Colors.black,fontWeight: FontWeight.bold),),
 
@@ -166,6 +168,7 @@ else{
           height: 100,
           width: 200,
           child: TextField(
+            key:Key('userName'),
             decoration: InputDecoration(
                 hintText: my_texts.UserName,
                 enabledBorder: OutlineInputBorder(
@@ -192,6 +195,7 @@ else{
           height: 100,
           width: 200,
           child: TextField(
+            key:Key('pass'),
             obscureText: true,
             decoration: InputDecoration(
                 hintText: my_texts.password,
@@ -234,11 +238,13 @@ else{
     Widget userNotFound()=>Text(
       my_texts.userNotFond,
       style: TextStyle(color: Colors.red,fontSize: 20),
+      key: Key('userNotFond'),
 
     );
   Widget  passOrnameWrong()=>Text(
     my_texts.userNameOrpasswordWrong,
     style: TextStyle(color: Colors.red,fontSize: 20),
+    key: Key('passOrnameWrong'),
 
   );
 

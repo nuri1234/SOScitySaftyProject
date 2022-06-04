@@ -14,7 +14,7 @@ import 'package:center_side/sos/sos_main_page.dart';
 
 
 
-void main() async {
+Future main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await MongoDB.connect();
   await my_socket.connect();
@@ -30,7 +30,7 @@ class MyApp extends StatelessWidget {
       title: 'HomePage',
       debugShowCheckedModeBanner: false,
      home:HomePage(),
-      // home:SOS(),
+       //home:SOS(),
       routes: {
         'homePage':(context){
           return HomePage();

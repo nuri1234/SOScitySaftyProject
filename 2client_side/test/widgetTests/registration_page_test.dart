@@ -15,10 +15,36 @@ void main() async{
     );
 
   }
+
+
+  testWidgets("init test", (WidgetTester tester)async {
+    final Registor page=Registor();
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    MaterialColor myMaterialColor=Colors.grey;
+    print(myMaterialColor);
+    expect((tester.firstWidget(find.byType(Icon)) as Icon).color,myMaterialColor);
+    expect(find.text("guest"),findsOneWidget);
+    expect(find.text("input phone"),findsOneWidget);
+    expect(find.byIcon(Icons.language),findsOneWidget);
+
+  });
   
   testWidgets("enter user name,save button color=green", (WidgetTester tester)async {
     final userNameTextField=find.byKey(const ValueKey('userNameTextField'));
+    final Registor page=Registor();
+    await tester.pumpWidget(makeTestableWidget(child: page));
+    await  tester.enterText(userNameTextField,"nuri");
+    await tester.pump();
+    print("here1");
+    print((tester.firstWidget(find.byType(Icon)) as Icon).color);
+    MaterialColor myMaterialColor=Colors.green;
+    print(myMaterialColor);
+    expect((tester.firstWidget(find.byType(Icon)) as Icon).color,myMaterialColor);
+    expect(find.text("nuri"),findsOneWidget);
+  });
 
+  testWidgets("enter user name,save button color=green", (WidgetTester tester)async {
+    final userNameTextField=find.byKey(const ValueKey('userNameTextField'));
     final Registor page=Registor();
     await tester.pumpWidget(makeTestableWidget(child: page));
     await  tester.enterText(userNameTextField,"nuri");

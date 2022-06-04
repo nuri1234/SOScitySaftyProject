@@ -39,18 +39,20 @@ class _RegistorState extends State<Registor> {
     setState(() {
       _save=false;
     });
-    print("save");
+
 
     data.user_name=_user_name.text;
     data.updateData();
-
+    print("save");
   }
 
   Widget languageButton()=> PopupMenuButton(
+    key: Key('languageButton'),
       color: Colors.grey,
       child: Icon(Icons.language,color:app_colors.languageButton,size: 40,) ,
       itemBuilder: (context) => [
         PopupMenuItem(
+          key: Key('arabic'),
           child: const Text("العربية"),
           value: 1,
           onTap: (){print("change to arbic");
@@ -62,6 +64,7 @@ class _RegistorState extends State<Registor> {
           },
         ),
         PopupMenuItem(
+          key: Key('english'),
           child: const Text("English"),
           value: 1,
           onTap: (){
@@ -75,6 +78,7 @@ class _RegistorState extends State<Registor> {
           },
         ),
         PopupMenuItem(
+          key: Key('hebrew'),
           child: const Text("עברית"),
           value: 1,
           onTap: (){
@@ -127,6 +131,7 @@ class _RegistorState extends State<Registor> {
     width: 150,
 
     child: IconButton(
+      key: Key('continueButton'),
       onPressed: (){
         Route route = MaterialPageRoute(builder: (context) => SOS());
         Navigator.pushReplacement(context, route);
@@ -170,6 +175,7 @@ class _RegistorState extends State<Registor> {
         ]
     ),
     child: ElevatedButton(
+      key: Key('inputPhoneButton'),
       onPressed: (){
 
         Navigator.push(context, MaterialPageRoute(builder: (context)=>(const verifyPhone())),).then((_) =>setState(() {}) );
@@ -210,7 +216,7 @@ class _RegistorState extends State<Registor> {
 
         filled: true,
       ),
-      maxLines: 15,
+      maxLines: 2,
       controller: _user_name,
       style:  GoogleFonts.aBeeZee(fontSize:20,fontWeight: FontWeight.bold,color: Colors.green,),
       textAlign: TextAlign.left,

@@ -431,6 +431,7 @@ class _SOSState extends State<SOS> {
 
   @override
   void initState() {
+    audioPlayer=AudioPlayer();
     super.initState();
     if(my_socket.isconnect && my_socket.clientSigninEmit==false) {
       my_socket.socket.emit("clientSignin", my_socket.socket.id);
@@ -1690,6 +1691,7 @@ class _SOSState extends State<SOS> {
         actions: [
           languageButton(),
           IconButton(
+            key: Key('registration_page_button'),
             onPressed:() {
               if(!chatOpen){
 

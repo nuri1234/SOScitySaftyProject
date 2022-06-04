@@ -15,7 +15,7 @@ import 'verify_phone_number_page.dart';
 
 
 
-void main() async{
+Future main() async{
   runApp(const splashScreen());
  WidgetsFlutterBinding.ensureInitialized();
  my_socket.connect();

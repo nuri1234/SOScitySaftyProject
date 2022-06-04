@@ -152,6 +152,7 @@ class _verifyPhoneState extends State<verifyPhone> {
     child: Text(my_texts.Next, style: TextStyle(color: app_colors.text_button,fontWeight:FontWeight.bold ,fontSize: 18),),
   );
   Widget backButton()=>ElevatedButton(
+    key: Key('backButton'),
     onPressed:(){
       Navigator.pop(context);
 

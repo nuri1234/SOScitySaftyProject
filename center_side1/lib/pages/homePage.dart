@@ -19,9 +19,10 @@ class HomeState extends State<HomePage> {
       child: Icon(Icons.language,color:Colors.black,size: 40,) ,
       itemBuilder: (context) => [
         PopupMenuItem(
+          key: Key('hebrew'),
           child: const Text("עברית"),
           value: 1,
-          onTap: (){print("change to hebrow");
+          onTap: (){print("change to hebrew");
           setState(() {
             my_texts.changeToHebrew();
             data.language=1;
@@ -99,6 +100,7 @@ class HomeState extends State<HomePage> {
                   width: 200.0,
                   child:
                   FloatingActionButton(
+                    key: Key("login"),
                     //child: Icon(Icons.ac_unit),
                     child: Text(my_texts.SignIn,style: TextStyle(fontSize: 22,color: Colors.black,fontWeight: FontWeight.bold),),
 
